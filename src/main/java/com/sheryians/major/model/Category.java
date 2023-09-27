@@ -12,6 +12,7 @@ public class Category {
     @Column(name="category_id")
     private int id;
 
+    @Column(unique = true)
     private String name;
 
 
