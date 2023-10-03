@@ -1,11 +1,10 @@
-package com.sheryians.major.controller;
+package com.ecommerce.miniproject.controller;
 
-import com.sheryians.major.dto.ProductDTO;
-import com.sheryians.major.model.Category;
-import com.sheryians.major.model.Product;
-import com.sheryians.major.repository.ProductRepository;
-import com.sheryians.major.service.CategoryService;
-import com.sheryians.major.service.ProductService;
+import com.ecommerce.miniproject.dto.ProductDTO;
+import com.ecommerce.miniproject.entity.Category;
+import com.ecommerce.miniproject.service.CategoryService;
+import com.ecommerce.miniproject.entity.Product;
+import com.ecommerce.miniproject.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -100,6 +99,7 @@ public class AdminController {
         }
         product.setImageName(imageUUID);
         productService.addProduct(product);
+
         return "redirect:/admin/products";
 
     }

@@ -1,9 +1,10 @@
-package com.sheryians.major.model;
+package com.ecommerce.miniproject.entity;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+
+import jakarta.persistence.*;
 
 @Getter
 @Setter
@@ -21,6 +22,5 @@ public class Product {
     private double weight;
     private String description;
     private String imageName;
-
 
 }

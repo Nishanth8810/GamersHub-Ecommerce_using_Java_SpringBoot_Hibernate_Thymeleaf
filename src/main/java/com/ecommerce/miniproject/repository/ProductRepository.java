@@ -1,6 +1,6 @@
-package com.sheryians.major.repository;
+package com.ecommerce.miniproject.repository;
 
-import com.sheryians.major.model.Product;
+import com.ecommerce.miniproject.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

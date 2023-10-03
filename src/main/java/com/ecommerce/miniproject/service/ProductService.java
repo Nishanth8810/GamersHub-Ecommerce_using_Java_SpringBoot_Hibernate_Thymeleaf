@@ -1,7 +1,7 @@
-package com.sheryians.major.service;
+package com.ecommerce.miniproject.service;
 
-import com.sheryians.major.model.Product;
-import com.sheryians.major.repository.ProductRepository;
+import com.ecommerce.miniproject.repository.ProductRepository;
+import com.ecommerce.miniproject.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

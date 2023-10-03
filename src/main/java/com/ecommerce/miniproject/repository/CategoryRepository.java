@@ -1,6 +1,6 @@
-package com.sheryians.major.repository;
+package com.ecommerce.miniproject.repository;
 
-import com.sheryians.major.model.Category;
+import com.ecommerce.miniproject.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CategoryRepository extends JpaRepository<Category,Integer> {

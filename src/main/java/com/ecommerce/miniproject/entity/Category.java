@@ -1,8 +1,11 @@
-package com.sheryians.major.model;
+package com.ecommerce.miniproject.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.Data;
+import jakarta.persistence.*;
 
-import javax.persistence.*;
+
 
 @Entity
 @Data
