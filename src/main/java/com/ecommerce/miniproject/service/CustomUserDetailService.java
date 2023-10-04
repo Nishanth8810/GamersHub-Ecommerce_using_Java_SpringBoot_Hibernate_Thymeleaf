@@ -17,7 +17,11 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findUserByEmail(email);
+
         user.orElseThrow(()-> new UsernameNotFoundException("username is inavlid"));
+        if (!user.get().isActive()){
+            throw new UsernameNotFoundException("user not Active");
+        }
         return user.map(CustomUserDetail::new).get() ;
     }
 }

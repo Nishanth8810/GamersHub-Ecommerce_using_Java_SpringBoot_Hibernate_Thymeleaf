@@ -41,6 +41,9 @@
         </div>
     </div>
 </nav>
+<div th:if="${error}" class="alert alert-danger">
+    <p th:text="${error}"></p>
+</div>
 <div class="container">
     <div class="col-sm-6">
         <h3 style="margin-top: 10px">Sign Up Now</h3>

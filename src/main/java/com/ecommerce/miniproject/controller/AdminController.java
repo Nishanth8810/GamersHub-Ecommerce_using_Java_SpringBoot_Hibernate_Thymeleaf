@@ -2,9 +2,11 @@ package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.dto.ProductDTO;
 import com.ecommerce.miniproject.entity.Category;
+import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.service.CategoryService;
 import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.service.ProductService;
+import com.ecommerce.miniproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +25,8 @@ public class AdminController {
     CategoryService categoryService;
     @Autowired
     ProductService productService;
+    @Autowired
+    UserService userService;
 
 
     @GetMapping("/admin")
@@ -58,6 +62,7 @@ public class AdminController {
         }else
                 return "404";
     }
+
     //product section
 
     @GetMapping("/admin/products")
@@ -121,8 +126,40 @@ public class AdminController {
 
         return "productsAdd";
 
+    }
+    @GetMapping("/admin/userManagement")
+    public String getUserManagement(Model model){
+        model.addAttribute("users",userService.getAllUser());
+        return "userManagement";
 
     }
+    @GetMapping("/admin/userManagement/disableUser/{id}")
+    public String getBlockUser(@PathVariable int id){
+       User user= userService.getUserById(id).get();
+       user.setActive(false);
+       userService.saveUser(user);
+       return "redirect:/admin/userManagement";
 
     }
+    @GetMapping("/admin/userManagement/enableUser/{id}")
+    public String getActiveBUser(@PathVariable int id){
+        User user= userService.getUserById(id).get();
+        user.setActive(true);
+        userService.saveUser(user);
+        return "redirect:/admin/userManagement";}
+
+    @GetMapping("/admin/userManagement/delete/{id}")
+    public String getDeleteUserById(@PathVariable int id){
+        userService.removeUserById(id);
+        return "redirect:/admin/userManagement";
+    }
+//    @GetMapping("/admin/userManagement/update/{id}")
+//    public String updateUserById(@PathVariable int id){
+//        userService.
+//    }
+
+}
+
+
+
 

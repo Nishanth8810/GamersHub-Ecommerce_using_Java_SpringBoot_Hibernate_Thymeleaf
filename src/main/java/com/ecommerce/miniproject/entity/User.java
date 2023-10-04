@@ -37,6 +37,7 @@ public class User {
             )
     private List<Role> roles;
 
+    private boolean active;
 
     public User(User user) {
         this.firstName = user.getFirstName();
@@ -49,6 +50,7 @@ public class User {
     public User(){
 
     }
+
 }
 
 

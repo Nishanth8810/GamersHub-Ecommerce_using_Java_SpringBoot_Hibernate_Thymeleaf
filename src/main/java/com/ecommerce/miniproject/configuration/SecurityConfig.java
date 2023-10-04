@@ -1,19 +1,14 @@
 package com.ecommerce.miniproject.configuration;
 
-import com.ecommerce.miniproject.entity.CustomUserDetail;
 import com.ecommerce.miniproject.service.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AndRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
@@ -25,7 +20,7 @@ public class SecurityConfig {
                         configurer
                                 .requestMatchers("/", "shop/**","register","/resources/**",
                                         "/static/**","/images/**","/productImages/**","/css").permitAll()
-                                .requestMatchers("/adminHome/**").hasRole("ADMIN")
+                                .requestMatchers("/admin/**","/admin/userManagement/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .formLogin(form ->
@@ -33,24 +28,20 @@ public class SecurityConfig {
                                 .loginPage("/login")
                                 .permitAll()
                                 .failureUrl("/login?error=true")
-                                .defaultSuccessUrl("/")
+                                .defaultSuccessUrl("/", true)
                                 .usernameParameter("email")
                                 .passwordParameter("password")
                 )
-                   .logout(LogoutConfigurer::permitAll
-
-
-                )
-
-
+                   .logout(logout->
+                           logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                                   .logoutSuccessUrl("/login")
+                                   .invalidateHttpSession(true)
+                                   .deleteCookies("JSESSIONID")
+                   )
                 .exceptionHandling(configurer ->
                         configurer
-                                .accessDeniedPage("/access-denied")
-
+                                .accessDeniedPage("/unauthorized-access")
                 );
-
-
-
         return httpSecurity.build();
     }
 @Bean
