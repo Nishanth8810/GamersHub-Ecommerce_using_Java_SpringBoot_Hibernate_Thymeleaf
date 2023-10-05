@@ -1,10 +1,14 @@
 package com.ecommerce.miniproject.entity;
 
-import jakarta.validation.constraints.NotEmpty;
+
+
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.List;
 import jakarta.persistence.*;
+
+
 
 @Entity
 @Data
@@ -15,7 +19,7 @@ public class Role {
     private Integer id;
 
     @Column(nullable = false,unique = true)
-    @NotEmpty
+    @NotNull
     private String name;
 
     @ManyToMany(mappedBy = "roles")

@@ -11,6 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.Optional;
+
 @Controller
 
 public class HomeController {
@@ -23,13 +26,20 @@ public class HomeController {
     UserService userService;
     @GetMapping({"/","home"})
     public String home(){
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        User user = userService.getUserByEmail(authentication.getName()).get();
-//        if (!user.isActive()){
-//            return "redirect:/logout";
-//        }
-
-        return "index";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+       Optional<User> userOptional = userService.getUserByEmail(authentication.getName());
+           if (userOptional.isPresent()){
+           User user= userOptional.get();
+           if (!user.isActive()){
+               return "redirect:/logout";
+           }
+           else{
+               return "index";
+           }
+       }
+       else{
+           return "index";
+       }
     }
     @GetMapping("/shop")
     public String shop(Model model){

@@ -1,11 +1,14 @@
 package com.ecommerce.miniproject.entity;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.List;
 import jakarta.persistence.*;
+
 
 @Entity
 @Data
@@ -15,18 +18,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotEmpty
+    @NotNull
     @Column(nullable = false)
     private String firstName;
 
     private String lastName;
 
     @Column(nullable = false,unique = true)
-    @NotEmpty
-    @Email(message = "{errors.invalid_emails}")
+    @NotNull
+    @Size (min = 1, message = "is required")
+    @Pattern(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$")
     private String email;
 
-    @NotEmpty
+    @NotNull
     private String password;
 
     @ManyToMany(cascade = CascadeType.MERGE,fetch =FetchType.EAGER)

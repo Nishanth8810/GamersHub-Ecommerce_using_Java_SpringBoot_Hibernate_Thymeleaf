@@ -5,8 +5,7 @@ import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.repository.UserRepository;
 import com.ecommerce.miniproject.service.UserService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,12 +13,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class LoginController {
@@ -41,7 +41,9 @@ public class LoginController {
         return "redirect:/";
     }
     @GetMapping({"register","/admin/userManagement/addUser"})
-    public String getRegister(){
+    public String getRegister(Model model){
+        model.addAttribute("user",new User());
+
         return "register";
     }
     @GetMapping("/logout")
@@ -50,12 +52,20 @@ public class LoginController {
     }
 
     @PostMapping({"register","/admin/userManagement/addUser"})
-    public String postRegister(@ModelAttribute ("user") User user, HttpServletRequest request, Model model) throws ServletException {
+    public String postRegister(@Valid @ModelAttribute ("user") User user ,BindingResult bindingResult, Model model )  {
 
-//        if (userService.getUserByEmails(user.getEmail())) {
-//            model.addAttribute("error", "Email already exists");
-//            return "registration-error"; // Create a Thymeleaf template for displaying the error message
-//        }
+        if (bindingResult.hasErrors()){
+            return "register";
+        }
+
+        Optional<User> optionalUser= userService.getUserByEmail(user.getEmail());
+        if (optionalUser.isPresent()){
+            model.addAttribute("user", user);
+            model.addAttribute("errorRegister", "Email already exists");
+            return "register";
+
+        }
+
 
         String password= user.getPassword();
         user.setPassword(bCryptPasswordEncoder.encode(password));
@@ -65,7 +75,7 @@ public class LoginController {
         user.setActive(true);
 
         userRepository.save(user);
-        request.login(user.getEmail(),user.getPassword());
+//        request.login(user.getEmail(),user.getPassword());
         return "redirect:/";
     }
 }

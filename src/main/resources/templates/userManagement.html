@@ -61,7 +61,7 @@
 
 
 
-            <td><a href="" th:href="@{/admin/userManagement/delete/{id}(id=${user.id})}" class="btn btn-danger">Delete</a></td>
+            <td th:if="${user.roles!='ROLE_ADMIN'}"><a href="" th:href="@{/admin/userManagement/delete/{id}(id=${user.id})}" class="btn btn-danger">Delete</a></td>
             <td th:if="${user.active}==false"><a  href="" th:href="@{/admin/userManagement/enableUser/{id}(id=${user.id})}" class="btn btn-primary">Enable</a></td>
             <td th:if="${user.active}==true"><a  href="" th:href="@{/admin/userManagement/disableUser/{id}(id=${user.id})}" class="btn btn-warning">Disable</a></td>
         </tr>
