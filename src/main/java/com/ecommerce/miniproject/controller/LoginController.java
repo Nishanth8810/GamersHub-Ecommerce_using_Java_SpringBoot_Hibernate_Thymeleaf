@@ -5,11 +5,15 @@ import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.repository.UserRepository;
 import com.ecommerce.miniproject.service.UserService;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,20 +56,17 @@ public class LoginController {
     }
 
     @PostMapping({"register","/admin/userManagement/addUser"})
-    public String postRegister(@Valid @ModelAttribute ("user") User user ,BindingResult bindingResult, Model model )  {
+    public String postRegister(@Valid @ModelAttribute ("user") User user , BindingResult bindingResult, Model model , HttpServletRequest request) throws ServletException {
 
         if (bindingResult.hasErrors()){
             return "register";
         }
-
         Optional<User> optionalUser= userService.getUserByEmail(user.getEmail());
         if (optionalUser.isPresent()){
             model.addAttribute("user", user);
             model.addAttribute("errorRegister", "Email already exists");
             return "register";
-
         }
-
 
         String password= user.getPassword();
         user.setPassword(bCryptPasswordEncoder.encode(password));
@@ -73,9 +74,36 @@ public class LoginController {
         roles.add(roleRepository.findById(2).get());
         user.setRoles(roles);
         user.setActive(true);
-
         userRepository.save(user);
-//        request.login(user.getEmail(),user.getPassword());
+        request.login(user.getEmail(),user.getPassword());
         return "redirect:/";
     }
+
+
+
+
+
+
+
+
+//    @GetMapping("/otpVerification")
+//    public String otpSent(Model model,User user) {
+//        model.addAttribute("otpValue", user);
+//        return "otpScreen";
+//
+//    }
+//    @PostMapping("/otpVerification")
+//    public String otpVerification(@ModelAttribute("otpValue") User user) {
+//        SecurityContext securityContext = SecurityContextHolder.getContext();
+//        UserDetails userd = (UserDetails) securityContext.getAuthentication().getPrincipal();
+//        User users = userService.getUserByEmail((userd.getUsername())).get();
+//        if(users.getOtp() == user.getOtp()) {
+//            users.setActive(true);
+//            userService.saveUser(users);
+//            return "redirect:/dashboard";
+//        }
+//        else
+//            return "redirect:/login/otpVerification?error";
+//    }
+
 }

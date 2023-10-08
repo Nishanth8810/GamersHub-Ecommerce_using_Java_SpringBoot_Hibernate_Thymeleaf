@@ -8,18 +8,18 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 public class SecurityConfig {
-    @Autowired
-    CustomUserDetailService customUserDetailService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(configurer ->
                         configurer
                                 .requestMatchers("/", "shop/**","register/**","/resources/**",
-                                        "/static/**","/images/**","/productImages/**","/css/**").permitAll()
+                                        "/static/**","/images/**","/productImages/**","/css/**","/js/**").permitAll()
                                 .requestMatchers("/admin/**","/admin/userManagement/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )

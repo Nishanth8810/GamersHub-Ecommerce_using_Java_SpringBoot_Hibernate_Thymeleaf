@@ -86,15 +86,10 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+<!--	-->
 		<dependency>
-			<groupId>com.paytm</groupId>
-			<artifactId>miniapp-sdk-client</artifactId>
-			<version>1.0.2-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.paytm</groupId>
-			<artifactId>paytm-checksum</artifactId>
-			<version>1.2.0</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 <!--        <dependency>-->
 <!--            <groupId>jakarta.validation</groupId>-->

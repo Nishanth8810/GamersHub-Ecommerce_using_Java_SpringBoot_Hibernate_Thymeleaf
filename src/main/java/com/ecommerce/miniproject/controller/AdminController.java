@@ -8,6 +8,7 @@ import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.service.ProductService;
 import com.ecommerce.miniproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -38,11 +39,18 @@ public class AdminController {
         model.addAttribute("categories",categoryService.getAllCategory());
         return "categories";
     }
-    @GetMapping("/admin/categories/add")
-    public String getCatAdd(Model model){
-        model.addAttribute("category",new Category());
-        return "categoriesAdd";
-    }
+//    @GetMapping("/admin/categories/add")
+//    public String getCatAdd(Model model){
+////        try{
+//            model.addAttribute("category",new Category());
+//            return "categoriesAdd";
+//        }
+//        catch (DataIntegrityViolationException e){
+//            e.
+//            return "redirect:/admin/categories/add";
+//        }
+//
+//    }
     @PostMapping("/admin/categories/add")
     public String postCatAdd(@ModelAttribute("category") Category category){
     categoryService.addCategory(category);
@@ -130,6 +138,8 @@ public class AdminController {
     @GetMapping("/admin/userManagement")
     public String getUserManagement(Model model){
         model.addAttribute("users",userService.getAllUser());
+
+
         return "userManagement";
 
     }
@@ -153,6 +163,14 @@ public class AdminController {
         userService.removeUserById(id);
         return "redirect:/admin/userManagement";
     }
+
+//    public void getuserrole(){
+//        System.out.println(userService.getUserById(252));
+//
+//
+//    }
+
+
 //    @GetMapping("/admin/userManagement/update/{id}")
 //    public String updateUserById(@PathVariable int id){
 //        userService.

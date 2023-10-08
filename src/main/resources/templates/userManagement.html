@@ -38,7 +38,15 @@
 </nav>
 <div class="container">
 
-    <a th:href="@{/admin/userManagement/addUser}" style="margin: 20px 0" class="btn btn-primary">Add user</a>
+<!--    <a th:href="@{/admin/userManagement/addUser}" style="margin: 20px 0" class="btn btn-primary">Add user</a>-->
+<!--    <form  th:action="@{/search}" method="get">-->
+<!--        <div th:text="${messages}"></div>-->
+
+<!--        <input type="text" name="keyword" placeholder="Enter username" class="mb-3"/>-->
+<!--        <button type="submit" class="btn btn-primary btn-sm">Search User</button>-->
+
+
+<!--    </form>-->
     <table class="table">
         <thead class="thead-light">
         <tr>
@@ -48,6 +56,9 @@
             <th scope="col">Email</th>
             <th scope="col">Delete</th>
             <th scope="col">Action</th>
+
+            <th scope="col"> Role</th>
+
 <!--            <th scope="col">Disable</th>-->
         </tr>
         </thead>
@@ -59,11 +70,17 @@
             <td th:text="${user.lastName}">Larry</td>
             <td th:text="${user.email}">Lar</td>
 
+            <td ><a href="" th:href="@{/admin/userManagement/delete/{id}(id=${user.id})}" class="btn btn-danger">Delete</a></td>
 
-
-            <td th:if="${user.roles!='ROLE_ADMIN'}"><a href="" th:href="@{/admin/userManagement/delete/{id}(id=${user.id})}" class="btn btn-danger">Delete</a></td>
             <td th:if="${user.active}==false"><a  href="" th:href="@{/admin/userManagement/enableUser/{id}(id=${user.id})}" class="btn btn-primary">Enable</a></td>
             <td th:if="${user.active}==true"><a  href="" th:href="@{/admin/userManagement/disableUser/{id}(id=${user.id})}" class="btn btn-warning">Disable</a></td>
+<!--            <td th:if="${user.roles.get(0).name}!='ROLE_ADMIN'" ><p th:each="role : ${user.roles}" th:text="${role.name}"></p></td>-->
+            <td th:if="${!user.hasRole()}" ><p th:text="${user.roles.get(0).name}"></p></td>
+            <td th:if="${user.hasRole()}" ><p >ROLE_ADMIN</p></td>
+
+
+
+
         </tr>
         </tbody>
     </table>
