@@ -75,8 +75,8 @@
             <td th:if="${user.active}==false"><a  href="" th:href="@{/admin/userManagement/enableUser/{id}(id=${user.id})}" class="btn btn-primary">Enable</a></td>
             <td th:if="${user.active}==true"><a  href="" th:href="@{/admin/userManagement/disableUser/{id}(id=${user.id})}" class="btn btn-warning">Disable</a></td>
 <!--            <td th:if="${user.roles.get(0).name}!='ROLE_ADMIN'" ><p th:each="role : ${user.roles}" th:text="${role.name}"></p></td>-->
-            <td th:if="${!user.hasRole()}" ><p th:text="${user.roles.get(0).name}"></p></td>
-            <td th:if="${user.hasRole()}" ><p >ROLE_ADMIN</p></td>
+            <td th:if="${!user.hasRole()}" class="btn btn-success"  th:href="@{/admin/userManagement/addRole/{id}(id=${user.roles.get(0).id})}" ><p th:text="${user.roles.get(0).name}"></p></td>
+<!--            <td th:if="${user.hasRole()}" class="btn btn-info" href="" th:href="@{/admin/userManagement/removeRole/{id}(id=${user.id)}" ><p >ROLE_ADMIN</p></td>-->
 
 
 

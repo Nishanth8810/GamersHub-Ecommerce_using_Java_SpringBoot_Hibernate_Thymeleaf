@@ -59,7 +59,6 @@ public class User {
         this.roles = user.getRoles();
         this.otp=user.getOtp();
     }
-
     public User(){
 
     }

@@ -1,8 +1,11 @@
 package com.ecommerce.miniproject.controller;
 
+import com.ecommerce.miniproject.dto.CategoryDTO;
 import com.ecommerce.miniproject.dto.ProductDTO;
 import com.ecommerce.miniproject.entity.Category;
+import com.ecommerce.miniproject.entity.Role;
 import com.ecommerce.miniproject.entity.User;
+import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.service.CategoryService;
 import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.service.ProductService;
@@ -17,6 +20,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -29,6 +34,9 @@ public class AdminController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    RoleRepository roleRepository;
+
 
     @GetMapping("/admin")
     public String adminHome(){
@@ -39,21 +47,23 @@ public class AdminController {
         model.addAttribute("categories",categoryService.getAllCategory());
         return "categories";
     }
-//    @GetMapping("/admin/categories/add")
-//    public String getCatAdd(Model model){
-////        try{
-//            model.addAttribute("category",new Category());
-//            return "categoriesAdd";
-//        }
-//        catch (DataIntegrityViolationException e){
-//            e.
-//            return "redirect:/admin/categories/add";
-//        }
-//
-//    }
+    @GetMapping("/admin/categories/add")
+    public String getCatAdd(Model model){
+        model.addAttribute("categoryDTO",new CategoryDTO());
+        return "categoriesAdd";
+    }
+
+
+
     @PostMapping("/admin/categories/add")
-    public String postCatAdd(@ModelAttribute("category") Category category){
-    categoryService.addCategory(category);
+    public String postCatAdd(@ModelAttribute("categoryDTO") CategoryDTO categoryDTO){
+
+        Category category =new Category();
+        category.setId(categoryDTO.getId());
+        category.setName(categoryDTO.getName());
+        category.setDescription(categoryDTO.getDescription());
+        categoryService.addCategory(category);
+
         return "redirect:/admin/categories";
     }
     @GetMapping("/admin/categories/delete/{id}")
@@ -61,17 +71,26 @@ public class AdminController {
         categoryService.removeCategoryById(id);
         return "redirect:/admin/categories";
     }
+
     @GetMapping("/admin/categories/update/{id}")
     public String updateCat(@PathVariable int id ,Model model){
         Optional<Category> category= categoryService.getCategoryById(id);
         if(category.isPresent()){
+           CategoryDTO categoryDTO =new CategoryDTO();
+           categoryDTO.setId(category.get().getId());
+           categoryDTO.setName(category.get().getName());
+           categoryDTO.setDescription(category.get().getDescription());
             model.addAttribute("category",category.get());
+            model.addAttribute("categoryDTO",categoryDTO);
             return "categoriesAdd";
         }else
                 return "404";
     }
 
-    //product section
+    //////
+    ///////////
+    /////////////////////
+    /////////PRODUCT MANAGEMENT////////////////////////
 
     @GetMapping("/admin/products")
     public String getProduct(Model model){
@@ -90,6 +109,7 @@ public class AdminController {
         productService.removeProductById(id);
         return "redirect:/admin/products";
     }
+
     @PostMapping("/admin/products/add")
     public String productAddPost(@ModelAttribute("productDTO")ProductDTO productDTO,
                                  @RequestParam("productImage")MultipartFile file,
@@ -133,8 +153,13 @@ public class AdminController {
         model.addAttribute("productDTO",productDTO);
 
         return "productsAdd";
-
     }
+
+
+    ///////
+    ///////////
+    /////////////////////
+    /////////USER MANAGEMENT////////////////////////
     @GetMapping("/admin/userManagement")
     public String getUserManagement(Model model){
         model.addAttribute("users",userService.getAllUser());
@@ -164,17 +189,23 @@ public class AdminController {
         return "redirect:/admin/userManagement";
     }
 
-//    public void getuserrole(){
-//        System.out.println(userService.getUserById(252));
-//
-//
-//    }
+    @GetMapping("/admin/userManagement/addRole/{id}")
+    public String getAddRoleBYId(@PathVariable int id)
+    {
 
+        User user = userService.getUserById(id).get();
+        List<Role> roles =new ArrayList<>();
+        roles.add(roleRepository.findById(1).get());
+        user.setRoles(roles);
+        userService.saveUser(user);
 
-//    @GetMapping("/admin/userManagement/update/{id}")
-//    public String updateUserById(@PathVariable int id){
-//        userService.
-//    }
+        return "redirect:/admin";
+
+//        List<Role> rolesList= new ArrayList<>();
+//        rolesList.add(roleRepository.findById(1).get());
+
+    }
+
 
 }
 
