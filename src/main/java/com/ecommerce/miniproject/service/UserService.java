@@ -39,6 +39,16 @@ public class UserService {
         return userRepository.findUserByEmail(email);
 
     }
+    public boolean isUserBlockedByEmail(String email){
+
+        Optional<User> optionalUser = getUserByEmail(email);
+        if (optionalUser.isPresent()){
+            User user = optionalUser.get();
+            return user.isActive();
+        }
+
+            return false;
+    }
 
 
 

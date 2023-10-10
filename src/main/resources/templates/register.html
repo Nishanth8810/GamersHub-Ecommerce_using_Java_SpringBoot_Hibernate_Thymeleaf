@@ -41,15 +41,19 @@
         </div>
     </div>
 </nav>
-<div th:if="${error}" class="alert alert-danger">
-    <p th:text="${error}"></p>
-</div>
+
 <div class="container">
     <div class="col-sm-6">
+
         <h3 style="margin-top: 10px">Sign Up Now</h3>
         <p>Please fill out this to register</p>
         <form th:action="@{/register}" th:object="${user}" method="post">
             <div class="form-group">
+<!--                <div th:if="${param.success}">-->
+<!--                    <div class="alert alert-info">-->
+<!--                        Registration successful !!!-->
+<!--                    </div>-->
+<!--                </div>-->
                 <label for="firstName">First Name</label>
                 <input type="text" th:field="*{firstName}" name="firstName" id="firstName"  placeholder="Your Firstname" class="form-control form-control-lg">
                 <div th:if="${#fields.hasErrors('firstName')}"

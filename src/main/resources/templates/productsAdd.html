@@ -54,6 +54,7 @@
                            placeholder="Enter name">
 
                 </div>
+                <p th:if="${errorProduct}" class="text-danger" th:text="${errorProduct}"></p>
                 <div class="form-group">
                     <label for="category">Select Category</label>
                     <select class="form-control" th:field="*{categoryId}" id="category" name="category">

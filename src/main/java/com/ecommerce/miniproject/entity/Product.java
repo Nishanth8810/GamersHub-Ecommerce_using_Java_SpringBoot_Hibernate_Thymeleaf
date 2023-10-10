@@ -6,6 +6,8 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -14,11 +16,17 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
+    @Column(unique = false)
     private String name;
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id" ,referencedColumnName = "category_id")
     private Category category;
+
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "product_variant")
+    private ProductVariants productVariants;
+
+
     private double price;
     private double weight;
     private String description;

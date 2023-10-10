@@ -3,6 +3,7 @@ package com.ecommerce.miniproject.service;
 import com.ecommerce.miniproject.repository.ProductRepository;
 import com.ecommerce.miniproject.entity.Product;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,4 +34,19 @@ public class ProductService {
         return  productRepository.findAllByCategory_id(id);
     }
 
+    public boolean getProductByName(String name){
+        Optional<Product> optionalProduct = productRepository.getProductByName(name);
+        if (optionalProduct.isPresent()){
+            Product product = optionalProduct.get();
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    public List<Product> getAllProducts(PageRequest of) {
+      return   productRepository.findAll();
+    }
 }

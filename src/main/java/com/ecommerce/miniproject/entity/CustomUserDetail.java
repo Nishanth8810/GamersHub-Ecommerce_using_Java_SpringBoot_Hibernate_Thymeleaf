@@ -11,8 +11,10 @@ import java.util.List;
 
 public class CustomUserDetail extends User implements UserDetails {
 
+    User user;
     public CustomUserDetail(User user){
         super(user);
+        this.user=user;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -25,12 +27,12 @@ public class CustomUserDetail extends User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return super.getPassword();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return super.getEmail();
+        return user.getEmail();
     }
 
     @Override
@@ -50,6 +52,6 @@ public class CustomUserDetail extends User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.isActive();
     }
 }

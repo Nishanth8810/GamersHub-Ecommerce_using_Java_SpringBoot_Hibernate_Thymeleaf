@@ -56,7 +56,14 @@ public class AdminController {
 
 
     @PostMapping("/admin/categories/add")
-    public String postCatAdd(@ModelAttribute("categoryDTO") CategoryDTO categoryDTO){
+    public String postCatAdd(@ModelAttribute("categoryDTO") CategoryDTO categoryDTO,Model model){
+
+        boolean isBoolean = categoryService.getCategoryByName(categoryDTO.getName());
+        if (isBoolean){
+            model.addAttribute("categoryDTO",categoryDTO);
+            model.addAttribute("errorCategory","Category with same name already exist");
+            return "categoriesAdd";
+        }
 
         Category category =new Category();
         category.setId(categoryDTO.getId());
@@ -99,6 +106,8 @@ public class AdminController {
     }
     @GetMapping("/admin/products/add")
     public String getProductAdd(Model model){
+
+
         model.addAttribute("productDTO",new ProductDTO());
         model.addAttribute("categories", categoryService.getAllCategory());
         return "productsAdd";
@@ -112,8 +121,17 @@ public class AdminController {
 
     @PostMapping("/admin/products/add")
     public String productAddPost(@ModelAttribute("productDTO")ProductDTO productDTO,
+                                 Model model,
                                  @RequestParam("productImage")MultipartFile file,
                                  @RequestParam("imgName")String imgName)throws IOException{
+        boolean isPresent = productService.getProductByName(productDTO.getName());
+
+        if (isPresent){
+            model.addAttribute("product",productDTO);
+            model.addAttribute("errorProduct","Product with same name already exits");
+            return "productsAdd";
+        }
+
         Product product = new Product();
         product.setId(productDTO.getId());
         product.setName(productDTO.getName());
@@ -198,13 +216,20 @@ public class AdminController {
         roles.add(roleRepository.findById(1).get());
         user.setRoles(roles);
         userService.saveUser(user);
-
         return "redirect:/admin";
-
-//        List<Role> rolesList= new ArrayList<>();
-//        rolesList.add(roleRepository.findById(1).get());
-
     }
+    @GetMapping("/admin/userManagement/removeRole/{id}")
+    public String getRemoveRoleBYId(@PathVariable int id)
+
+    {
+        User user = userService.getUserById(id).get();
+        List<Role> roles =new ArrayList<>();
+        roles.add(roleRepository.findById(2).get());
+        user.setRoles(roles);
+        userService.saveUser(user);
+        return "redirect:/admin/userManagement";
+    }
+
 
 
 }

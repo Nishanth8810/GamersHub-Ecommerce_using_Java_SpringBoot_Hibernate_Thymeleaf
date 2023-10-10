@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,32 +26,35 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class LoginController {
     @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+     BCryptPasswordEncoder bCryptPasswordEncoder;
      @Autowired
-    UserRepository userRepository;
+     UserRepository userRepository;
      @Autowired
     RoleRepository roleRepository;
      @Autowired
     UserService userService;
 
     @GetMapping("login")
-    public String getLogin(){
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        if (authentication==null || authentication instanceof AnonymousAuthenticationToken){
+    public String getLogin() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if ( authentication==null||authentication instanceof AnonymousAuthenticationToken) {
             return "login";
         }
-        return "redirect:/";
+            return "redirect:/";
+
     }
     @GetMapping({"register","/admin/userManagement/addUser"})
     public String getRegister(Model model){
-        model.addAttribute("user",new User());
 
+        model.addAttribute("user",new User());
         return "register";
     }
     @GetMapping("/logout")
@@ -60,7 +64,7 @@ public class LoginController {
 
      @InitBinder
     public void initBinder(WebDataBinder webDataBinder){
-        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
+        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
         webDataBinder.registerCustomEditor(String.class,stringTrimmerEditor);
     }
 
@@ -70,6 +74,7 @@ public class LoginController {
         if (bindingResult.hasErrors()){
             return "register";
         }
+
         Optional<User> optionalUser= userService.getUserByEmail(user.getEmail());
         if (optionalUser.isPresent()){
             model.addAttribute("user", user);
@@ -84,35 +89,8 @@ public class LoginController {
         user.setRoles(roles);
         user.setActive(true);
         userRepository.save(user);
-        request.login(user.getEmail(),user.getPassword());
+        request.login(user.getEmail(),password);
         return "redirect:/";
     }
-
-
-
-
-
-
-
-
-//    @GetMapping("/otpVerification")
-//    public String otpSent(Model model,User user) {
-//        model.addAttribute("otpValue", user);
-//        return "otpScreen";
-//
-//    }
-//    @PostMapping("/otpVerification")
-//    public String otpVerification(@ModelAttribute("otpValue") User user) {
-//        SecurityContext securityContext = SecurityContextHolder.getContext();
-//        UserDetails userd = (UserDetails) securityContext.getAuthentication().getPrincipal();
-//        User users = userService.getUserByEmail((userd.getUsername())).get();
-//        if(users.getOtp() == user.getOtp()) {
-//            users.setActive(true);
-//            userService.saveUser(users);
-//            return "redirect:/dashboard";
-//        }
-//        else
-//            return "redirect:/login/otpVerification?error";
-//    }
 
 }

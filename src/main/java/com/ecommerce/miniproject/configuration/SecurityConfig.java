@@ -8,6 +8,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -27,7 +28,7 @@ public class SecurityConfig {
                         form
                                 .loginPage("/login")
                                 .permitAll()
-                                .failureUrl("/login?error=true")
+                                .failureUrl(("/login?error"))
                                 .defaultSuccessUrl("/", true)
                                 .usernameParameter("email")
                                 .passwordParameter("password")
@@ -52,6 +53,10 @@ public DaoAuthenticationProvider authenticationProvider(CustomUserDetailService 
     return auth;
 }
 
+//    @Bean
+//    public AuthenticationFailureHandler authenticationFailureHandler() {
+//        return new CustomAuthenticationFailureHandler();
+//    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){

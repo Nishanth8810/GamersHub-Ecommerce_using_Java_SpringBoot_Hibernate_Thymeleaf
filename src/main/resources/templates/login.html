@@ -9,7 +9,7 @@
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <link rel="stylesheet" href="style.css"> <!-- Add your custom CSS file here -->
+    <link rel="stylesheet" href="/style.css"> <!-- Add your custom CSS file here -->
     <title>E-commerce</title>
 </head>
 <body>
@@ -45,19 +45,21 @@
             <div class="card">
                 <div class="card-body">
                     <h2 class="card-title text-center">Login</h2>
-                    <p class="card-text text-center">Please fill out this form to login</p>
+                    <p class="card-text text-center">Please fill out this form to Login</p>
                     <form th:action="@{/login}" method="post">
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input type="email" name="email" id="email" placeholder="Your Email" class="form-control" required>
+                            <input type="email"  name="email" id="email" placeholder="Your Email" class="form-control" required>
                         </div>
 
                         <div class="form-group">
                             <label for="password">Password</label>
                             <input type="password" class="form-control" placeholder="Password" name="password" id="password" required>
                         </div>
+
                         <div th:if="${param.error}" class="alert alert-danger">
-                            Invalid username or password.
+                            <span th:if="${session.SPRING_SECURITY_LAST_EXCEPTION.message}=='Bad credentials'">Invalid Username or Password</span>
+                            <span th:if="${session.SPRING_SECURITY_LAST_EXCEPTION.message}!='Bad credentials'" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></span>
                         </div>
 
                         <button type="submit" class="btn btn-primary btn-block">Login</button>
