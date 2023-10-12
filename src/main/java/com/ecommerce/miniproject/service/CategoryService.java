@@ -3,6 +3,7 @@ package com.ecommerce.miniproject.service;
 import com.ecommerce.miniproject.entity.Category;
 import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.repository.CategoryRepository;
+import com.ecommerce.miniproject.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,8 @@ import java.util.Optional;
 public class CategoryService {
     @Autowired
     CategoryRepository categoryRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     public List<Category> getAllCategory() {
         return categoryRepository.findAll();
@@ -28,6 +31,12 @@ public class CategoryService {
 
     public Optional<Category> getCategoryById(int id) {
         return categoryRepository.findById(id);
+    }
+
+
+    public boolean getProductByCategoryId(int id){
+        List<Product> optionalProduct=productRepository.findAllByCategory_id(id);
+        return !optionalProduct.isEmpty();
     }
 
     public boolean getCategoryByName(String name) {

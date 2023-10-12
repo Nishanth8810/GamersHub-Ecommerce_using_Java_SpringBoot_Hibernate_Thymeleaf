@@ -5,6 +5,7 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import jakarta.persistence.*;
 
+import java.util.List;
 
 
 @Entity
@@ -18,8 +19,8 @@ public class Category {
     @Column(unique = true)
     private String name;
 
-
     private String description;
 
-
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
+    private List<Product> products;
 }

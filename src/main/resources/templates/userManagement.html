@@ -76,8 +76,8 @@
 
             <td th:if="${user.active}==false"><a  href="" th:href="@{/admin/userManagement/enableUser/{id}(id=${user.id})}" class="btn btn-primary">Enable</a></td>
             <td th:if="${user.active}==true"><a  href="" th:href="@{/admin/userManagement/disableUser/{id}(id=${user.id})}" class="btn btn-warning">Disable</a></td>
-            <td th:if="${!user.hasRoleAdmin()}" class="btn btn-info">ROLE_USER</td>
-            <td th:if="${user.hasRoleAdmin()}" class="btn btn-info">ROLE_ADMIN</td>
+            <td th:if="${!user.hasRoleAdmin()}" class="text-success">ROLE_USER</td>
+            <td th:if="${user.hasRoleAdmin()}" class="text-danger">ROLE_ADMIN</td>
             <td th:if="${user.hasRoleAdmin()}"><a class="btn btn-secondary" th:href="@{/admin/userManagement/removeRole/{id}(id=${user.id})}">Change Role</a></td>
             <td th:if="${!user.hasRoleAdmin()}"><a class="btn btn-secondary" th:href="@{/admin/userManagement/addRole/{id}(id=${user.id})}">Make ADMIN</a></td>
 

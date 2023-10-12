@@ -81,7 +81,6 @@ public class LoginController {
             model.addAttribute("errorRegister", "Email already exists");
             return "register";
         }
-
         String password= user.getPassword();
         user.setPassword(bCryptPasswordEncoder.encode(password));
         List<Role> roles =new ArrayList<>();

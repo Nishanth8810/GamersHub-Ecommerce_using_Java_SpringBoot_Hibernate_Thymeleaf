@@ -11,6 +11,7 @@ import java.util.List;
 
 public class CustomUserDetail extends User implements UserDetails {
 
+
     User user;
     public CustomUserDetail(User user){
         super(user);

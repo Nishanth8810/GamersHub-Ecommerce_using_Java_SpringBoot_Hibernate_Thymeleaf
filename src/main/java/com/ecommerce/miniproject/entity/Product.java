@@ -16,9 +16,10 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @Column(unique = false)
+    @Column()
     private String name;
-    @ManyToOne (fetch = FetchType.LAZY)
+
+    @ManyToOne (cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id" ,referencedColumnName = "category_id")
     private Category category;
 
@@ -26,7 +27,7 @@ public class Product {
     @JoinColumn(name = "product_variant")
     private ProductVariants productVariants;
 
-
+    private int quantity;
     private double price;
     private double weight;
     private String description;

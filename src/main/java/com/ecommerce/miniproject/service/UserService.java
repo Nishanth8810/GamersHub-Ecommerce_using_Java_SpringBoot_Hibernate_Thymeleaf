@@ -17,40 +17,40 @@ public class UserService {
     @Autowired
     RoleRepository roleRepository;
 
-    public List<User> getAllUser(){
+    public List<User> getAllUser() {
 
         return userRepository.findAll();
     }
 
-    public Optional<User> getUserById(int id){
+    public Optional<User> getUserById(int id) {
 
         return userRepository.findById(id);
 
     }
-    public void saveUser(User user){
+
+    public void saveUser(User user) {
         userRepository.save(user);
     }
 
-    public void removeUserById(int id){
+    public void removeUserById(int id) {
         userRepository.deleteById(id);
     }
 
-    public Optional<User> getUserByEmail(String email)throws NoSuchElementException {
+    public Optional<User> getUserByEmail(String email) throws NoSuchElementException {
         return userRepository.findUserByEmail(email);
 
     }
-    public boolean isUserBlockedByEmail(String email){
+
+    public boolean isUserBlockedByEmail(String email) {
 
         Optional<User> optionalUser = getUserByEmail(email);
-        if (optionalUser.isPresent()){
+        if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             return user.isActive();
         }
 
-            return false;
+        return false;
     }
-
-
 
 
 

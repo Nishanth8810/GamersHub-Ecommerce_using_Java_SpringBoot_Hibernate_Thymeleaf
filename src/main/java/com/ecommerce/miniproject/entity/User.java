@@ -1,19 +1,18 @@
 package com.ecommerce.miniproject.entity;
 
 
-import jakarta.annotation.Nullable;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
-import jakarta.persistence.*;
 
 
+@Getter
 @Entity
-@Data
+
 @Table(name= "users")
 public class User {
     @Id
@@ -51,6 +50,11 @@ public class User {
 
     private int otp;
 
+    @OneToMany(mappedBy = "user")
+    private List<Address> addresses;
+
+
+
     public User(User user) {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
@@ -58,6 +62,7 @@ public class User {
         this.password = user.getPassword();
         this.roles = user.getRoles();
         this.otp=user.getOtp();
+        this.addresses=user.getAddresses();
     }
     public User(){
 
@@ -69,6 +74,42 @@ public class User {
                 return true;
         }
         return false;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void setOtp(int otp) {
+        this.otp = otp;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
     }
 }
 

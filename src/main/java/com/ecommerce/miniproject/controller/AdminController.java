@@ -74,7 +74,16 @@ public class AdminController {
         return "redirect:/admin/categories";
     }
     @GetMapping("/admin/categories/delete/{id}")
-    public String deleteCat(@PathVariable int id){
+    public String deleteCat(@PathVariable int id,Model model){
+
+        boolean isPresent=categoryService.getProductByCategoryId(id);
+
+        if (isPresent){
+            model.addAttribute("productPresent","Product is available in this Category , try deleting product first");
+            model.addAttribute("categories",categoryService.getAllCategory());
+            return "categories";
+        }
+
         categoryService.removeCategoryById(id);
         return "redirect:/admin/categories";
     }
@@ -124,6 +133,7 @@ public class AdminController {
                                  Model model,
                                  @RequestParam("productImage")MultipartFile file,
                                  @RequestParam("imgName")String imgName)throws IOException{
+
         boolean isPresent = productService.getProductByName(productDTO.getName());
 
         if (isPresent){
@@ -136,9 +146,12 @@ public class AdminController {
         product.setId(productDTO.getId());
         product.setName(productDTO.getName());
         product.setCategory(categoryService.getCategoryById(productDTO.getCategoryId()).get());
+        product.setQuantity(productDTO.getQuantity());
         product.setPrice(productDTO.getPrice());
         product.setWeight(productDTO.getWeight());
         product.setDescription(productDTO.getDescription());
+
+
         String imageUUID;
         if(!file.isEmpty()){
             imageUUID = file.getOriginalFilename();
@@ -156,7 +169,7 @@ public class AdminController {
     }
 
     @GetMapping("/admin/product/update/{id}")
-    public String updateProductGet(@PathVariable long id,Model model){
+    public String updateProductGet(@PathVariable int id,Model model){
         Product product =productService.getProductById(id).get();
         ProductDTO productDTO =new ProductDTO();
         productDTO.setId(product.getId());
@@ -218,6 +231,8 @@ public class AdminController {
         userService.saveUser(user);
         return "redirect:/admin";
     }
+
+
     @GetMapping("/admin/userManagement/removeRole/{id}")
     public String getRemoveRoleBYId(@PathVariable int id)
 

@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -24,12 +25,9 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto"></ul>
             <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/}" href="#" ><span th:text="${#authentication.principal.firstName}"></span></a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/admin}" href="#">admin-home</a>
-                </li>
+<!--                <li class="nav-item active">-->
+<!--                    <a class="nav-link" th:href="@{/admin}" href="#">admin-home</a>-->
+<!--                </li>-->
                 <li class="nav-item active">
                     <a class="nav-link" th:href="@{/logout}" href="#">logout</a>
                 </li>
@@ -39,35 +37,44 @@
         </div>
     </div>
 </nav>
-<div class="container">
-
-    <a th:href="@{/admin/categories/add}" style="margin: 20px 0" class="btn btn-primary">Add Category</a>
-    <p th:if="${productPresent}" class="text-danger" th:text="${productPresent}"></p>
-    <table class="table">
-        <thead class="thead-light">
-        <tr>
-            <th scope="col">SN</th>
-            <th scope="col">Category Name</th>
-            <th scope="col">Delete</th>
-            <th scope="col">Update</th>
-        </tr>
-        </thead>
-        <tbody>
-
-        <tr th:each="category, iStat : ${categories}">
-            <th scope="row" th:text="${iStat.index + 1}">1</th>
-            <td th:text="${category.name}">Larry</td>
-
-
-
-
-            <td><a href="" th:href="@{/admin/categories/delete/{id}(id=${category.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to delete this Category ?') )) return false">Delete</a></td>
-            <td><a href="" th:href="@{/admin/categories/update/{id}(id=${category.id})}" class="btn btn-warning">Update</a></td>
-
-        </tr>
-        </tbody>
-    </table>
+<div class="jumbotron text-center">
+    <h1 class="display-4">Welcome back, <span th:text="${#authentication.principal.firstName}"></span></h1>
+    <p>Easily manage your data from this User Profile Section</p>
 </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="card" style="background-color:white;">
+                <div class="card-body">
+                    <h4 class="card-title">View Orders</h4>
+                    <p class="card-text">Manage the Orders-section here.</p>
+                    <a href="#" th:href="@{/user/orders}" class="card-link btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="card" style="background-color:white;">
+                <div class="card-body">
+                    <h4 class="card-title">View Addresses</h4>
+                    <p class="card-text">Manage all the addresses here.</p>
+                    <a href="#" th:href="@{/user/address}" class="card-link btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="card" style="background-color:white;">
+                <div class="card-body">
+                    <h4 class="card-title">User Details</h4>
+                    <p class="card-text">Manage the User Details here.</p>
+                    <a href="#" th:href="@{/user/userDetails}" class="card-link btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 

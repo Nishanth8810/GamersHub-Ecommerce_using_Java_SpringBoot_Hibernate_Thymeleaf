@@ -36,7 +36,7 @@ public class SecurityConfig {
                    .logout(logout->
                            logout.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                                    .logoutSuccessUrl("/login")
-                                   .invalidateHttpSession(true)
+                                   .invalidateHttpSession(false)
                                    .deleteCookies("JSESSIONID")
                    )
                 .exceptionHandling(configurer ->
@@ -53,10 +53,6 @@ public DaoAuthenticationProvider authenticationProvider(CustomUserDetailService 
     return auth;
 }
 
-//    @Bean
-//    public AuthenticationFailureHandler authenticationFailureHandler() {
-//        return new CustomAuthenticationFailureHandler();
-//    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
