@@ -40,4 +40,8 @@ public class AddressService {
       return addressRepository.findById(id).get();
 
     }
+
+    public Address getAddressById(int id) {
+        return  addressRepository.findById(id).get();
+    }
 }

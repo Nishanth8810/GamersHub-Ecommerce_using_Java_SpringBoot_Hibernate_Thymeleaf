@@ -29,7 +29,7 @@ public class User {
     @Size(min = 1, message = "is required")
     private String lastName;
 
-    @Column(nullable = false,unique = true)
+
     @Size (min = 1, message = "is required")
     @Pattern(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$",message = "invalid format")
     private String email;
@@ -55,6 +55,9 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Orders> orders;
+
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "user")
+    private List<Cart> cartList;
 
 
 

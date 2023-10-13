@@ -119,22 +119,53 @@ public class UserController {
 
     }
     @PostMapping("user/userDetails")
-    public String postUpdateUserDetails(@ModelAttribute("userDTO")UserDTO userDTO,Model model){
+    public String postUpdateUserDetails(@RequestParam("firstName")String firstName,
+                                        @RequestParam("lastName") String lastName
+                                       ,UserDTO userDTO ,Model model,Principal principal){
+
+
+    String loggesUser=principal.getName();
+    User userObj =userService.getUserByEmail(loggesUser).get();
+
+
         User user= new User();
 
-        user.setFirstName(userDTO.getFirstName());
-        user.setId(userDTO.getId());
-        String password= user.getPassword();
-        user.setPassword(bCryptPasswordEncoder.encode(password));
-        user.setPassword(userDTO.getPassword());
-        user.setLastName(userDTO.getLastName());
-        user.setEmail(userDTO.getEmail());
+        userDTO.setId(user.getId());
+        userDTO.setEmail(userObj.getEmail());
+        userDTO.setLastName(lastName);
+        userDTO.setEmail(firstName);
+
+//        user.setFirstName(firstName);
+//        user.setLastName(lastName);
+//        user.setEmail(userDTO.getEmail());
+
 
         userService.saveUser(user);
 
         return "redirect:/user";
 
 
+    }
+
+    @GetMapping ("/user/changePassword")
+        public String getChangePassword(){
+        return "changePassword";
+    }
+
+    @PostMapping("user/changePassword")
+    public String postChangePassword(Principal principal,@RequestParam("oldPass") String oldPass,
+                                     @RequestParam("newPass") String newPass){
+
+        String loggedUser=principal.getName();
+        User user=userService.getUserByEmail(loggedUser).get();
+
+       boolean f= bCryptPasswordEncoder.matches(oldPass,user.getPassword());
+       if (f){
+          user.setPassword(bCryptPasswordEncoder.encode(newPass));
+          userService.saveUser(user);
+       }
+
+        return "userProfile";
     }
 
 

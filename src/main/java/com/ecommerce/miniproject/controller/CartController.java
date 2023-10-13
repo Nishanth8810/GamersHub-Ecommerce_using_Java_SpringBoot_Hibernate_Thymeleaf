@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class CartController {
@@ -35,9 +36,35 @@ public class CartController {
 
     @GetMapping("/addToCart/{id}")
     public String addToCart(@PathVariable int id){
+
+//        Product productToAdd = productService.getProductById(id).orElse(null);
+
         GlobalData.cart.add(productService.getProductById(id).get());
         return "redirect:/shop";
 
+//        if (productToAdd != null) {
+//            // Check if the product is already in the cart
+//            Optional<Product> existingProduct = GlobalData.cart.stream()
+//                    .filter(p -> p.getId() == id)
+//                    .findFirst();
+//
+//            if (existingProduct.isPresent()) {
+//
+//                Product productInCart = existingProduct.get();
+
+
+
+
+                // Update the quantity of the existing product in the cart
+//                Product productInCart = existingProduct.get();
+//                productInCart.setQuantity(productInCart.getQuantity() + 1);
+//            } else {
+//                // Add the product to the cart with a quantity of 1
+//                productToAdd.setQuantity(1);
+//                GlobalData.cart.add(productToAdd);
+//            }
+//        }
+//        return "redirect:/shop";
     }
     @GetMapping("/cart")
     public String cartGet(Model model){
