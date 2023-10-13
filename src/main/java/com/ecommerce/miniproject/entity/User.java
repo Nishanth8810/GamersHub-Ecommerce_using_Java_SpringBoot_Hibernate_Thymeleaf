@@ -6,11 +6,14 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
 @Getter
+@Setter
 @Entity
 
 @Table(name= "users")
@@ -48,7 +51,11 @@ public class User {
 
     private boolean active;
 
-    private int otp;
+    private boolean otpActive;
+
+    private String otp;
+
+    private LocalDateTime otpGeneratedTime;
 
     @OneToMany(mappedBy = "user")
     private List<Address> addresses;
@@ -69,9 +76,15 @@ public class User {
         this.roles = user.getRoles();
         this.otp=user.getOtp();
         this.addresses=user.getAddresses();
+        this.setOtpActive(user.otpActive);
+
     }
     public User(){
 
+    }
+
+    public void setOtpActive(boolean otpActive) {
+        this.otpActive = otpActive;
     }
 
     public boolean hasRoleAdmin() {
@@ -81,6 +94,8 @@ public class User {
         }
         return false;
     }
+
+
 
     public void setId(Integer id) {
         this.id = id;
@@ -110,9 +125,6 @@ public class User {
         this.active = active;
     }
 
-    public void setOtp(int otp) {
-        this.otp = otp;
-    }
 
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;

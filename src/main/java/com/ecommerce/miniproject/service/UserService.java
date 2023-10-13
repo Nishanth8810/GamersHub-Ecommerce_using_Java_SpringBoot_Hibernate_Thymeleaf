@@ -1,11 +1,20 @@
 package com.ecommerce.miniproject.service;
 
+import com.ecommerce.miniproject.dto.UserDTO;
+import com.ecommerce.miniproject.entity.Role;
 import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.repository.UserRepository;
+import com.ecommerce.miniproject.util.EmailUtil;
+import com.ecommerce.miniproject.util.OtpUtil;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -16,6 +25,15 @@ public class UserService {
     UserRepository userRepository;
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    OtpUtil otpUtil;
+
+    @Autowired
+    EmailUtil emailUtil;
+
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public List<User> getAllUser() {
 
@@ -36,6 +54,8 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+
+
     public Optional<User> getUserByEmail(String email) throws NoSuchElementException {
         return userRepository.findUserByEmail(email);
 
@@ -53,6 +73,51 @@ public class UserService {
     }
 
 
+    ///////otp///////
 
 
+
+    public void register(UserDTO userDTO) {
+        String otp = otpUtil.generateOtp();
+
+        try {
+            emailUtil.sendOtpEmail(userDTO.getEmail(), otp);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Unable to send otp please try again");
+        }
+
+        User user = new User();
+        user.setFirstName(userDTO.getFirstName());
+        user.setEmail(userDTO.getEmail());
+        user.setLastName(userDTO.getLastName());
+        String password= userDTO.getPassword();
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        List<Role> roles =new ArrayList<>();
+        roles.add(roleRepository.findById(2).get());
+        user.setRoles(roles);
+        user.setActive(true);
+        user.setOtp(otp);
+        user.setOtpGeneratedTime(LocalDateTime.now());
+        userRepository.save(user);
+
+    }
+
+
+    public void verifyOtp(String otp, String email) {
+
+        User user= userRepository.findUserByEmail(email).get();
+        System.out.println(email);
+        System.out.println(otp);
+
+
+        if (user.getOtp().equals(otp)&& Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() < (2 * 60)){
+
+
+            user.setOtpActive(true);
+
+            userRepository.save(user);
+
+        }
+
+    }
 }

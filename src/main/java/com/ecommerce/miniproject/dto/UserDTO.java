@@ -23,4 +23,6 @@ public class UserDTO {
     private int ROLEid;
 
     private boolean active;
+
+    private boolean otpActive;
 }
