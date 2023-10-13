@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>OTP Verification</title>
+
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="text-center">
+                <h1 class="mb-3">OTP Verification</h1>
+                <p>Enter the OTP sent to your email to verify your account.</p>
+            </div>
+            <form th:action="@{/verifyAccount}" method="post">
+                <div class="form-group">
+                    <label for="otp">OTP:</label>
+                    <input type="text" id="otp" name="otp" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <!-- Use Thymeleaf to set the value of email input -->
+                    <input type="hidden" id="email" name="email" th:value="${param.email}" required>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Verify</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
