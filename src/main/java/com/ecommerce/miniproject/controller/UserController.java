@@ -9,12 +9,10 @@ import com.ecommerce.miniproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -26,6 +24,8 @@ public class UserController {
     UserService userService;
     @Autowired
     AddressService addressService;
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
 
@@ -111,12 +111,32 @@ public class UserController {
         return "redirect:/user/address";
     }
     @GetMapping("user/userDetails")
-    public String getUserDetails(Model model){
-
-        model.addAttribute("webUser",new UserDTO());
+    public String getUserDetails(Model model,Principal principal){
+        String loggedUser=principal.getName();
+        User user=userService.getUserByEmail(loggedUser).get();
+        model.addAttribute("userDTO",user);
         return "userPage";
 
     }
+    @PostMapping("user/userDetails")
+    public String postUpdateUserDetails(@ModelAttribute("userDTO")UserDTO userDTO,Model model){
+        User user= new User();
+
+        user.setFirstName(userDTO.getFirstName());
+        user.setId(userDTO.getId());
+        String password= user.getPassword();
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setPassword(userDTO.getPassword());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+
+        userService.saveUser(user);
+
+        return "redirect:/user";
+
+
+    }
+
 
 
 }

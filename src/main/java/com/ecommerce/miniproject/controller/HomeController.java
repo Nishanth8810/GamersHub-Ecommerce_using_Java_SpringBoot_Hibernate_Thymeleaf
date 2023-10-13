@@ -25,26 +25,15 @@ public class HomeController {
 
     @Autowired
     UserService userService;
-    @GetMapping({"/","home"})
+    @GetMapping({"/","home","index"})
     public String home(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         boolean isBoolean = userService.isUserBlockedByEmail(authentication.getName());
-//        System.out.println(isBoolean);
         if (!isBoolean){
             return "redirect:/logout";
         }
 
-//       Optional<User> userOptional = userService.getUserByEmail(authentication.getName());
-//           if (userOptional.isPresent()){
-//           User user= userOptional.get();
-//           if (!user.isActive()){
-//               return "redirect:/logout";
-//           }
-//           else{
-//               return "index";
-//           }
-       //}
        else{
            return "index";
        }

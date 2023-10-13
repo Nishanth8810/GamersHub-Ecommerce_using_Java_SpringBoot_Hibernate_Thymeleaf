@@ -229,7 +229,7 @@ public class AdminController {
         roles.add(roleRepository.findById(1).get());
         user.setRoles(roles);
         userService.saveUser(user);
-        return "redirect:/admin";
+        return "redirect:/admin/userManagement";
     }
 
 

@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
->
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -50,9 +51,11 @@
                 <div class="card-text">
 
                     <!-- Updation Form -->
-                    <form action="#" th:action="@{/register/processFormForUpdate}"
-                          th:object="${webUser}"
+                    <form  th:action="@{/user/userDetails}"
+                          th:object="${userDTO}"
                           method="POST" class="form-horizontal">
+
+                        <input type="hidden" name="id" th:field="*{id}">
 
                         <!-- First Name -->
                         <label for="firstName" >First Name </label>
@@ -62,53 +65,34 @@
 
                         </div>
 
-                        <div th:if="${#fields.hasErrors('firstName')}"
-                             style="margin-bottom: 25px" class="text-danger">
-                            <ul>
-                                <li th:each="err : ${#fields.errors('firstName')}" th:text="'First name ' + ${err}"></li>
-                            </ul>
-                        </div>
-
                         <!-- Last Name -->
                         <label for="lastName" >Last Name </label>
                         <div style="margin-bottom: 25px" class="input-group">
 
-                            <input type="text" th:field="*{lastName}" placeholder="Last name (*)" class="form-control" />
-                        </div>
-
-                        <div th:if="${#fields.hasErrors('lastName')}"
-                             style="margin-bottom: 25px" class="text-danger">
-                            <ul>
-                                <li th:each="err : ${#fields.errors('lastName')}" th:text="'Last name ' + ${err}"></li>
-                            </ul>
+                            <input type="text" th:field="*{lastName}" placeholder="Last name (*)" class="form-control" id="lastName" />
                         </div>
 
                         <!-- Email -->
                         <label for="Email" >Email </label>
                         <div style="margin-bottom: 25px" class="input-group">
-                            <input type="text" th:field="*{email}" placeholder="Email (*)" class="form-control" readonly/>
+                            <input type="text" th:field="*{email}" placeholder="Email (*)" class="form-control" id="Email" />
                         </div>
 
-                        <div th:if="${#fields.hasErrors('email')}"
-                             style="margin-bottom: 25px" class="text-danger">
-                            <ul>
-                                <li th:each="err : ${#fields.errors('email')}" th:text="'Email ' + ${err}" />
-                            </ul>
+                        <label for="Password" >Password </label>
+                        <div style="margin-bottom: 25px" class="input-group">
+                            <input type="text" th:field="*{password}" placeholder="Email (*)" class="form-control" id="password" />
                         </div>
+
 
 
 <!--                        <label for="Password">Password</label>-->
-                        <div style="margin-bottom: 25px" class="input-group">
-                            <input id="div1" style=" display: none; " type="password" th:field="*{password}"  placeholder="password (*)" class="form-control" />
-                            <div class="input-group-append">
-                                <button id="toggleButton" type="button" class="btn btn-primary" >Change Password</button>
-                            </div>
-                        </div>
-                        <div th:if="${#fields.hasErrors('password')}" style="margin-bottom: 25px" class="text-danger">
-                            <ul>
-                                <li th:each="err : ${#fields.errors('password')}" th:text="'password ' + ${err}"></li>
-                            </ul>
-                        </div>
+<!--                        <div style="margin-bottom: 25px" class="input-group">-->
+<!--                            <input id="div1" style=" display: none; " type="password" th:field="*{password}"  placeholder="password (*)" class="form-control" />-->
+<!--                            <div class="input-group-append">-->
+<!--                                <button id="toggleButton" type="button" class="btn btn-primary" >Change Password</button>-->
+<!--                            </div>-->
+<!--                        </div>-->
+
 
 
                         <!-- Updation Button -->
@@ -127,7 +111,8 @@
         </div>
     </div>
 
-</div>
+
+ </div>
 <script>
 
     const toggleButton = document.getElementById("toggleButton");

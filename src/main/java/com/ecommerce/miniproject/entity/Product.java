@@ -27,6 +27,10 @@ public class Product {
     @JoinColumn(name = "product_variant")
     private ProductVariants productVariants;
 
+
+    @OneToMany(mappedBy = "product")
+    private List<Orders> orders;
+
     private int quantity;
     private double price;
     private double weight;

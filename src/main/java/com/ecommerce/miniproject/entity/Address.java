@@ -4,6 +4,8 @@ package com.ecommerce.miniproject.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 public class Address {
@@ -26,5 +28,8 @@ public class Address {
 
     @ManyToOne
     private User user;
+
+    @OneToMany(mappedBy = "address")
+    private List<Orders> orders;
 
 }

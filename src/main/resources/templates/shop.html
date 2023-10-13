@@ -30,7 +30,7 @@
                     <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/}" href="#" ><span th:text="${#authentication.principal.firstName}"></span></a>
                 </li>
                 <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/}" href="#">home</a>
+                    <a class="nav-link" th:href="@{/index}" href="#">home</a>
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" th:href="@{/shop}" href="#">shop</a>

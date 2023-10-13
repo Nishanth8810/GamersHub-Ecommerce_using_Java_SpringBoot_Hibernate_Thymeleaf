@@ -67,6 +67,7 @@
 
             <!--Grid column-->
             <div class="col-lg-12 mb-4">
+                <form th:action="@{/checkout/selectAddress}" method="post" th:object="${orderDTO}" >
                 <div th:each="address : ${addressList}">
                     <form class="form-group">
                         <div class="row">
