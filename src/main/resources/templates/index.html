@@ -52,21 +52,26 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav  ">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/admin}">Admin Panel <span class="sr-only">(current)</span></a>
+                        </li>
                         <li class="nav-item active">
                             <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="about.html"> About</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" th:href="@{/shop}">Products</a>
                         </li>
-
                         <li class="nav-item">
-                            <a class="nav-link" href="contact.html">Contact Us</a>
+                            <a class="nav-link" th:href="@{/cart}">Cart</a>
                         </li>
                         <li sec:authorize="isAuthenticated()" class="nav-item">
-                            <a class="nav-link" th:href="@{/user}">User</a>
+                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user}" href="#" ><span th:text="${#authentication.principal.firstName}"></span></a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/login}" href="#">login</a>
+                        </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}" href="#">logout</a>
                         </li>
                     </ul>
                     <div class="user_optio_box">
@@ -324,359 +329,38 @@
 
 
 <!-- product section -->
-
-<section class="product_section ">
-    <div class="container">
-        <div class="product_heading">
-            <h2>
-                Top Sale Products
-            </h2>
-        </div>
-        <div class="product_container">
-            <div class="box">
-                <div class="box-content">
-                    <div class="img-box">
-                        <img src="images/cpu1.png" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <div class="text">
-                            <h6>
-                                I9 CPU
-                            </h6>
-                            <h5>
-                                <span>Rs</span> 44000
-                            </h5>
-                        </div>
-                        <div class="like">
-                            <h6>
-                                Like
-                            </h6>
-                            <div class="star_container">
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="btn-box">
-                    <a href="">
-                        Add To Cart
-                    </a>
-                </div>
-            </div>
-            <div class="box">
-                <div class="box-content">
-                    <div class="img-box">
-                        <img src="images/gpu1.png" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <div class="text">
-                            <h6>
-                                Graphics Cards
-                            </h6>
-                            <h5>
-                                <span>Rs</span> 30000
-                            </h5>
-                        </div>
-                        <div class="like">
-                            <h6>
-                                Like
-                            </h6>
-                            <div class="star_container">
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="btn-box">
-                    <a href="">
-                        Add To Cart
-                    </a>
-                </div>
-            </div>
-            <div class="box">
-                <div class="box-content">
-                    <div class="img-box">
-                        <img src="/images/antCabinet.png" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <div class="text">
-                            <h6>
-                                Cabinet
-                            </h6>
-                            <h5>
-                                <span>Rs</span> 2400
-                            </h5>
-                        </div>
-                        <div class="like">
-                            <h6>
-                                Like
-                            </h6>
-                            <div class="star_container">
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="btn-box">
-                    <a href="">
-                        Add To Cart
-                    </a>
+<div class="col-sm-12">
+    <div class="row">
+        <!-- Loop through your products and create product cards -->
+        <div class="col-md-3" th:each="product : ${products}">
+            <div class="card" style="margin-top: 20px">
+                <img class="card-img-top" height="150px" width="150px"
+                     th:src="@{${'/productImages/' + product.imageName}}" th:alt="${product.name}" alt="" src="">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${product.name}"></h5>
+                    <h4>₹ <span th:text="${product.price}"></span></h4>
+                    <p th:text="${product.description}"></p>
+                    <a href="#" th:href="@{/shop/viewproduct/{id}(id=${product.id})}"
+                       class="btn btn-primary">View Product</a>
                 </div>
             </div>
         </div>
     </div>
-</section>
-
-<!-- end product section -->
+ </div>
 
 
-<!-- product section -->
-
-<section class="product_section ">
-    <div class="container">
-        <div class="product_heading">
-            <h2>
-                Featured Products
-            </h2>
-        </div>
-        <div class="product_container">
-            <div class="box">
-                <div class="box-content">
-                    <div class="img-box">
-                        <img src="images/csKeyboard.png" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <div class="text">
-                            <h6>
-                                Cosmic Byte Keyboard
-                            </h6>
-                            <h5>
-                                <span>Rs</span> 1300
-                            </h5>
-                        </div>
-                        <div class="like">
-                            <h6>
-                                Like
-                            </h6>
-                            <div class="star_container">
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="btn-box">
-                    <a href="">
-                        Add To Cart
-                    </a>
-                </div>
-            </div>
-            <div class="box">
-                <div class="box-content">
-                    <div class="img-box">
-                        <img src="images/antesportsmouse.png" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <div class="text">
-                            <h6>
-                                AntESports Mouse
-                            </h6>
-                            <h5>
-                                <span>Rs</span> 4300
-                            </h5>
-                        </div>
-                        <div class="like">
-                            <h6>
-                                Like
-                            </h6>
-                            <div class="star_container">
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="btn-box">
-                    <a href="">
-                        Add To Cart
-                    </a>
-                </div>
-            </div>
-            <div class="box">
-                <div class="box-content">
-                    <div class="img-box">
-                        <img src="images/gigabytemotherboard.png" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <div class="text">
-                            <h6>
-                                GigaByte MotherBoard
-                            </h6>
-                            <h5>
-                                <span>Rs</span> 5550
-                            </h5>
-                        </div>
-                        <div class="like">
-                            <h6>
-                                Like
-                            </h6>
-                            <div class="star_container">
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="btn-box">
-                    <a href="">
-                        Add To Cart
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 
 <!-- end product section -->
 
 
+
+
+
+
+
 <!-- product section -->
 
-<section class="product_section ">
-    <div class="container">
-        <div class="product_heading">
-            <h2>
-                New Arrivals
-            </h2>
-        </div>
-        <div class="product_container">
-            <div class="box">
-                <div class="box-content">
-                    <div class="img-box">
-                        <img src="images/gpu1.png" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <div class="text">
-                            <h6>
-                                Asus Graphics Card
-                            </h6>
-                            <h5>
-                                <span>Rs</span> 15000
-                            </h5>
-                        </div>
-                        <div class="like">
-                            <h6>
-                                Like
-                            </h6>
-                            <div class="star_container">
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="btn-box">
-                    <a href="">
-                        Add To Cart
-                    </a>
-                </div>
-            </div>
-            <div class="box">
-                <div class="box-content">
-                    <div class="img-box">
-                        <img src="images/ssd.png" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <div class="text">
-                            <h6>
-                                SSD
-                            </h6>
-                            <h5>
-                                <span>Rs</span> 3000
-                            </h5>
-                        </div>
-                        <div class="like">
-                            <h6>
-                                Like
-                            </h6>
-                            <div class="star_container">
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="btn-box">
-                    <a href="">
-                        Add To Cart
-                    </a>
-                </div>
-            </div>
-            <div class="box">
-                <div class="box-content">
-                    <div class="img-box">
-                        <img src="images/roggaming.png" alt="">
-                    </div>
-                    <div class="detail-box">
-                        <div class="text">
-                            <h6>
-                                ASUS ROG gaming
-                            </h6>
-                            <h5>
-                                <span>Rs</span> 69999
-                            </h5>
-                        </div>
-                        <div class="like">
-                            <h6>
-                                Like
-                            </h6>
-                            <div class="star_container">
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                                <i class="fa fa-star" aria-hidden="true"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="btn-box">
-                    <a href="">
-                        Add To Cart
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
 
 
 <!-- end product section -->
@@ -859,7 +543,9 @@
             </div>
         </div>
     </div>
+
 </section>
+
 
 <!-- end info_section -->
 
@@ -888,6 +574,8 @@
 </script>
 <!-- End Google Map -->
 
+
+    
 </body>
 
 </html>

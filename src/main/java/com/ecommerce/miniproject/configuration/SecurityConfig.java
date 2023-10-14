@@ -20,7 +20,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(configurer ->
                         configurer
                                 .requestMatchers("/", "shop/**","register/**","/resources/**","otpScreen/**","verifyAccount/**",
-                                        "/static/**","/images/**","/productImages/**","/css/**","/js/**","/index/**").permitAll()
+                                        "/static/**","/images/**","/productImages/**","/css/**","/js/**","/index/**","/resendOTP/**").permitAll()
                                 .requestMatchers("/admin/**","/admin/userManagement/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )

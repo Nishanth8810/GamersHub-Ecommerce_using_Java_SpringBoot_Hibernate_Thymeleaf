@@ -26,15 +26,15 @@ public class HomeController {
     @Autowired
     UserService userService;
     @GetMapping({"/","home","index"})
-    public String home(){
+    public String home(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         boolean isBoolean = userService.isUserBlockedByEmail(authentication.getName());
         if (!isBoolean){
             return "redirect:/logout";
         }
 
        else{
+           model.addAttribute("products",productService.getAllProduct());
            return "index";
        }
     }

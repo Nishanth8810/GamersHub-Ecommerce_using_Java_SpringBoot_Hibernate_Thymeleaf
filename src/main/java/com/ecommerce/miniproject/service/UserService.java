@@ -106,8 +106,6 @@ public class UserService {
     public void verifyOtp(String otp, String email) {
 
         User user= userRepository.findUserByEmail(email).get();
-        System.out.println(email);
-        System.out.println(otp);
 
 
         if (user.getOtp().equals(otp)&& Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() < (2 * 60)){
@@ -118,6 +116,23 @@ public class UserService {
             userRepository.save(user);
 
         }
+
+    }
+
+    public void regenerateOtp(String email) throws MessagingException {
+
+        User user = userRepository.findUserByEmail(email).get();
+
+        String otp= otpUtil.generateOtp();
+
+        try {
+            emailUtil.sendOtpEmail(email, otp);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Unable to send otp please try again");
+        }
+        user.setOtp(otp);
+        user.setOtpGeneratedTime(LocalDateTime.now());
+        userRepository.save(user);
 
     }
 }

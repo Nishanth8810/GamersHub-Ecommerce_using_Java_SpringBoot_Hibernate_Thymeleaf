@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <title>Order Successful</title>
+</head>
+<body>
+<h1>Order Successful</h1>
+<p>Your order has been placed successfully.</p>
+<p>Order ID: <span th:text="${orderId}"></span></p>
+<p>Order Total: $<span th:text="${orderTotal}"></span></p>
+<a th:href="@{/home}" href="/home">Return to Home</a>
+</body>
+</html>

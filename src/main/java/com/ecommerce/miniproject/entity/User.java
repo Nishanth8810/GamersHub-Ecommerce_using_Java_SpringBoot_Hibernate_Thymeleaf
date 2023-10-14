@@ -32,7 +32,7 @@ public class User {
     @Size(min = 1, message = "is required")
     private String lastName;
 
-
+    @Column(nullable = false,unique = true)
     @Size (min = 1, message = "is required")
     @Pattern(regexp = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$",message = "invalid format")
     private String email;
@@ -57,7 +57,7 @@ public class User {
 
     private LocalDateTime otpGeneratedTime;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<Address> addresses;
 
     @OneToMany(mappedBy = "user")

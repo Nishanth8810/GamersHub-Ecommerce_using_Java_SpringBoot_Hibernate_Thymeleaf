@@ -26,9 +26,9 @@ public class CustomUserDetailService implements UserDetailsService {
         Optional<User> user = userRepository.findUserByEmail(email);
 
         user.orElseThrow(() -> new UsernameNotFoundException("username is invalid"));
-//        if (!user.get().isActive()) {
-//            throw new UsernameNotFoundException("user not Active");
-//        }
+        if (!user.get().isOtpActive()) {
+            throw new UsernameNotFoundException("user not verified");
+        }
         return user.map(CustomUserDetail::new).get();
     }
 }

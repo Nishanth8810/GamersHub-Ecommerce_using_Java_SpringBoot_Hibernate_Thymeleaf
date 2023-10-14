@@ -10,16 +10,17 @@ import org.springframework.mail.javamail.JavaMailSender;
 public class EmailUtil {
 
     @Autowired
-    private JavaMailSender javaMailSender;
+   final private JavaMailSender javaMailSender;
+
+    public EmailUtil(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
 
     public void sendOtpEmail(String email, String otp) throws MessagingException {
         SimpleMailMessage message =new SimpleMailMessage();
-
-//        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-//        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
         message.setTo(email);
         message.setSubject("Verify OTP");
-        message.setText("Click the following link to verify: http://localhost:8080/verify-account?email=" + email + "&otp=" + otp);
+        message.setText(email + "&otp=" + otp);
 
         javaMailSender.send(message);
     }

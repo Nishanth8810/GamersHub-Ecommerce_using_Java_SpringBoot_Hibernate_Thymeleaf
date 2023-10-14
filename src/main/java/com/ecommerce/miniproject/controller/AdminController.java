@@ -158,6 +158,7 @@ public class AdminController {
             Path fileNameAndPath = Paths.get(uploadDir,imageUUID);
             Files.write(fileNameAndPath,file.getBytes());
         }
+
         else {
             imageUUID = imgName;
         }

@@ -6,6 +6,7 @@ import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.repository.UserRepository;
 import com.ecommerce.miniproject.service.UserService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -64,8 +65,8 @@ public class LoginController {
         webDataBinder.registerCustomEditor(String.class,stringTrimmerEditor);
     }
 
-    @PostMapping({"register","/admin/userManagement/addUser"})
-    public String postRegister(@Valid @ModelAttribute ("user") UserDTO userDTO , BindingResult bindingResult, Model model , HttpServletRequest request) throws ServletException {
+    @PostMapping("/register")
+    public String postRegister(@Valid @ModelAttribute ("user") UserDTO userDTO , BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()){
             return "register";
@@ -78,18 +79,11 @@ public class LoginController {
             return "register";
         }
 
+
         userService.register(userDTO);
 
-//        String password= user.getPassword();
-//        user.setPassword(bCryptPasswordEncoder.encode(password));
-//        List<Role> roles =new ArrayList<>();
-//        roles.add(roleRepository.findById(2).get());
-//        user.setRoles(roles);
-//        user.setActive(true);
-//        userRepository.save(user);
-//        request.login(user.getEmail(),password);
-
         model.addAttribute("email",userDTO.getEmail());
+
         return "otpVerification";
     }
 
@@ -100,6 +94,15 @@ public class LoginController {
        userService.verifyOtp(otp,email);
 
         return "login";
+    }
+    @PostMapping("/resendOTP")
+    public String postResendOTP(@ModelAttribute("email") String email,Model model) throws MessagingException {
+
+
+        userService.regenerateOtp(email);
+        model.addAttribute("email",email);
+
+        return "otpVerification";
     }
 
 

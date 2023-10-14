@@ -8,6 +8,7 @@ import com.ecommerce.miniproject.global.GlobalData;
 import com.ecommerce.miniproject.service.AddressService;
 import com.ecommerce.miniproject.service.ProductService;
 import com.ecommerce.miniproject.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,9 +36,17 @@ public class CartController {
 
 
     @GetMapping("/addToCart/{id}")
-    public String addToCart(@PathVariable int id){
+    public String addToCart(@PathVariable int id, HttpServletRequest httpServletRequest){
 
-//        Product productToAdd = productService.getProductById(id).orElse(null);
+        String referer= httpServletRequest.getHeader("Referer");
+
+        if (referer!=null&&referer.contains("/shop")){
+
+            GlobalData.cart.add(productService.getProductById(id).get());
+            return "redirect:/cart";
+
+
+        }
 
         GlobalData.cart.add(productService.getProductById(id).get());
         return "redirect:/shop";
