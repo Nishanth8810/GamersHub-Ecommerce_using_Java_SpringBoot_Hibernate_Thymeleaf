@@ -66,66 +66,32 @@
             <div class="border p-3">
 
             <!--Grid column-->
-            <div class="col-lg-12 mb-4">
+            <div class="col-lg-8 mb-4">
                 <form th:action="@{/checkout/selectAddress}" method="post" th:object="${orderDTO}" >
 <!--                    <input type="hidden" name="id" th:value="${address.id}" />-->
-                <div th:each="address : ${addressList}">
-<!--                    <input type="hidden" name="id" th:field="*{id}" th:value="${address.id}" />-->
-                    <form class="form-group">
-                        <div class="row">
+                    <div th:each="address, addressStat : ${addressList}">
+                        <!-- Use radio buttons to select the address -->
+                        <label>
+                            <input type="radio" th:id="'addressRadio' + ${addressStat.index}" th:name="selectedAddress" th:value="${address.id}">
+                        </label>
+                        <label th:for="'addressRadio' + ${addressStat.index}">
+                            <!-- Address details -->
+                            <span th:text="${address.name}"></span>
+                            <span th:text="${address.phoneNo}"></span>
+                            <span th:text="${address.pincode}"></span>
+                            <span th:text="${address.address}"></span>
+                            <span th:text="${address.city}"></span>
+                            <span th:text="${address.landmark}"></span>
+                        </label>
+                    </div>
 
-                            <div class="col-lg-2">
-
-
-                                <!-- Name -->
-                                <div class="md-form md-outline mb-0 mb-lg-4">
-                                    <label for="name" th:text="${address.name}">Name</label>
-                                </div>
-                            </div>
-<!--                            <input type="hidden" name="id" th:field="*{id}" th:text="${address.id}">-->
-
-                            <div class="col-lg-2">
-                                <!-- Phone No -->
-                                <div class="md-form md-outline">
-                                    <label for="phoneNo" th:text="${address.phoneNo}">Phone No</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-2">
-                                <!-- Phone No -->
-                                <div class="md-form md-outline">
-                                    <label for="phoneNo" th:text="${address.pincode}"> </label>
-                                </div>
-                            </div>
-                            <div class="col-lg-2">
-                                <!-- Phone No -->
-                                <div class="md-form md-outline">
-                                    <label for="phoneNo" th:text="${address.address}"></label>
-                                </div>
-                            </div>
-                            <div class="col-lg-2">
-                                <!-- Phone No -->
-                                <div class="md-form md-outline">
-                                    <label for="phoneNo" th:text="${address.city}"></label>
-                                </div>
-                            </div>
-                            <div class="col-lg-2">
-                                <!-- Phone No -->
-                                <div class="md-form md-outline">
-                                    <label for="phoneNo" th:text="${address.landmark}"></label>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-sm waves-effect waves-light" th:href="@{/checkout/selectAddress}" >Use this Address</button>
-
-
-                        </div>
-
-                        <!-- Other address fields -->
-                    </form>
-                </div>
+                </form>
             </div>
 
 
-                <!-- Card -->
+
+
+                    <!-- Card -->
                 <div class="card wish-list pb-1">
                     <div class="card-body">
                         <a class="dark-grey-text d-flex justify-content-between" data-toggle="collapse" href="#left-section" aria-expanded="false" aria-controls="left-section">
@@ -215,7 +181,7 @@
             <!--Grid column-->
 
             <!--Grid column-->
-            <div class="col-lg-4">
+            <div class="col-lg-6">
 
                 <!-- Card -->
                 <div class="card mb-4">

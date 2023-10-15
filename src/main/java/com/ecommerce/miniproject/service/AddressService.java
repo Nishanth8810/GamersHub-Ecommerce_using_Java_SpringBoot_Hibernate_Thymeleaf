@@ -26,10 +26,7 @@ public class AddressService {
 
     public List<Address> getAddressOfUser(String email){
         User user = userRepository.findUserByEmail(email).get();
-        if (user!=null){
-            return addressRepository.findByUser(user);
-        }
-        return Collections.emptyList();
+        return addressRepository.findByUser(user);
     }
 
     public void deleteAddressByID(int id) {

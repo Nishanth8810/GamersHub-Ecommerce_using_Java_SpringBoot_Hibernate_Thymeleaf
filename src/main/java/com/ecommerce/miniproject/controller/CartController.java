@@ -2,13 +2,14 @@ package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.entity.Address;
-import com.ecommerce.miniproject.entity.Product;
+import com.ecommerce.miniproject.entity.Cart;
+import com.ecommerce.miniproject.entity.CartItem;
 import com.ecommerce.miniproject.entity.User;
-import com.ecommerce.miniproject.global.GlobalData;
+import com.ecommerce.miniproject.repository.CartItemRepository;
 import com.ecommerce.miniproject.service.AddressService;
+import com.ecommerce.miniproject.service.CartService;
 import com.ecommerce.miniproject.service.ProductService;
 import com.ecommerce.miniproject.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -33,68 +33,47 @@ public class CartController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    CartService cartService;
+
+    @Autowired
+    CartItemRepository cartItemRepository;
+
 
 
     @GetMapping("/addToCart/{id}")
-    public String addToCart(@PathVariable int id, HttpServletRequest httpServletRequest){
+    public String addToCart(@PathVariable int id, Principal principal){
 
-        String referer= httpServletRequest.getHeader("Referer");
-
-        if (referer!=null&&referer.contains("/shop")){
-
-            GlobalData.cart.add(productService.getProductById(id).get());
-            return "redirect:/cart";
-
-
+        User user = userService.getUserByEmail(principal.getName()).get();
+        Cart cart = cartService.findCartByUser(user).get();
+        List<CartItem> cartItemList = cart.getCartItems();
+        Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart(productService.getProductById(id).get(), cart);
+        if (cartItemOptional.isPresent()) {
+            CartItem cartItem = cartItemOptional.get();
+            cartItem.setQuantity(cartItem.getQuantity() + 1);
+            cartItemRepository.save(cartItem);
+        } else {
+            CartItem cartItem = new CartItem();
+            cartItem.setProduct(productService.getProductById(id).get());
+            cartItem.setCart(cart);
+            cartItem.setQuantity(1);
+            cartItemRepository.save(cartItem);
         }
+        return "redirect:/shop/viewproduct/" + id;
 
-        GlobalData.cart.add(productService.getProductById(id).get());
-        return "redirect:/shop";
-
-//        if (productToAdd != null) {
-//            // Check if the product is already in the cart
-//            Optional<Product> existingProduct = GlobalData.cart.stream()
-//                    .filter(p -> p.getId() == id)
-//                    .findFirst();
-//
-//            if (existingProduct.isPresent()) {
-//
-//                Product productInCart = existingProduct.get();
-
-
-
-
-                // Update the quantity of the existing product in the cart
-//                Product productInCart = existingProduct.get();
-//                productInCart.setQuantity(productInCart.getQuantity() + 1);
-//            } else {
-//                // Add the product to the cart with a quantity of 1
-//                productToAdd.setQuantity(1);
-//                GlobalData.cart.add(productToAdd);
-//            }
-//        }
-//        return "redirect:/shop";
     }
     @GetMapping("/cart")
-    public String cartGet(Model model){
-        model.addAttribute("cartCount",GlobalData.cart.size());
-        model.addAttribute("total",GlobalData.cart.stream().mapToDouble(Product::getPrice).sum());
-        model.addAttribute("cart",GlobalData.cart);
+    public String cartGet(Model model, Principal principal){
+        model.addAttribute("cartCount", cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().size());
+        model.addAttribute("total",cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().stream().map(item->item.getProduct().getPrice()*item.getQuantity()).reduce(0.0, (a, b) -> a + b));
+        model.addAttribute("cart", cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems());
         return "cart";
     }
 
-    @GetMapping("/cart/removeItem/{index}")
-        public String removeCartItem(@PathVariable int index){
-
-        GlobalData.cart.remove(index);
-        return "redirect:/cart";
-
-        }
     @GetMapping("/checkout")
-    public String checkout(Model model, Principal principal){model.addAttribute("total",
-            GlobalData
-            .cart.stream()
-            .mapToDouble(Product::getPrice).sum());
+    public String checkout(Model model, Principal principal){
+
+        model.addAttribute("total",cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().stream().map(item->item.getProduct().getPrice()*item.getQuantity()).reduce(0.0, (a, b) -> a + b));
         model.addAttribute("addressDTO",new AddressDTO());
 
        String loggedUser= principal.getName();
