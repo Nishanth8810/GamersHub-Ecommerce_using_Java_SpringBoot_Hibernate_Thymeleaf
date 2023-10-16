@@ -46,6 +46,12 @@ public class HomeController {
     @GetMapping("/shop")
     public String shop(Model model,Principal principal){
 
+        if (principal==null){
+            model.addAttribute("categories",categoryService.getAllCategory());
+            model.addAttribute("products",productService.getAllProduct());
+            return "shop";
+        }
+
         //Create cart for user
         Optional<Cart> cartOptional = cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get());
         if (cartOptional.isEmpty()) {
@@ -69,11 +75,18 @@ public class HomeController {
         return "shop";
     }
     @GetMapping("/shop/viewproduct/{id}")
-    public String viewProduct(@PathVariable int id, Model model, Principal principal){
-        model.addAttribute("total",cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().stream().map(item->item.getProduct().getPrice()*item.getQuantity()).reduce(0.0, (a, b) -> a + b));
+    public String viewProduct(@PathVariable int id, Model model, Principal principal) {
 
-        model.addAttribute("product",productService.getProductById(id).get());
-        return "viewProduct";
+        if (principal == null) {
+
+            model.addAttribute("product", productService.getProductById(id).get());
+            return "viewProduct";
+
+        } else {
+            model.addAttribute("total", cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().stream().map(item -> item.getProduct().getPrice() * item.getQuantity()).reduce(0.0, (a, b) -> a + b));
+
+            model.addAttribute("product", productService.getProductById(id).get());
+            return "viewProduct";
+        }
     }
-
 }

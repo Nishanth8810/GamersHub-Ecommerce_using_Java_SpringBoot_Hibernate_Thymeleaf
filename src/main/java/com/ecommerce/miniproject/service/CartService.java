@@ -20,4 +20,8 @@ public class CartService {
     public void save(Cart cart) {
         cartRepository.save(cart);
     }
+
+    public void removeCartItemOfUser(long id){
+        cartRepository.deleteById(id);
+    }
 }

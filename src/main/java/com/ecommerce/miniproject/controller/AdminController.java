@@ -10,10 +10,12 @@ import com.ecommerce.miniproject.service.CategoryService;
 import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.service.ProductService;
 import com.ecommerce.miniproject.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -129,15 +131,24 @@ public class AdminController {
     }
 
     @PostMapping("/admin/products/add")
-    public String productAddPost(@ModelAttribute("productDTO")ProductDTO productDTO,
+    public String productAddPost(@Valid @ModelAttribute("productDTO")ProductDTO productDTO,
+                                 BindingResult bindingResult,
                                  Model model,
                                  @RequestParam("productImage")MultipartFile file,
                                  @RequestParam("imgName")String imgName)throws IOException{
+
+
+
+        if (bindingResult.hasErrors()){
+            model.addAttribute("categories",categoryService.getAllCategory());
+            return "productsAdd";
+        }
 
         boolean isPresent = productService.getProductByName(productDTO.getName());
 
         if (isPresent){
             model.addAttribute("product",productDTO);
+            model.addAttribute("categories",categoryService.getAllCategory());
             model.addAttribute("errorProduct","Product with same name already exits");
             return "productsAdd";
         }

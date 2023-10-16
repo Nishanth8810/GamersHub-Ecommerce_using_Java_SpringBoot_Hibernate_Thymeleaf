@@ -48,7 +48,7 @@ public class LoginController {
             return "redirect:/";
 
     }
-    @GetMapping({"register","/admin/userManagement/addUser"})
+    @GetMapping("register")
     public String getRegister(Model model){
 
         model.addAttribute("user",new User());

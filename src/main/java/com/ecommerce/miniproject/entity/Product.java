@@ -1,5 +1,6 @@
 package com.ecommerce.miniproject.entity;
 
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,10 +17,11 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    @Column()
+
+    @Size(min = 1, message = "Name is required")
     private String name;
 
-    @ManyToOne (cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id" ,referencedColumnName = "category_id")
     private Category category;
 

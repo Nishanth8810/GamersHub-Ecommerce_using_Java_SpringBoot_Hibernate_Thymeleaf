@@ -941,4 +941,22 @@ a:focus {
 .footer_section p a {
   color: inherit;
 }
+
+<style>
+    .red-button {
+        background-color: red; /* Set the background color to red */
+        color: white; /* Set the text color to white */
+        padding: 10px 20px; /* Adjust padding for a stylish look */
+        border: none; /* Remove the border */
+        border-radius: 5px; /* Add rounded corners for a button-like appearance */
+        text-decoration: none; /* Remove underlines from links */
+        display: inline-block;
+        transition: background-color 0.3s; /* Add a smooth color transition on hover */
+    }
+
+    .red-button:hover {
+        background-color: darkred; /* Change color on hover for a visual effect */
+    }
+</style>
+
 /*# sourceMappingURL=style.css.map */

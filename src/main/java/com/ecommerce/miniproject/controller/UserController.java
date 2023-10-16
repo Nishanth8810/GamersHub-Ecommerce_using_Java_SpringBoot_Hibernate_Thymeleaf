@@ -7,15 +7,19 @@ import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.service.AddressService;
 import com.ecommerce.miniproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class UserController {
@@ -147,25 +151,51 @@ public class UserController {
 
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder webDataBinder){
+        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
+        webDataBinder.registerCustomEditor(String.class,stringTrimmerEditor);
+    }
+
     @GetMapping ("/user/changePassword")
         public String getChangePassword(){
         return "changePassword";
     }
 
+
     @PostMapping("user/changePassword")
-    public String postChangePassword(Principal principal,@RequestParam("oldPass") String oldPass,
-                                     @RequestParam("newPass") String newPass){
+    public String postChangePassword(Principal principal,
+
+                                     @RequestParam("oldPass") String oldPass,
+                                     @RequestParam("newPass") String newPass,
+                                     @RequestParam("confirmPass") String confirmPass,
+                                     Model model
+                                     ){
 
         String loggedUser=principal.getName();
         User user=userService.getUserByEmail(loggedUser).get();
+
+//        if (bindingResult.hasErrors()){
+//            return "changePassword";
+//        }
+
+        if (!Objects.equals(newPass, confirmPass)){
+
+            model.addAttribute("errorConfirmPass","Passwords must be same");
+
+        }
+        else {
 
        boolean f= bCryptPasswordEncoder.matches(oldPass,user.getPassword());
        if (f){
           user.setPassword(bCryptPasswordEncoder.encode(newPass));
           userService.saveUser(user);
+          model.addAttribute("passSuccess","password changed");
        }
+        }
+        return "changePassword";
 
-        return "userProfile";
+
     }
 
 

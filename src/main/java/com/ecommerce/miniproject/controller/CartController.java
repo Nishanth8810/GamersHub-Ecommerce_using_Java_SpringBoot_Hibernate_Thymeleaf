@@ -6,10 +6,7 @@ import com.ecommerce.miniproject.entity.Cart;
 import com.ecommerce.miniproject.entity.CartItem;
 import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.repository.CartItemRepository;
-import com.ecommerce.miniproject.service.AddressService;
-import com.ecommerce.miniproject.service.CartService;
-import com.ecommerce.miniproject.service.ProductService;
-import com.ecommerce.miniproject.service.UserService;
+import com.ecommerce.miniproject.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +35,9 @@ public class CartController {
 
     @Autowired
     CartItemRepository cartItemRepository;
+
+    @Autowired
+    CartItemService cartItemService;
 
 
 
@@ -106,6 +106,15 @@ public class CartController {
 
 
             return "redirect:/checkout";
+
+        }
+
+        @GetMapping("/cart/removeItem/{id}")
+         public String removeCart(@PathVariable long id){
+        cartItemService.removeCartItemOfUser(id);
+
+        return "redirect:/cart";
+
 
         }
 

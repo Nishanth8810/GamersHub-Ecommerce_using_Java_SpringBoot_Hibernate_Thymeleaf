@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <title>E-commerce</title>
@@ -25,8 +26,11 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto"></ul>
             <ul class="navbar-nav">
+<!--                <li class="nav-item active">-->
+<!--                    <a class="nav-link" th:href="@{/admin}" href="#">admin-home</a>-->
+<!--                </li>-->
                 <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/admin}" href="#">admin-home</a>
+                    <a class="nav-link" th:href="@{/}" href="#">Shop</a>
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" th:href="@{/logout}" href="#">logout</a>
@@ -39,7 +43,7 @@
 </nav>
 <div class="jumbotron text-center">
     <h1 class="display-4">Welcome back, <span th:text="${#authentication.principal.firstName}"></span></h1>
-    <p>Easily manage your data from this admin <mark>CMS</mark></p>
+    <p>Easily manage your data from this admin </p>
 </div>
 <div class="container-fluid">
     <div class="row">
