@@ -3,7 +3,9 @@ package com.ecommerce.miniproject.controller;
 import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.dto.UserDTO;
 import com.ecommerce.miniproject.entity.Address;
+import com.ecommerce.miniproject.entity.Role;
 import com.ecommerce.miniproject.entity.User;
+import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.service.AddressService;
 import com.ecommerce.miniproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,7 +34,11 @@ public class UserController {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    RoleRepository roleRepository;
 
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("/user")
     public String getUserDetail(Model model,Principal principal){
@@ -114,7 +121,7 @@ public class UserController {
 
         return "redirect:/user/address";
     }
-    @GetMapping("user/userDetails")
+    @GetMapping("/user/userDetails")
     public String getUserDetails(Model model,Principal principal){
         String loggedUser=principal.getName();
         User user=userService.getUserByEmail(loggedUser).get();
@@ -122,33 +129,29 @@ public class UserController {
         return "userPage";
 
     }
-    @PostMapping("user/userDetails")
-    public String postUpdateUserDetails(@RequestParam("firstName")String firstName,
-                                        @RequestParam("lastName") String lastName
-                                       ,UserDTO userDTO ,Model model,Principal principal){
 
 
-    String loggesUser=principal.getName();
-    User userObj =userService.getUserByEmail(loggesUser).get();
 
+    @PostMapping("/user/userDetails")
+    public String postUserDetails(@ModelAttribute("userDTO") UserDTO userDTO,Principal principal){
 
         User user= new User();
 
-        userDTO.setId(user.getId());
-        userDTO.setEmail(userObj.getEmail());
-        userDTO.setLastName(lastName);
-        userDTO.setEmail(firstName);
-
-//        user.setFirstName(firstName);
-//        user.setLastName(lastName);
-//        user.setEmail(userDTO.getEmail());
-
-
+        user.setId(userDTO.getId());
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(userDTO.getPassword());
+        user.setOtpActive(true);
+        user.setActive(true);
+//        String password=userDTO.getPassword();
+//        user.setPassword((passwordEncoder.encode(password)));
+        List<Role> roles =new ArrayList<>();
+        roles.add(roleRepository.findById(2).get());
+        user.setRoles(roles);
         userService.saveUser(user);
 
         return "redirect:/user";
-
-
     }
 
     @InitBinder

@@ -6,6 +6,7 @@ import com.ecommerce.miniproject.entity.Cart;
 import com.ecommerce.miniproject.entity.CartItem;
 import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.repository.CartItemRepository;
+import com.ecommerce.miniproject.repository.CartRepository;
 import com.ecommerce.miniproject.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -92,8 +93,6 @@ public class CartController {
         User user = userService.getUserByEmail(currentPrincipalName).get();
 
             Address address = new Address();
-
-
             address.setId(addressDTO.getId());
             address.setName(addressDTO.getName());
             address.setCity(addressDTO.getCity());
@@ -103,20 +102,45 @@ public class CartController {
             address.setPincode(addressDTO.getPincode());
             address.setAddress(addressDTO.getAddress());
             addressService.addAddress(address);
-
-
             return "redirect:/checkout";
-
         }
 
         @GetMapping("/cart/removeItem/{id}")
          public String removeCart(@PathVariable long id){
+            System.out.println(id);
         cartItemService.removeCartItemOfUser(id);
 
         return "redirect:/cart";
 
 
         }
+
+        @GetMapping("/cart/increaseQuantity/{id}")
+        public String getIncreaseQuantity(@PathVariable long id){
+
+        CartItem cartItem = cartItemRepository.findById(id).get();
+
+        cartItem.setQuantity(cartItem.getQuantity()+1);
+            cartItemRepository.save(cartItem);
+            return "redirect:/cart";
+
+
+        }
+
+         @GetMapping("/cart/decreaseQuantity/{id}")
+         public String getDecreaseQuantity(@PathVariable long id){
+
+             CartItem cartItem = cartItemRepository.findById(id).get();
+             long quantity=cartItem.getQuantity();
+             if (quantity>1){
+                 cartItem.setQuantity(cartItem.getQuantity()-1);
+                 cartItemRepository.save(cartItem);
+                 return "redirect:/cart";
+             }
+             return "redirect:/cart";
+    }
+
+
 
 
 

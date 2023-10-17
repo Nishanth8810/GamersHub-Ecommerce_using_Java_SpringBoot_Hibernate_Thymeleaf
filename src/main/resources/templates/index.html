@@ -54,6 +54,7 @@
                     <ul class="navbar-nav  ">
                         <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                             <a class="nav-link" th:href="@{/admin}">Admin Panel <span class="sr-only">(current)</span></a>
+
                         </li>
 
                         <li class="nav-item active">
@@ -75,14 +76,14 @@
                             <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}" href="#">logout</a>
                         </li>
                     </ul>
-                    <div class="user_optio_box">
-                        <a href="">
-                            <i class="fa fa-user" aria-hidden="true"></i>
-                        </a>
-                        <a href="">
-                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                        </a>
-                    </div>
+<!--                    <div class="user_optio_box">-->
+<!--                        <a href="">-->
+<!--                            <i class="fa fa-user" aria-hidden="true"></i>-->
+<!--                        </a>-->
+<!--                        <a href="">-->
+<!--                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>-->
+<!--                        </a>-->
+<!--                    </div>-->
                 </div>
             </nav>
         </div>

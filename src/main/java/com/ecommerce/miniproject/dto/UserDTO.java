@@ -30,8 +30,8 @@ public class UserDTO {
 
     @Column(nullable = false)
     @Size(min = 1, message = "Password is required")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",message = "message = \"Password must contain at least one uppercase letter, one lowercase letter, one special character, and be at least 8 characters long.\"\n" +
-            ")")
+//    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",message = "message = \"Password must contain at least one uppercase letter, one lowercase letter, one special character, and be at least 8 characters long.\"\n" +
+       //     ")")
 
     private String password;
 
