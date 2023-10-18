@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -38,5 +39,8 @@ public class Product {
     private double weight;
     private String description;
     private String imageName;
+//
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<ProductImage> images = new ArrayList<>();
 
 }

@@ -2,12 +2,9 @@ package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.dto.CategoryDTO;
 import com.ecommerce.miniproject.dto.ProductDTO;
-import com.ecommerce.miniproject.entity.Category;
-import com.ecommerce.miniproject.entity.Role;
-import com.ecommerce.miniproject.entity.User;
+import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.service.CategoryService;
-import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.service.ProductService;
 import com.ecommerce.miniproject.service.UserService;
 import jakarta.validation.Valid;
@@ -25,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class AdminController {
@@ -190,7 +188,9 @@ public class AdminController {
         productDTO.setPrice(product.getPrice());
         productDTO.setWeight(product.getWeight());
         productDTO.setDescription(product.getDescription());
-        productDTO.setImageName(product.getImageName());
+//        productDTO.setImageName(product.getImageName());
+
+
 
         model.addAttribute("categories",categoryService.getAllCategory());
         model.addAttribute("productDTO",productDTO);
