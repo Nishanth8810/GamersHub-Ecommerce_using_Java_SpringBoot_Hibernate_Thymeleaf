@@ -65,6 +65,11 @@ public class CartController {
     }
     @GetMapping("/cart")
     public String cartGet(Model model, Principal principal){
+        int number=cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().size();
+        if (number==0){
+            return "CartEmpty";
+        }
+
         model.addAttribute("cartCount", cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().size());
         model.addAttribute("total",cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().stream().map(item->item.getProduct().getPrice()*item.getQuantity()).reduce(0.0, (a, b) -> a + b));
         model.addAttribute("cart", cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems());
@@ -73,6 +78,11 @@ public class CartController {
 
     @GetMapping("/checkout")
     public String checkout(Model model, Principal principal){
+
+       int number=cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().size();
+       if (number==0){
+           return "redirect:/cart";
+       }
 
         model.addAttribute("total",cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().stream().map(item->item.getProduct().getPrice()*item.getQuantity()).reduce(0.0, (a, b) -> a + b));
         model.addAttribute("addressDTO",new AddressDTO());
@@ -88,6 +98,9 @@ public class CartController {
 
     @PostMapping("/checkout")
     public String postCheckout(@ModelAttribute AddressDTO addressDTO) {
+
+
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         User user = userService.getUserByEmail(currentPrincipalName).get();
@@ -102,12 +115,12 @@ public class CartController {
             address.setPincode(addressDTO.getPincode());
             address.setAddress(addressDTO.getAddress());
             addressService.addAddress(address);
+
             return "redirect:/checkout";
         }
 
         @GetMapping("/cart/removeItem/{id}")
          public String removeCart(@PathVariable long id){
-            System.out.println(id);
         cartItemService.removeCartItemOfUser(id);
 
         return "redirect:/cart";
@@ -117,14 +130,12 @@ public class CartController {
 
         @GetMapping("/cart/increaseQuantity/{id}")
         public String getIncreaseQuantity(@PathVariable long id){
-
         CartItem cartItem = cartItemRepository.findById(id).get();
 
         cartItem.setQuantity(cartItem.getQuantity()+1);
             cartItemRepository.save(cartItem);
+
             return "redirect:/cart";
-
-
         }
 
          @GetMapping("/cart/decreaseQuantity/{id}")
@@ -133,16 +144,14 @@ public class CartController {
              CartItem cartItem = cartItemRepository.findById(id).get();
              long quantity=cartItem.getQuantity();
              if (quantity>1){
+
                  cartItem.setQuantity(cartItem.getQuantity()-1);
                  cartItemRepository.save(cartItem);
-                 return "redirect:/cart";
+                     return "redirect:/cart";
+                 } else if (quantity==1){
+                 cartItemService.removeCartItemOfUser(id);
              }
              return "redirect:/cart";
     }
 
-
-
-
-
-
-    }
+}

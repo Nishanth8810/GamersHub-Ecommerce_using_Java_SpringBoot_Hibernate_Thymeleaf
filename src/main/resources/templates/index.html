@@ -298,6 +298,67 @@
 
 <!-- about section -->
 
+<!-- end about section -->
+
+
+<!-- product section -->
+<div class="col-sm-12">
+    <div class="row">
+        <!-- Loop through your products and create product cards -->
+        <div class="col-md-3" th:each="product : ${products}">
+            <div class="card" style="margin-top: 20px">
+                <img class="card-img-top" height="150px" width="150px"
+                     th:src="@{${'/productImages/' + product.imageName}}" th:alt="${product.name}" alt="" src="">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${product.name}"></h5>
+                    <h4>₹ <span th:text="${product.price}"></span></h4>
+                    <p th:text="${product.description}"></p>
+                    <a href="#" th:href="@{/shop/viewproduct/{id}(id=${product.id})}"
+                       class="btn btn-primary">View Product</a>
+                </div>
+            </div>
+        </div>
+    </div>
+ </div>
+
+<!--<div th:if="${totalPages > 1}">-->
+<!--    <div class="row col-sm-10">-->
+<!--        <div class="col-sm-2">-->
+<!--            Total Rows:[[${totalItems}]]-->
+
+<!--        </div>-->
+<!--        <div class="col-sm-1">-->
+<!--            <span th:each="i : ${#numbers.sequence(1, totalPages)}">-->
+<!--    <a th:if="${currentPage != i}" th:href="@{'/page/' + ${i}}">[[${i}]]</a>-->
+<!--    <span th:unless="${currentPage != i}">[[${i}]]</span>  &nbsp; &nbsp;-->
+<!--            </span>-->
+<!--        </div>-->
+
+
+<!--    </div>-->
+<!--</div>-->
+
+<!--        <div class="col-sm-1">-->
+<!--            <a th:if="${currentPage < totalPages}" th:href="@{'/page' + (${currentPage+1})}">Next</a>-->
+<!--            <span th:unless="${currentPage < totalPages}">Next-->
+
+<!--            </span>-->
+
+
+
+
+
+
+
+
+
+
+
+<!-- end product section -->
+
+
+
+
 <section class="about_section layout_padding">
     <div class="container-fluid">
         <div class="row">
@@ -327,37 +388,6 @@
         </div>
     </div>
 </section>
-<!-- end about section -->
-
-
-<!-- product section -->
-<div class="col-sm-12">
-    <div class="row">
-        <!-- Loop through your products and create product cards -->
-        <div class="col-md-3" th:each="product : ${products}">
-            <div class="card" style="margin-top: 20px">
-                <img class="card-img-top" height="150px" width="150px"
-                     th:src="@{${'/productImages/' + product.imageName}}" th:alt="${product.name}" alt="" src="">
-                <div class="card-body">
-                    <h5 class="card-title" th:text="${product.name}"></h5>
-                    <h4>₹ <span th:text="${product.price}"></span></h4>
-                    <p th:text="${product.description}"></p>
-                    <a href="#" th:href="@{/shop/viewproduct/{id}(id=${product.id})}"
-                       class="btn btn-primary">View Product</a>
-                </div>
-            </div>
-        </div>
-    </div>
- </div>
-
-
-
-
-<!-- end product section -->
-
-
-
-
 
 
 

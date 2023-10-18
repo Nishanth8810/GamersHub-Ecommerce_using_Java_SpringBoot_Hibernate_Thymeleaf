@@ -81,10 +81,30 @@
                 </div>
                 <!-- End product loop -->
 
+                <div th:if="${totalPages > 1}" class="col-sm-12 text-center mt-3">
+        <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+        <a th:if="${currentPage != i}" th:href="@{'/page/' + ${i}}" th:text="${i}"></a>
+        <span th:unless="${currentPage != i}" th:text="${i}"></span>
+        </span>
+                </div>
+
+
             </div>
         </div>
+        <div>
+
+        </div>
+
+
+
+
+
+
+
+
+
         <!-- Footer -->
-        <footer class="text-center text-lg-start text-muted mt-3" style="background-color: #f5f5f5; width:900vh;">
+        <footer class="text-center text-lg-start text-muted mt-3" style="background-color: #f5f5f5; width:1000vh;">
             <!-- Section: Links  -->
             <section class="">
                 <div class="container text-center text-md-start pt-4 pb-4">

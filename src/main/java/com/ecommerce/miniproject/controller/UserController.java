@@ -133,22 +133,11 @@ public class UserController {
 
 
     @PostMapping("/user/userDetails")
-    public String postUserDetails(@ModelAttribute("userDTO") UserDTO userDTO,Principal principal){
+    public String postUserDetails(@ModelAttribute("userDTO") UserDTO userDTO){
 
-        User user= new User();
-
-        user.setId(userDTO.getId());
+        User user= userService.getUserById(userDTO.getId()).get();
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
-        user.setOtpActive(true);
-        user.setActive(true);
-//        String password=userDTO.getPassword();
-//        user.setPassword((passwordEncoder.encode(password)));
-        List<Role> roles =new ArrayList<>();
-        roles.add(roleRepository.findById(2).get());
-        user.setRoles(roles);
         userService.saveUser(user);
 
         return "redirect:/user";

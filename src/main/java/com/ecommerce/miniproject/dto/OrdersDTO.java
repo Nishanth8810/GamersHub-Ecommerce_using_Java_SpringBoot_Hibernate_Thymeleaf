@@ -12,7 +12,4 @@ public class OrdersDTO {
         private Long productId;
         private Long addressId;
 
-
-
-
 }

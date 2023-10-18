@@ -15,19 +15,24 @@ public class OrderController {
     @Autowired
     AddressService addressService;
 
-    @PostMapping("checkout/selectAddress")
-    public String selectAddress(@RequestParam("id") int id , Model model){
+//    @PostMapping("checkout/selectAddress")
+//    public String selectAddress(@RequestParam("id") int id , Model model){
+//
+//        System.out.println(id);
+//
+//        Address address = addressService.getAddressById(id);
+//
+//        Orders orders=new Orders();
+//
+//        orders.setAddress(address);
+//
+//
+//        return "redirect:/checkout";
+//
+//    }
 
-        System.out.println(id);
-
-        Address address = addressService.getAddressById(id);
-
-        Orders orders=new Orders();
-
-        orders.setAddress(address);
 
 
-        return "redirect:/checkout";
 
-    }
+//   @PostMapping
 }
