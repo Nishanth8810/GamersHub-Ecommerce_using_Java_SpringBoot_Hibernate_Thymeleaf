@@ -3,6 +3,7 @@ package com.ecommerce.miniproject.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -32,6 +33,19 @@ public class Orders {
 
     @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
+
+
+
+    @Column(name = "order_placed_time")
+    private LocalDateTime localDateTime;
+
+
+    @ManyToOne
+    private OrderStatus orderStatus;
+
+
+
+
 
 
 
