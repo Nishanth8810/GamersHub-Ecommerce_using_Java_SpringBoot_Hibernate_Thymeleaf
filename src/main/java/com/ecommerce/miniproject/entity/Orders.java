@@ -20,7 +20,6 @@ public class Orders {
     @ManyToOne
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
-    private String payment;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -31,14 +31,15 @@ public class Product {
     private ProductVariants productVariants;
 
 
-    @OneToMany(mappedBy = "product")
-    private List<Orders> orders;
-
     private int quantity;
     private double price;
     private double weight;
     private String description;
     private String imageName;
+
+    @OneToMany(mappedBy = "product")
+    private List<OrderItem> orderItems;
+
 //
 //    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<ProductImage> images = new ArrayList<>();
