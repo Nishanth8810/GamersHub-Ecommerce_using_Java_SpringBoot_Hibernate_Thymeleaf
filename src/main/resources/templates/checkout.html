@@ -69,15 +69,15 @@
 
                 <!--Grid column-->
                 <div class="col-lg-8 mb-4">
-                    <form th:action="@{/checkout/selectAddress}" method="post" th:object="${orderDTO}">
+                    <form th:action="@{/checkout/confirmOrder}" method="post" >
                         <!--<input type="hidden" name="id" th:value="${address.id}" />-->
                         <div th:each="address, addressStat : ${addressList}">
                             <!-- Use radio buttons to select the address -->
                             <label>
-                                <input type="radio" th:id="'addressRadio' + ${addressStat.index}"
+                                <input type="radio"
                                        th:name="selectedAddress" th:value="${address.id}">
                             </label>
-                            <label th:for="'addressRadio' + ${addressStat.index}">
+                            <label>
                                 <!-- Address details -->
                                 <span th:text="${address.name}"></span>
                                 <span th:text="${address.phoneNo}"></span>
@@ -87,6 +87,19 @@
                                 <span th:text="${address.landmark}"></span>
                             </label>
                         </div>
+                        <label for="paymentMethodSelect"></label><select name="paymentMethod" id="paymentMethodSelect">
+                        <option value="cashOnDelivery">Cash on delivery</option>
+                        <option value="creditCard">Credit Card</option>
+                        <option value="DebitCard
+">Debit Card</option>
+                        <option value="Emi">EMI</option>
+                        <!--                                    <option value="paypal">P</option>-->
+
+                        <!-- Add more payment methods as needed -->
+                    </select>
+                        <button type="submit" class="btn btn-primary btn-block waves-effect waves-light">Place
+                            order
+                        </button>
 
                     </form>
                 </div>
@@ -197,15 +210,7 @@
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                                 Payment Method
-                                <select name="paymentMethod" id="paymentMethodSelect">
-                                    <option value="creditCard">Cash on delivery</option>
-                                    <option value="creditCard">Credit Card</option>
-                                    <option value="paypal">Debit Card</option>
-                                    <option value="paypal">EMI</option>
-                                    <!--                                    <option value="paypal">P</option>-->
 
-                                    <!-- Add more payment methods as needed -->
-                                </select>
                             </li>
                             <!--                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">-->
                             <!--                                Cash on Delivery-->
@@ -229,13 +234,6 @@
                                 <span><strong>₹<span th:text="${total}"></span></strong></span>
                             </li>
                         </ul>
-
-
-                        <form action="" method="post" th:action="@{/payNow}">
-                            <button type="submit" class="btn btn-primary btn-block waves-effect waves-light">Place
-                                order
-                            </button>
-                        </form>
 
                     </div>
                 </div>
