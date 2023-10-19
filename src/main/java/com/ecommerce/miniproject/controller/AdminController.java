@@ -3,12 +3,16 @@ package com.ecommerce.miniproject.controller;
 import com.ecommerce.miniproject.dto.CategoryDTO;
 import com.ecommerce.miniproject.dto.ProductDTO;
 import com.ecommerce.miniproject.entity.*;
+import com.ecommerce.miniproject.repository.OrderRepository;
+import com.ecommerce.miniproject.repository.OrderStatusRepository;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.service.CategoryService;
+import com.ecommerce.miniproject.service.OrderService;
 import com.ecommerce.miniproject.service.ProductService;
 import com.ecommerce.miniproject.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,6 +40,11 @@ public class AdminController {
 
     @Autowired
     RoleRepository roleRepository;
+    @Autowired
+    OrderService orderService;
+
+    @Autowired
+    OrderStatusRepository orderStatusRepository;
 
 
     @GetMapping("/admin")
@@ -255,6 +264,101 @@ public class AdminController {
         user.setRoles(roles);
         userService.saveUser(user);
         return "redirect:/admin/userManagement";
+    }
+
+    //////////////////////orderManagement////////////////
+
+    @GetMapping("/admin/orders")
+    public String getAdminOrders(Model model){
+
+        model.addAttribute("userOrder",orderService.getAllOrders());
+        return "adminOrders";
+    }
+
+    /////////////orderStatus///////////////////
+
+    @GetMapping("/admin/order/cancel/{id}")
+    public String getCancelOrder(@PathVariable long id){
+
+        Orders orders=orderService.getOrderById(id).get();
+
+        orders.setOrderStatus(orderStatusRepository.findById(5L).get());
+
+        orderService.saveOrder(orders);
+
+
+
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("/admin/order/shipped/{id}")
+    public String getShippedOrder(@PathVariable long id){
+
+        Orders orders=orderService.getOrderById(id).get();
+
+        orders.setOrderStatus(orderStatusRepository.findById(2L).get());
+
+        orderService.saveOrder(orders);
+
+
+
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("/admin/order/pending/{id}")
+    public String getPendingOrder(@PathVariable long id){
+
+        Orders orders=orderService.getOrderById(id).get();
+
+        orders.setOrderStatus(orderStatusRepository.findById(6L).get());
+
+        orderService.saveOrder(orders);
+
+
+
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("/admin/order/transit/{id}")
+    public String getTransitOrder(@PathVariable long id){
+
+        Orders orders=orderService.getOrderById(id).get();
+
+        orders.setOrderStatus(orderStatusRepository.findById(3L).get());
+
+        orderService.saveOrder(orders);
+
+
+
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("/admin/order/delivered/{id}")
+    public String getDeliveredOrder(@PathVariable long id){
+
+        Orders orders=orderService.getOrderById(id).get();
+
+        orders.setOrderStatus(orderStatusRepository.findById(4L).get());
+
+        orderService.saveOrder(orders);
+
+
+
+        return "redirect:/admin/orders";
+    }
+
+    @GetMapping("/admin/order/confirmed/{id}")
+    public String getConfirmedOrder(@PathVariable long id){
+
+        Orders orders=orderService.getOrderById(id).get();
+
+        orders.setOrderStatus(orderStatusRepository.findById(1L).get());
+
+        orderService.saveOrder(orders);
+
+
+
+        return "redirect:/admin/orders";
     }
 
 

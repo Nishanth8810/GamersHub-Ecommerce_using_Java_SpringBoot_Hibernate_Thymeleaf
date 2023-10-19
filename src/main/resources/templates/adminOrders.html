@@ -1,10 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>E-commerce</title>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img th:src="@{/images/logo.png}" src="../static/images/logo.png" width="auto" height="38" class="d-inline-block align-top" alt=""/>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto"></ul>
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/}" href="#"><span th:text="${#authentication.principal.firstName}"></span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/user}" href="#">User Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/logout}" href="#">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <table class="table">
+                <thead class="thead-light">
+                <tr>
+                    <th scope="col">SN</th>
+                    <th scope="col">Order Id</th>
+                    <th scope="col">Customer Name</th>
+                    <th scope="col">Phone No</th>
+                    <th scope="col">Payment method</th>
+                    <th scope="col">Order date and time</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order, iStat : ${userOrder}">
+                    <th scope="row" th:text="${iStat.index + 1}">1</th>
+                    <td th:text="${order.id}">Larry</td>
+                    <td th:text="${order.user.firstName}">Larry</td>
+                    <td th:text="${order.address.phoneNo}">Larry</td>
+                    <td th:text="${order.paymentMethod.name}">Larry</td>
+                    <td th:text="${order.localDateTime}">Larry</td>
+                    <td th:text="${order.orderStatus.status}">Larry</td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="cancelDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Change Status
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="cancelDropdown">
+                                <a class="dropdown-item text-danger" href="#" th:href="@{/admin/order/cancel/{id}(id=${order.id})}">
+                                    Cancel Order
+                                </a>
+                                <a class="dropdown-item text-primary" href="#" th:href="@{/admin/order/shipped/{id}(id=${order.id})}">
+                                    Order Shipped
+                                </a>
+                                <a class="dropdown-item text-secondary" href="#" th:href="@{/admin/order/pending/{id}(id=${order.id})}">
+                                    Order Pending
+                                </a>
+                                <a class="dropdown-item text-info" href="#" th:href="@{/admin/order/transit/{id}(id=${order.id})}">
+                                    Order in-Transit
+                                </a>
+                                <a class="dropdown-item text-success" href="#" th:href="@{/admin/order/delivered/{id}(id=${order.id})}">
+                                    Order delivered
+                                </a>
+                                <a class="dropdown-item text-warning" href="#" th:href="@{/admin/order/confirmed/{id}(id=${order.id})}">
+                                    Order confirmed
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </body>
 </html>
