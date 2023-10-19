@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Order Details</title>
+    <!-- Add Bootstrap CSS links -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <!-- Add your custom CSS links here if needed -->
+</head>
+<body>
+<!-- Add a header or navigation bar using Bootstrap -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img th:src="@{/images/logo.png}" src="../static/images/logo.png" width="auto" height="38" class="d-inline-block align-top" alt=""/>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/admin/orders}" href="#">Back to Orders</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Display order details using Bootstrap styles -->
+    <div th:each="order : ${orderList}" class="mt-4 border p-3">
+        <h2 class="mb-3">Order #<span th:text="${order.id}"></span></h2>
+        <p class="mb-1"><strong>Customer Name:</strong> <span th:text="${order.user.firstName}"></span></p>
+        <p class="mb-1"><strong>Phone No:</strong> <span th:text="${order.address.phoneNo}"></span></p>
+        <p class="mb-1"><strong>Payment Method:</strong> <span th:text="${order.paymentMethod.name}"></span></p>
+        <p class="mb-1"><strong>Order Date and Time:</strong> <span th:text="${order.localDateTime}"></span></p>
+        <p class="mb-1"><strong>Status:</strong> <span th:text="${order.orderStatus.status}"></span></p>
+        <p class="mb-1"><strong>Total amount:</strong> <span th:text="${order.amount}"></span></p>
+
+
+        <!-- Display order items in a Bootstrap table -->
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>Product</th>
+                <th>Image</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${order.orderItems}">
+                <td th:text="${item.product.name}"></td>
+<!--                <td th:text="${item.product.name}"></td>-->
+                <!-- Display the product image using the imageUrl property -->
+<!--                <td th:text="${item.product.imageName}"></td>-->
+                <td>
+                    <img  th:src="@{${'/productImages/' + item.product.imageName}}"  alt="Product Image" width="100" height="100" src="">
+                </td>
+                <td th:text="${item.quantity}"></td>
+                <td th:text="${item.product.price}"></td>
+
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Bootstrap and custom JavaScript scripts here if needed -->
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+</html>
