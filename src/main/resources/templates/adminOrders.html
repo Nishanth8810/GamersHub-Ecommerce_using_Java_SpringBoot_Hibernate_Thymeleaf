@@ -55,7 +55,7 @@
                 <tbody>
                 <tr th:each="order, iStat : ${userOrder}">
                     <th scope="row" th:text="${iStat.index + 1}">1</th>
-                    <td th:text="${order.id}">Larry</td>
+                    <td ><a  th:text="${order.id}" th:href="@{/admin/order/viewOrderDetails/{id}(id=${order.id})}" ></a></td>
                     <td th:text="${order.user.firstName}">Larry</td>
                     <td th:text="${order.address.phoneNo}">Larry</td>
                     <td th:text="${order.paymentMethod.name}">Larry</td>
@@ -76,7 +76,7 @@
                                 <a class="dropdown-item text-secondary" href="#" th:href="@{/admin/order/pending/{id}(id=${order.id})}">
                                     Order Pending
                                 </a>
-                                <a class="dropdown-item text-info" href="#" th:href="@{/admin/order/transit/{id}(id=${order.id})}">
+                                <a class="dropdown-item text-dark" href="#" th:href="@{/admin/order/transit/{id}(id=${order.id})}">
                                     Order in-Transit
                                 </a>
                                 <a class="dropdown-item text-success" href="#" th:href="@{/admin/order/delivered/{id}(id=${order.id})}">

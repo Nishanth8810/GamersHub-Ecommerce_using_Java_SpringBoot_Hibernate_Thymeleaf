@@ -5,6 +5,9 @@ import com.ecommerce.miniproject.repository.OrderItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class OrderItemService {
     @Autowired
@@ -13,5 +16,8 @@ public class OrderItemService {
 
     public void saveOrderItem(OrderItem orderItem){
         orderItemRepository.save(orderItem);
+    }
+    public Optional<OrderItem> getOrderItemByOrderId(Long id){
+        return orderItemRepository.findByOrders_Id(id);
     }
 }

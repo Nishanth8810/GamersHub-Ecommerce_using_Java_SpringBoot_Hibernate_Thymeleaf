@@ -61,7 +61,7 @@
 
         <tr th:each="order, iStat : ${orderDetails}">
             <th scope="row" th:text="${iStat.index + 1}">1</th>
-            <td th:text="${order.id}">Larry</td>
+            <td ><a th:text="${order.id}" th:href="@{/user/order/viewOrder/{id}(id=${order.id})}" ></a></td>
 
             <td th:text="${order.amount}">Larry</td>
             <td th:text="${order.address.name}">Larry</td>

@@ -6,10 +6,8 @@ import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.repository.OrderRepository;
 import com.ecommerce.miniproject.repository.OrderStatusRepository;
 import com.ecommerce.miniproject.repository.RoleRepository;
-import com.ecommerce.miniproject.service.CategoryService;
-import com.ecommerce.miniproject.service.OrderService;
-import com.ecommerce.miniproject.service.ProductService;
-import com.ecommerce.miniproject.service.UserService;
+import com.ecommerce.miniproject.service.*;
+import jakarta.persistence.criteria.Order;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
@@ -45,6 +43,9 @@ public class AdminController {
 
     @Autowired
     OrderStatusRepository orderStatusRepository;
+
+    @Autowired
+    OrderItemService orderItemService;
 
 
     @GetMapping("/admin")
@@ -359,6 +360,20 @@ public class AdminController {
 
 
         return "redirect:/admin/orders";
+    }
+
+    @GetMapping("/admin/order/viewOrderDetails/{id}")
+    public String getViewOrderDetails(Model model,@PathVariable long id){
+
+        Orders orders =orderService.getOrderById(id).get();
+//        OrderItem orderItem=orderItemService.getOrderItemByOrderId(id).get();
+
+        model.addAttribute("orderList",orders);
+
+//        model.addAttribute("orderItem",orderItem);
+
+
+        return "adminViewOrder";
     }
 
 
