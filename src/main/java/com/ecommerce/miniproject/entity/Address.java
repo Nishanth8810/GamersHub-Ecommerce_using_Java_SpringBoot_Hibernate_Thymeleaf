@@ -60,6 +60,21 @@ public class Address {
 
     private String city;
 
+    @Override
+    public String toString() {
+        return "Address{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", phoneNo=" + phoneNo +
+                ", pincode=" + pincode +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", landmark='" + landmark + '\'' +
+                ", user=" + user +
+                ", orders=" + orders +
+                '}';
+    }
+
     private String landmark;
 
 

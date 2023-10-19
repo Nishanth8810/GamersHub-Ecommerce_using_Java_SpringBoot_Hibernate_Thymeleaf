@@ -76,7 +76,7 @@ public class AdminController {
     @GetMapping("/admin/categories/delete/{id}")
     public String deleteCat(@PathVariable int id,Model model){
 
-        boolean isPresent=categoryService.getProductByCategoryId(id);
+        boolean isPresent = categoryService.getProductByCategoryId(id);
 
         if (isPresent){
             model.addAttribute("productPresent","Product is available in this Category , try deleting product first");

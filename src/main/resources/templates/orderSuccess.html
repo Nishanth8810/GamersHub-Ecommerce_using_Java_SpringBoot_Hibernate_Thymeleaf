@@ -1,13 +1,51 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="">
-<head>
-    <title>Order Successful</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Placed</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom CSS for styling */
+        body {
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            text-align: center;
+            margin-top: 100px;
+        }
+
+        .success-message {
+            font-size: 24px;
+            color: #4CAF50;
+        }
+    </style>
 </head>
 <body>
-<h1>Order Successful</h1>
-<p>Your order has been placed successfully.</p>
-<p>Order ID: <span th:text="${orderId}"></span></p>
-<p>Order Total: $<span th:text="${orderTotal}"></span></p>
-<a th:href="@{/home}" href="/home">Return to Home</a>
+<div class="container">
+    <div class="alert alert-success success-message">
+        <strong>Order Placed Successfully!</strong>
+    </div>
+
+    <div class="order-review">
+        <h2>Order Review</h2>
+        <p>Thank you for your order. Here are the details:</p>
+        <input type="hidden" id="selectedAddress" name="selectedAddress" th:value="${param.selectedAddress}" required>
+
+        <!-- Add order review details here -->
+        <ul>
+            <li ><strong>Order Number:</strong><span th:text="${orderId}"></span> </li>
+<!--            <li><strong>Shipping Address:</strong> <span th:text="${address}"></span> </li>-->
+<!--            <li><strong>Items Ordered:</strong> <span th:text="${orderItem}"></span> </li>-->
+            <li><strong>Total Amount:</strong> <span th:text="${total}"></span> </li>
+        </ul>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

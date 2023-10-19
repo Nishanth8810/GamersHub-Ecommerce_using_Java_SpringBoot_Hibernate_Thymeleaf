@@ -13,6 +13,60 @@
     <title>E-commerce</title>
 </head>
 <body>
+<style>
+
+    /* Styling for the address list */
+.address-list {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Styling for individual address items */
+.address-item {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+
+/* Styling for address details */
+.address-details {
+    flex-grow: 1;
+}
+
+<!--/* Styling for address detail spans */-->
+<!--.address-details span {-->
+<!--    display: block;-->
+<!--    margin-bottom: 5px;-->
+<!--}-->
+
+
+
+
+
+
+<!--    /* Style the label */-->
+<!--    label {-->
+<!--        font-weight: bold;-->
+<!--        margin-right: 10px;-->
+<!--    }-->
+
+    /* Style the select dropdown */
+    select {
+        padding: 5px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    /* Style the options in the dropdown */
+    select option {
+        background-color: #f5f5f5;
+    }
+</style>
 
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -58,6 +112,7 @@
 </nav>
 
 
+
 <div class="container">
 
     <!--Section: Block Content-->
@@ -65,33 +120,40 @@
 
         <!--Grid row-->
         <div class="row">
-            <div class="border p-3">
+            <div class="border p-2">
 
                 <!--Grid column-->
                 <div class="col-lg-8 mb-4">
                     <form th:action="@{/checkout/confirmOrder}" method="post" >
+
+                        <h5 class="mb-2">Billing details</h5>
                         <!--<input type="hidden" name="id" th:value="${address.id}" />-->
-                        <div th:each="address, addressStat : ${addressList}">
-                            <!-- Use radio buttons to select the address -->
-                            <label>
-                                <input type="radio"
-                                       th:name="selectedAddress" th:value="${address.id}">
-                            </label>
-                            <label>
+                        <div class="address-list" th:each="address, addressStat : ${addressList}">
+                            <div class="address-item">
+                                <!-- Radio button for selecting the address -->
+                                <label>
+                                    <input type="radio"
+                                           th:name="selectedAddress" th:value="${address.id}">
+                                </label>
+                            </div>
+                            <div class="address-details">
                                 <!-- Address details -->
-                                <span th:text="${address.name}"></span>
-                                <span th:text="${address.phoneNo}"></span>
-                                <span th:text="${address.pincode}"></span>
-                                <span th:text="${address.address}"></span>
-                                <span th:text="${address.city}"></span>
-                                <span th:text="${address.landmark}"></span>
-                            </label>
+                                <span class="address-name" th:text="${address.name+','}"></span>
+                                <span class="address-line" th:text="${address.address+','}"></span>
+                                <span class="address-phone" th:text="${address.phoneNo+','}"></span>
+                                <span class="address-pincode" th:text="${address.pincode+','}"></span>
+                                <span class="address-city" th:text="${address.city+','}"></span>
+                                <span class="address-landmark" th:text="${address.landmark}"></span>
+                            </div>
                         </div>
+
+
+                        <br>
                         <label for="paymentMethodSelect"></label><select name="paymentMethod" id="paymentMethodSelect">
                         <option value="cashOnDelivery">Cash on delivery</option>
                         <option value="creditCard">Credit Card</option>
                         <option value="DebitCard
-">Debit Card</option>
+                         ">Debit Card</option>
                         <option value="Emi">EMI</option>
                         <!--                                    <option value="paypal">P</option>-->
 
@@ -99,6 +161,8 @@
 
 
                     </select>
+
+                        <br><br>
 
                         <button type="submit" class="btn btn-primary btn-block waves-effect waves-light">Place
                             order
@@ -119,7 +183,6 @@
                         </a>
                         <div id="left-section" class="collapse">
 
-                            <h5 class="mb-2">Billing details</h5>
 
 
                             <div class="form-group">
@@ -211,10 +274,10 @@
                     <div class="card-body">
 
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
-                                Payment Method
+<!--                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">-->
+<!--                                Payment Method-->
 
-                            </li>
+<!--                            </li>-->
                             <!--                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">-->
                             <!--                                Cash on Delivery-->
                             <!--                                <input type="checkbox" id="cashOnDeliveryCheckbox" name="cashOnDelivery">-->
