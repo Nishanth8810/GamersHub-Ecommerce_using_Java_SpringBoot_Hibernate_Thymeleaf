@@ -190,11 +190,7 @@ public class UserController {
 
     }
 
-    @GetMapping("/user/orders")
-    public String getOrders(){
 
-        return "userOrders";
-    }
 
 
 

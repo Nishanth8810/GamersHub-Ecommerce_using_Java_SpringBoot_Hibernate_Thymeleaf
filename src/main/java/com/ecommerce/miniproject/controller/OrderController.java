@@ -77,7 +77,11 @@ public class OrderController {
             orderItemService.saveOrderItem(orderItem);
         }
 
+//        cartService.removeCartById();
+//        cartService.clearCart(user);
+
         model.addAttribute("selectedAddress",addressService.getAddressById(id));
+
 
 
 

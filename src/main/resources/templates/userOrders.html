@@ -40,16 +40,19 @@
 </nav>
 <div class="container-fluid">
 
-    <a th:href="@{/user/orders}" style="margin: 20px 0" class="btn btn-primary">Add Address</a>
+    <a th:href="@{/user/orders}" ></a>
     <table class="table">
         <thead class="thead-light">
         <tr>
             <th scope="col">SN</th>
-            <th scope="col">Product Name</th>
+            <th scope="col">Order Id</th>
+            <th scope="col">Amount</th>
             <th scope="col">Address</th>
             <th scope="col">Phone No</th>
-            <th scope="col">Order date</th>
+            <th scope="col">Order date and time</th>
             <th scope="col">Status</th>
+            <th scope="col">Action</th>
+
 <!--            <th scope="col">Delete</th>-->
 <!--            <th scope="col">Update</th>-->
         </tr>
@@ -58,12 +61,14 @@
 
         <tr th:each="order, iStat : ${orderDetails}">
             <th scope="row" th:text="${iStat.index + 1}">1</th>
-            <td th:text="${order.name}">Larry</td>
-            <td th:text="${order.address}">Larry</td>
-            <td th:text="${order.phoneNo}">Larry</td>
-            <td th:text="${address.phoneNo}">Larry</td>
-            <td th:text="${address.city}">Larry</td>
-<!--            <td><a href="" th:href="@{/user/address/delete/{id}(id=${address.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to delete this User ?') )) return false">Delete</a></td>-->
+            <td th:text="${order.id}">Larry</td>
+
+            <td th:text="${order.amount}">Larry</td>
+            <td th:text="${order.address.name}">Larry</td>
+            <td th:text="${order.address.phoneNo}">Larry</td>
+            <td th:text="${order.localDateTime}">Larry</td>
+            <td th:text="${order.orderStatus.status}">Larry</td>
+            <td><a href="" th:href="@{/user/order/cancel/{id}(id=${order.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to cancel this order ?') )) return false">Cancel</a></td>
 <!--            <td><a href="" th:href="@{/user/address/update/{id}(id=${address.id})}" class="btn btn-warning">Update</a></td>-->
 
         </tr>
