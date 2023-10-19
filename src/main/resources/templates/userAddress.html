@@ -40,38 +40,31 @@
 </nav>
 <div class="container-fluid">
 
+
     <a th:href="@{/user/addressAdd}" style="margin: 20px 0" class="btn btn-primary">Add Address</a>
-    <table class="table">
-        <thead class="thead-light">
-        <tr>
-            <th scope="col">SN</th>
-            <th scope="col">Name</th>
-            <th scope="col">Address</th>
-            <th scope="col">Pincode</th>
-            <th scope="col">Phone No</th>
-            <th scope="col">City</th>
-            <th scope="col">Delete</th>
-            <th scope="col">Update</th>
-        </tr>
-        </thead>
-        <tbody>
+    <p th:if="${message}" class="text-danger" th:text="${message}"></p>
 
-        <tr th:each="address, iStat : ${userAddress}">
-            <th scope="row" th:text="${iStat.index + 1}">1</th>
-            <td th:text="${address.name}">Larry</td>
-            <td th:text="${address.address}">Larry</td>
-            <td th:text="${address.pincode}">Larry</td>
-            <td th:text="${address.phoneNo}">Larry</td>
-            <td th:text="${address.city}">Larry</td>
-            <td><a href="" th:href="@{/user/address/delete/{id}(id=${address.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to delete this User ?') )) return false">Delete</a></td>
-            <td><a href="" th:href="@{/user/address/update/{id}(id=${address.id})}" class="btn btn-warning">Update</a></td>
 
-        </tr>
-        </tbody>
-    </table>
+
+    <div class="row">
+        <div th:each="address, iStat : ${userAddress}" class="col-md-4 mb-4 ">
+            <div class="card">
+                <div class="card-body">
+
+                    <h5 class="card-title" th:text="${address.name}"></h5>
+                    <p class="card-text"><strong>Address:</strong> <span th:text="${address.address}"></span></p>
+                    <p class="card-text"><strong>Pincode:</strong> <span th:text="${address.pincode}"></span></p>
+                    <p class="card-text"><strong>Phone No:</strong> <span th:text="${address.phoneNo}"></span></p>
+                    <p class="card-text"><strong>City:</strong> <span th:text="${address.city}"></span></p>
+                    <p class="card-text"><strong>Land Mark:</strong> <span th:text="${address.landmark}"></span></p>
+
+                    <a href="" th:href="@{/user/address/delete/{id}(id=${address.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to delete this User ?') )) return false">Delete</a>
+                    <a href="" th:href="@{/user/address/update/{id}(id=${address.id})}" class="btn btn-warning">Update</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-
-
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

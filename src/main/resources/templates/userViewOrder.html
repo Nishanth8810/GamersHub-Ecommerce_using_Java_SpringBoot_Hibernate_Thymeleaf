@@ -38,7 +38,7 @@
         <p class="mb-1"><strong>Order Date and Time:</strong> <span th:text="${order.localDateTime}"></span></p>
         <p class="mb-1"><strong>Status:</strong> <span th:text="${order.orderStatus.status}"></span></p>
         <p class="mb-1"><strong>Total amount:</strong> <span th:text="${order.amount}"></span></p>
-        <a href="" th:href="@{/user/order/cancel/{id}(id=${order.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to cancel this order ?') )) return false">Cancel</a>
+        <a th:if="${!order.notCancelled()}" th:href="@{/user/order/cancel/{id}(id=${order.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to cancel this order ?') )) return false">Cancel</a>
 
 
 

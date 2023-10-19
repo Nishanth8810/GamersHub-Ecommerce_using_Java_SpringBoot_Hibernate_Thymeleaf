@@ -38,15 +38,6 @@
 </nav>
 <div class="container">
 
-
-<!--    <a th:href="@{/admin/userManagement/addUser}" style="margin: 20px 0" class="btn btn-primary">Add user</a>-->
-<!--    <form  th:action="@{/search}" method="get">-->
-<!--        <div th:text="${messages}"></div>-->
-
-<!--        <input type="text" name="keyword" placeholder="Enter username" class="mb-3"/>-->
-<!--        <button type="submit" class="btn btn-primary btn-sm">Search User</button>-->
-
-
 <!--    </form>-->
     <table class="table">
         <thead class="thead-light">
@@ -80,9 +71,6 @@
             <td th:if="${user.hasRoleAdmin()}" class="text-danger">ROLE_ADMIN</td>
             <td th:if="${user.hasRoleAdmin()}"><a class="btn btn-secondary" th:href="@{/admin/userManagement/removeRole/{id}(id=${user.id})}">Change Role</a></td>
             <td th:if="${!user.hasRoleAdmin()}"><a class="btn btn-secondary" th:href="@{/admin/userManagement/addRole/{id}(id=${user.id})}">Make ADMIN</a></td>
-
-
-
 
 
         </tr>

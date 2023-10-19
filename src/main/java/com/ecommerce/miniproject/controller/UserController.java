@@ -7,6 +7,7 @@ import com.ecommerce.miniproject.entity.Role;
 import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.service.AddressService;
+import com.ecommerce.miniproject.service.OrderService;
 import com.ecommerce.miniproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -18,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -33,6 +35,8 @@ public class UserController {
     AddressService addressService;
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    OrderService orderService;
 
     @Autowired
     RoleRepository roleRepository;
@@ -66,13 +70,31 @@ public class UserController {
         return "userAddress";
     }
     @GetMapping("/user/address/delete/{id}")
-    public String getDeleteUserAddress(@PathVariable int id){
+    public String getDeleteUserAddress(@PathVariable int id, Model model,Principal principal){
+
+        boolean isPresent=orderService.isAddressUsedInOrder(id);
+
+        if (isPresent) {
+
+            model.addAttribute("message", "This address is associated with an order and cannot be deleted.");
+            String loggedUser= principal.getName();
+
+            userService.getUserByEmail(loggedUser);
+            List<Address> addressList=addressService.getAddressOfUser(loggedUser);
+
+            model.addAttribute("userAddress",addressList);
+            return "userAddress";
+
+        }
+        else {
         addressService.deleteAddressByID(id);
-        return "redirect:/user/address";
+            return "redirect:/user/address";
+        }
+
     }
 
     @GetMapping("user/address/update/{id}")
-    public String updateUserAddress(@PathVariable int id,Model model,Principal principal){
+    public String updateUserAddress(@PathVariable int id, Model model,Principal principal){
 
         String loggedUser=principal.getName();
 
