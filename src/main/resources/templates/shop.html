@@ -85,7 +85,7 @@
 <div class="container mt-3">
     <form class="form-inline" th:action="@{/search/product}" method="get" >
         <div  class="input-group" >
-            <input type="text" class="form-control" name="keyword" placeholder="Search Product" aria-label="Search" aria-describedby="search-button">
+            <input type="text" class="form-control" name="keyword"  th:value="${keyword}" placeholder="Search Product" aria-label="Search" aria-describedby="search-button">
             <div class="input-group-append">
                 <button  class="btn btn-primary" type="submit" id="search-button">
                     <i class="fas fa-search"></i>

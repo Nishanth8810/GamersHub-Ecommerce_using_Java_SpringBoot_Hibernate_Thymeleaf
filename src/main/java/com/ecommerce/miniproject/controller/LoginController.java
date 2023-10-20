@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -78,9 +79,32 @@ public class LoginController {
 
     @PostMapping("/verifyAccount")
     public String postOtpVerification(@RequestParam("otp") String otp,
-                                      @RequestParam("email") String email) {
+                                      @RequestParam("email") String email, Model model) {
 
-        userService.verifyOtp(otp, email);
+      int verification = userService.verifyOtp(otp, email);
+
+
+      if (verification==1){
+          model.addAttribute("email",email);
+          model.addAttribute("wrongOtp","Entered otp is wrong");
+          return "otpVerification";
+
+        }
+        if (verification==2){
+            model.addAttribute("email",email);
+            model.addAttribute("wrongOtp","Entered otp is wrong");
+            return "otpVerification";
+
+        }
+        if (verification==3){
+            model.addAttribute("email",email);
+            model.addAttribute("wrongOtp","OTP Timeout");
+            return "otpVerification";
+
+        }
+
+
+
         return "login";
     }
 

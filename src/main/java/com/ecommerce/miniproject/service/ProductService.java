@@ -52,18 +52,23 @@ public class ProductService {
         Pageable pageable= PageRequest.of(pageNo-1,pageSize);
         return this.productRepository.findAll(pageable);
     }
+//
+//    public List<Product> searchProduct(String keyword){
+//
+//       List<Product> searchResult=new ArrayList<>();
+//       List<Product> allProducts= productRepository.findAll();
+//        for (Product product: allProducts) {
+//            if (product.getName().toLowerCase().contains(keyword.toLowerCase())){
+//                searchResult.add(product);
+//            }
+//
+//        }
+//        return searchResult;
+//
+//    }
 
-    public List<Product> searchProduct(String keyword){
+    public List<Product> searchProductsByKeyword(String keyword) {
 
-       List<Product> searchResult=new ArrayList<>();
-       List<Product> allProducts= productRepository.findAll();
-        for (Product product: allProducts) {
-            if (product.getName().toLowerCase().contains(keyword.toLowerCase())){
-                searchResult.add(product);
-            }
-
-        }
-        return searchResult;
-
+        return productRepository.findByNameContaining(keyword);
     }
 }

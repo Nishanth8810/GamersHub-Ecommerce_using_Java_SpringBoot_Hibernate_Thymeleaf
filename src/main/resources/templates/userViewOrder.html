@@ -55,9 +55,6 @@
             <tbody>
             <tr th:each="item : ${order.orderItems}">
                 <td th:text="${item.product.name}"></td>
-                <!--                <td th:text="${item.product.name}"></td>-->
-                <!-- Display the product image using the imageUrl property -->
-                <!--                <td th:text="${item.product.imageName}"></td>-->
                 <td>
                     <img  th:src="@{${'/productImages/' + item.product.imageName}}"  alt="Product Image" width="100" height="100" src="">
                 </td>

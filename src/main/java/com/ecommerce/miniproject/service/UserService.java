@@ -1,6 +1,7 @@
 package com.ecommerce.miniproject.service;
 
 import com.ecommerce.miniproject.dto.UserDTO;
+import com.ecommerce.miniproject.entity.Cart;
 import com.ecommerce.miniproject.entity.Role;
 import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.repository.RoleRepository;
@@ -31,6 +32,8 @@ public class UserService {
 
     @Autowired
     EmailUtil emailUtil;
+    @Autowired
+    CartService cartService;
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -55,7 +58,6 @@ public class UserService {
     }
 
 
-
     public Optional<User> getUserByEmail(String email) throws NoSuchElementException {
         return userRepository.findUserByEmail(email);
 
@@ -75,7 +77,6 @@ public class UserService {
     ///////otp///////
 
 
-
     public void register(UserDTO userDTO) {
         String otp = otpUtil.generateOtp();
 
@@ -89,31 +90,45 @@ public class UserService {
         user.setFirstName(userDTO.getFirstName());
         user.setEmail(userDTO.getEmail());
         user.setLastName(userDTO.getLastName());
-        String password= userDTO.getPassword();
+        String password = userDTO.getPassword();
         user.setPassword(bCryptPasswordEncoder.encode(password));
-        List<Role> roles =new ArrayList<>();
+        List<Role> roles = new ArrayList<>();
         roles.add(roleRepository.findById(2).get());
         user.setRoles(roles);
         user.setActive(true);
         user.setOtp(otp);
         user.setOtpGeneratedTime(LocalDateTime.now());
+//
         userRepository.save(user);
 
     }
 
 
-    public void verifyOtp(String otp, String email) {
-        User user= userRepository.findUserByEmail(email).get();
-        if (user.getOtp().equals(otp)&& Duration.between
-                (user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() < (2 * 60)){
+    public int verifyOtp(String otp, String email) {
+        User user = userRepository.findUserByEmail(email).get();
+
+        if (!user.getOtp().equals(otp)) {
+            return 1;
+        }
+        else if ((user.getOtp().equals(otp) && Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() > (2 * 60))) {
+                return 3;
+        }
+
+        else if (user.getOtp().equals(otp) && Duration.between
+                (user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() < (2 * 60)) {
             user.setOtpActive(true);
             userRepository.save(user);
+            Cart cart = new Cart();
+            cart.setUser(user);
+            cartService.save(cart);
+            return 2;
         }
+        return 0;
     }
 
     public void regenerateOtp(String email) throws MessagingException {
         User user = userRepository.findUserByEmail(email).get();
-        String otp= otpUtil.generateOtp();
+        String otp = otpUtil.generateOtp();
         try {
             emailUtil.sendOtpEmail(email, otp);
         } catch (MessagingException e) {

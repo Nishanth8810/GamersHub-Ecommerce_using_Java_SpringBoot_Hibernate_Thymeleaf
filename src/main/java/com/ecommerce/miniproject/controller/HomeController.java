@@ -130,8 +130,6 @@ public class HomeController {
                 cartService.findCartByUser
                                 (userService.getUserByEmail(principal.getName()).get())
                         .get().getCartItems().size());
-
-
         model.addAttribute("categories",categoryService.getAllCategory());
         model.addAttribute("products", productList);
         model.addAttribute("totalPages", page.getTotalPages());
@@ -144,12 +142,11 @@ public class HomeController {
     @GetMapping("/search/product")
     public String getSearchProduct(@RequestParam("keyword") String keyword,
                                    Model model){
-        List<Product> productList=productService.searchProduct(keyword);
-
+        List<Product> productList=productService.searchProductsByKeyword(keyword);
         model.addAttribute("products",productList);
         model.addAttribute("categories",categoryService.getAllCategory());
+        model.addAttribute("keyword",keyword);
         return "shop";
-
     }
 
 }

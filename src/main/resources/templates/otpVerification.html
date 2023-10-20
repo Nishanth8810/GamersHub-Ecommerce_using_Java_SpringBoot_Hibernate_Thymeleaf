@@ -15,6 +15,7 @@
         <div class="col-md-6">
             <div class="text-center">
                 <h1 class="mb-3">OTP Verification</h1>
+                <p th:if="${wrongOtp}" class="text-danger" th:text="${wrongOtp}"></p>
                 <p>Enter the OTP sent to your email to verify your account.</p>
             </div>
             <form th:action="@{/verifyAccount}" method="post">
@@ -36,6 +37,8 @@
 
 
                     <button type="submit" class="btn btn-secondary">Resend OTP</button>
+
+
 
                 </div>
             </form>
