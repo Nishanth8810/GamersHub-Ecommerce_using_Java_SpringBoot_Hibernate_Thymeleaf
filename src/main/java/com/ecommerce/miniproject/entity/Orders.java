@@ -48,7 +48,7 @@ public class Orders {
     private OrderStatus orderStatus;
 
     public boolean isNotCancelled() {
-        return !"order cancelled".equalsIgnoreCase(this.orderStatus.getStatus());
+        return !"order cancelled".equalsIgnoreCase(orderStatus.getStatus());
     }
 
 
