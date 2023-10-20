@@ -10,6 +10,7 @@ import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -51,7 +52,7 @@ public class OrderController {
 
     @PostMapping("/checkout/confirmOrder")
     public String confirmOrder(@ModelAttribute("selectedAddress") int id,
-                                Principal principal,Model model) {
+                               Principal principal, RedirectAttributes redirectAttributes) {
 
         double tot = cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().stream().map(item -> item.getProduct().getPrice() * item.getQuantity()).reduce(0.0, Double::sum);
 
@@ -65,6 +66,7 @@ public class OrderController {
         orders.setLocalDateTime(LocalDateTime.now());
         orders.setAmount((int) tot);
         orderService.saveOrder(orders);
+        long orderId=orders.getId();
 
         Cart cart = cartService.findCartByUser(user).get();
         List<CartItem> cartItemLists = cart.getCartItems();
@@ -77,10 +79,17 @@ public class OrderController {
             orderItemService.saveOrderItem(orderItem);
         }
 
+
+
+
+
+
 //        cartService.removeCartById();
 //        cartService.clearCart(user);
 
-        model.addAttribute("selectedAddress",addressService.getAddressById(id));
+        redirectAttributes.addFlashAttribute("orderId",orderId);
+
+        redirectAttributes.addFlashAttribute("selectedAddress",addressService.getAddressById(id));
 
 
 
@@ -91,22 +100,14 @@ public class OrderController {
     }
 
     @GetMapping("/orderSuccess")
-    public String getOrderSuccess(Model model, Principal principal) {
+    public String getOrderSuccess(Model model,@ModelAttribute("orderId")long orderId) {
 
-        User user = userService.getUserByEmail(principal.getName()).get();
 
-        List<Orders> userOrders = user.getOrders();
-
-        userOrders.sort(Comparator.comparing(Orders::getId).reversed());
-
-        if (!userOrders.isEmpty()) {
-            Orders lastOrder = userOrders.get(0);
-            Long lastOrderId = lastOrder.getId();
-
-          Orders orders=  orderService.getOrderById(lastOrderId).get();
-
-            // Add the last order ID to the model
-            model.addAttribute("orderId", lastOrderId);
+//
+          Orders orders=  orderService.getOrderById(orderId).get();
+//
+//            // Add the last order ID to the model
+//            model.addAttribute("orderId", lastOrderId);
 
 //            model.addAttribute("address",orders.getAddress());
 //            model.addAttribute("orderId");
@@ -118,6 +119,6 @@ public class OrderController {
 
         }
 
-        return "orderSuccess";
+//        return "orderSuccess";
 //   @PostMapping
-    }}
+    }

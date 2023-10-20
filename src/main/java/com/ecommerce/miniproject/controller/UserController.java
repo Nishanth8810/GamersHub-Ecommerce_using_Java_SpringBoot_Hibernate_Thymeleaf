@@ -38,11 +38,6 @@ public class UserController {
     @Autowired
     OrderService orderService;
 
-    @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
-    BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("/user")
     public String getUserDetail(Model model,Principal principal){
