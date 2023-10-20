@@ -3,16 +3,20 @@ package com.ecommerce.miniproject.controller;
 import com.ecommerce.miniproject.dto.ProductDTO;
 import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.entity.ProductImage;
+import com.ecommerce.miniproject.repository.OrderItemRepository;
 import com.ecommerce.miniproject.repository.ProductImageRepository;
 import com.ecommerce.miniproject.service.CategoryService;
+import com.ecommerce.miniproject.service.OrderItemService;
 import com.ecommerce.miniproject.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,6 +35,8 @@ public class AdminProductController {
     ProductService productService;
     @Autowired
     ProductImageRepository productImageRepository;
+    @Autowired
+    private OrderItemService orderItemService;
 
 
     @GetMapping("/admin/products")
@@ -48,7 +54,17 @@ public class AdminProductController {
 
 
     @GetMapping("/admin/product/delete/{id}")
-    public String deleteProduct(@PathVariable long id) {
+    public String deleteProduct(@PathVariable long id,
+                                    RedirectAttributes redirectAttributes) {
+
+        boolean isPresent=orderItemService.orderItemCheck(id);
+        System.out.println(isPresent);
+
+        if (isPresent){
+            redirectAttributes.addFlashAttribute("deleteError","Cannot delete the product because there are existing orders associated with it.");
+            return "redirect:/admin/products";
+
+        }
         productService.removeProductById(id);
         return "redirect:/admin/products";
     }
@@ -146,6 +162,7 @@ public class AdminProductController {
 
         return "productsAdd";
     }
+
 
 
 }

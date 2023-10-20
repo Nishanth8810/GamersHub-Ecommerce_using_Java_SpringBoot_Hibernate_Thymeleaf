@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 import java.util.List;
@@ -139,4 +140,16 @@ public class HomeController {
         return "shop";
 
     }
+
+    @GetMapping("/search/product")
+    public String getSearchProduct(@RequestParam("keyword") String keyword,
+                                   Model model){
+        List<Product> productList=productService.searchProduct(keyword);
+
+        model.addAttribute("products",productList);
+        model.addAttribute("categories",categoryService.getAllCategory());
+        return "shop";
+
+    }
+
 }

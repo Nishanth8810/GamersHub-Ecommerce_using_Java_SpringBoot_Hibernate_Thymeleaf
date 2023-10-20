@@ -30,4 +30,10 @@ public class ProductDTO {
     @Size(min = 1,message = "Please add at least one image")
     private String imageName;
 
+    private String imageName2;
+
+    private String imageName3;
+
+    private String imageName4;
+//    private List<MultipartFile> imageFiles = new ArrayList<>();
 }

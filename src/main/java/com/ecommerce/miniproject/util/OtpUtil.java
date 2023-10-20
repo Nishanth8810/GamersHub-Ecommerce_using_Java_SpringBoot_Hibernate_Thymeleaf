@@ -6,11 +6,9 @@ import java.util.Random;
 
 @Component
 public class OtpUtil {
-
-
     public String generateOtp() {
         Random random = new Random();
-        int randomNumber = random.nextInt(900000) + 100000; // Generates a random number between 100000 and 999999
+        int randomNumber = random.nextInt(900000) + 100000;
         return String.format("%06d", randomNumber);
 
     }

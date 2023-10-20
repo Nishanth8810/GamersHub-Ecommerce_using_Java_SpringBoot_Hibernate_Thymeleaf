@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,5 +51,19 @@ public class ProductService {
     public Page<Product> findPaginated(int pageNo, int pageSize){
         Pageable pageable= PageRequest.of(pageNo-1,pageSize);
         return this.productRepository.findAll(pageable);
+    }
+
+    public List<Product> searchProduct(String keyword){
+
+       List<Product> searchResult=new ArrayList<>();
+       List<Product> allProducts= productRepository.findAll();
+        for (Product product: allProducts) {
+            if (product.getName().toLowerCase().contains(keyword.toLowerCase())){
+                searchResult.add(product);
+            }
+
+        }
+        return searchResult;
+
     }
 }
