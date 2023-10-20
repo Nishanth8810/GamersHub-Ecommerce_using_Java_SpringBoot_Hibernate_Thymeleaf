@@ -1,9 +1,7 @@
 package com.ecommerce.miniproject.service;
 
-import com.ecommerce.miniproject.entity.Address;
 import com.ecommerce.miniproject.entity.Orders;
 import com.ecommerce.miniproject.repository.OrderRepository;
-import jakarta.persistence.criteria.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +14,6 @@ public class OrderService {
 
     @Autowired
     OrderRepository orderRepository;
-    @Autowired
-    AddressService addressService;
 
 
     public void saveOrder(Orders orders){
