@@ -4,10 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 public class ProductDTO {
@@ -34,10 +30,4 @@ public class ProductDTO {
     @Size(min = 1,message = "Please add at least one image")
     private String imageName;
 
-//    private String imageName2;
-//
-//    private String imageName3;
-//
-//    private String imageName4;
-//    private List<MultipartFile> imageFiles = new ArrayList<>();
 }

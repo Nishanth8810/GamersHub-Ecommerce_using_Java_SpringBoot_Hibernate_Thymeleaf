@@ -3,9 +3,7 @@ package com.ecommerce.miniproject.controller;
 import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.dto.UserDTO;
 import com.ecommerce.miniproject.entity.Address;
-import com.ecommerce.miniproject.entity.Role;
 import com.ecommerce.miniproject.entity.User;
-import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.service.AddressService;
 import com.ecommerce.miniproject.service.OrderService;
 import com.ecommerce.miniproject.service.UserService;
@@ -16,13 +14,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,8 +41,8 @@ public class UserController {
         String currentPrincipalName = authentication.getName();
         User user = userService.getUserByEmail(currentPrincipalName).get();
         model.addAttribute(user);
-
         return "userProfile";
+
     }
 
 
@@ -55,13 +50,9 @@ public class UserController {
     public String getUserAddress(Model model, Principal principal){
 
         String loggedUser= principal.getName();
-
         userService.getUserByEmail(loggedUser);
         List<Address> addressList=addressService.getAddressOfUser(loggedUser);
-
         model.addAttribute("userAddress",addressList);
-
-
         return "userAddress";
     }
     @GetMapping("/user/address/delete/{id}")
@@ -70,36 +61,27 @@ public class UserController {
         boolean isPresent=orderService.isAddressUsedInOrder(id);
 
         if (isPresent) {
-
             model.addAttribute("message", "This address is associated with an order and cannot be deleted.");
             String loggedUser= principal.getName();
-
             userService.getUserByEmail(loggedUser);
             List<Address> addressList=addressService.getAddressOfUser(loggedUser);
-
             model.addAttribute("userAddress",addressList);
             return "userAddress";
-
         }
         else {
         addressService.deleteAddressByID(id);
             return "redirect:/user/address";
         }
-
     }
 
     @GetMapping("user/address/update/{id}")
-    public String updateUserAddress(@PathVariable int id, Model model,Principal principal){
-
+    public String updateUserAddress(@PathVariable int id,
+                                    Model model,
+                                    Principal principal){
         String loggedUser=principal.getName();
-
         User user = userService.getUserByEmail(loggedUser).get();
-
         Address address = addressService.getAddressOfUser(id);
-
-
         AddressDTO addressDTO= new AddressDTO();
-
         addressDTO.setAddress(address.getAddress());
         addressDTO.setName(address.getName());
         addressDTO.setId(address.getId());
@@ -121,8 +103,7 @@ public class UserController {
 
     @PostMapping("user/addressAdd")
     public String postAddAddress(@ModelAttribute("addressDTO")AddressDTO addressDTO,
-                                 Model model,
-    Principal principal){
+                                                                 Principal principal){
         String loggedUser=principal.getName();
         User user = userService.getUserByEmail(loggedUser).get();
         Address address = new Address();
@@ -151,7 +132,6 @@ public class UserController {
 
     @PostMapping("/user/userDetails")
     public String postUserDetails(@ModelAttribute("userDTO") UserDTO userDTO){
-
         User user= userService.getUserById(userDTO.getId()).get();
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
@@ -184,14 +164,8 @@ public class UserController {
         String loggedUser=principal.getName();
         User user=userService.getUserByEmail(loggedUser).get();
 
-//        if (bindingResult.hasErrors()){
-//            return "changePassword";
-//        }
-
         if (!Objects.equals(newPass, confirmPass)){
-
             model.addAttribute("errorConfirmPass","Passwords must be same");
-
         }
         else {
 
@@ -203,12 +177,6 @@ public class UserController {
        }
         }
         return "changePassword";
-
-
     }
-
-
-
-
 
 }

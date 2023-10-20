@@ -1,13 +1,10 @@
 package com.ecommerce.miniproject.entity;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-
-import jakarta.persistence.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -29,7 +26,6 @@ public class Product {
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "product_variant")
     private ProductVariants productVariants;
-
 
     private int quantity;
     private double price;

@@ -17,15 +17,12 @@ public class CartService {
     public Optional<Cart> findCartByUser(User user) {
         return cartRepository.findCartByUser(user);
     }
-
     public void save(Cart cart) {
         cartRepository.save(cart);
     }
-
     public void removeCartItemOfUser(long id) {
         cartRepository.deleteById(id);
     }
-
     public void clearCart(User user) {
         Cart cart = findCartByUser(user).orElse(new Cart());
         cart.setCartItems(new ArrayList<>());

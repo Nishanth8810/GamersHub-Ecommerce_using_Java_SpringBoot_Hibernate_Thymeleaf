@@ -33,15 +33,8 @@ public class OrderService {
     }
 
     public boolean isAddressUsedInOrder(int id) {
-//       Orders orders= orderRepository.findById(id).get();
-//        Address address= addressService.getAddressById(id);
         List<Orders> orders = orderRepository.findByAddressId(id);
-        if (orders.isEmpty()){
-            return false;
-        }
-        else {
-            return true;
-        }
+        return !orders.isEmpty();
 
     }
 }

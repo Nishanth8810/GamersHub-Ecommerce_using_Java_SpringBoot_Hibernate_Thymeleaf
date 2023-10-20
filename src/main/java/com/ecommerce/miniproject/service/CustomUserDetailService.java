@@ -4,9 +4,6 @@ import com.ecommerce.miniproject.entity.CustomUserDetail;
 import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,10 +14,6 @@ import java.util.Optional;
 public class CustomUserDetailService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    UserService userService;
-
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findUserByEmail(email);

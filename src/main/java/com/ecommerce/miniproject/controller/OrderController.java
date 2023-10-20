@@ -1,23 +1,19 @@
 package com.ecommerce.miniproject.controller;
 
-import com.ecommerce.miniproject.dto.OrdersDTO;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.repository.*;
 import com.ecommerce.miniproject.service.*;
-import jakarta.persistence.criteria.Order;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 public class OrderController {
@@ -26,10 +22,6 @@ public class OrderController {
 
     @Autowired
     OrderItemService orderItemService;
-
-    @Autowired
-    PaymentMethodService paymentMethodService;
-
     @Autowired
     OrderService orderService;
     @Autowired
@@ -38,23 +30,21 @@ public class OrderController {
     UserService userService;
 
     @Autowired
-    private PaymentMethodRepository paymentMethodRepository;
-    @Autowired
-    private OrderRepository orderRepository;
-    @Autowired
-    OrderStatusRepository orderStatusRepository;
+    PaymentMethodRepository paymentMethodRepository;
 
     @Autowired
-    OrderItemRepository orderItemRepository;
-    @Autowired
-    private UserRepository userRepository;
+    OrderStatusRepository orderStatusRepository;
 
 
     @PostMapping("/checkout/confirmOrder")
     public String confirmOrder(@ModelAttribute("selectedAddress") int id,
-                               Principal principal, RedirectAttributes redirectAttributes) {
+                               Principal principal,
+                               RedirectAttributes redirectAttributes) {
 
-        double tot = cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().stream().map(item -> item.getProduct().getPrice() * item.getQuantity()).reduce(0.0, Double::sum);
+        double tot = cartService.findCartByUser(userService.getUserByEmail
+                        (principal.getName()).get()).get().getCartItems()
+                .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
+                .reduce(0.0, Double::sum);
 
 
         User user = userService.getUserByEmail(principal.getName()).get();
@@ -66,7 +56,7 @@ public class OrderController {
         orders.setLocalDateTime(LocalDateTime.now());
         orders.setAmount((int) tot);
         orderService.saveOrder(orders);
-        long orderId=orders.getId();
+        long orderId = orders.getId();
 
         Cart cart = cartService.findCartByUser(user).get();
         List<CartItem> cartItemLists = cart.getCartItems();
@@ -78,47 +68,18 @@ public class OrderController {
             orderItem.setOrders(orders);
             orderItemService.saveOrderItem(orderItem);
         }
-
-
-
-
-
-
-//        cartService.removeCartById();
-//        cartService.clearCart(user);
-
-        redirectAttributes.addFlashAttribute("orderId",orderId);
-
-        redirectAttributes.addFlashAttribute("selectedAddress",addressService.getAddressById(id));
-
-
-
-
+        redirectAttributes.addFlashAttribute("orderId", orderId);
+        redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
         return "redirect:/orderSuccess";
-
-
     }
 
     @GetMapping("/orderSuccess")
-    public String getOrderSuccess(Model model,@ModelAttribute("orderId")long orderId) {
+    public String getOrderSuccess(Model model, @ModelAttribute("orderId") long orderId) {
 
+        Orders orders = orderService.getOrderById(orderId).get();
+        model.addAttribute("orderItem", orders.getOrderItems());
+        model.addAttribute("total", orders.getAmount());
+        return "orderSuccess";
 
-//
-          Orders orders=  orderService.getOrderById(orderId).get();
-//
-//            // Add the last order ID to the model
-//            model.addAttribute("orderId", lastOrderId);
-
-//            model.addAttribute("address",orders.getAddress());
-//            model.addAttribute("orderId");
-            model.addAttribute("orderItem",orders.getOrderItems());
-            model.addAttribute("total",orders.getAmount());
-
-
-            return "orderSuccess";
-
-        }
-
-//        return "orderSuccess";
-//   @PostMapping
     }
+}

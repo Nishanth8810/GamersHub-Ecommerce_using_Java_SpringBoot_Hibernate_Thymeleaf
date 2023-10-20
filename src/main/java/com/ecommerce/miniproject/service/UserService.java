@@ -68,7 +68,6 @@ public class UserService {
             User user = optionalUser.get();
             return user.isActive();
         }
-
         return false;
     }
 
@@ -104,27 +103,17 @@ public class UserService {
 
 
     public void verifyOtp(String otp, String email) {
-
         User user= userRepository.findUserByEmail(email).get();
-
-
-        if (user.getOtp().equals(otp)&& Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() < (2 * 60)){
-
-
+        if (user.getOtp().equals(otp)&& Duration.between
+                (user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() < (2 * 60)){
             user.setOtpActive(true);
-
             userRepository.save(user);
-
         }
-
     }
 
     public void regenerateOtp(String email) throws MessagingException {
-
         User user = userRepository.findUserByEmail(email).get();
-
         String otp= otpUtil.generateOtp();
-
         try {
             emailUtil.sendOtpEmail(email, otp);
         } catch (MessagingException e) {

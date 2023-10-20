@@ -45,10 +45,7 @@ public class ProductService {
         else{
             return false;
         }
-
     }
-
-
     public Page<Product> findPaginated(int pageNo, int pageSize){
         Pageable pageable= PageRequest.of(pageNo-1,pageSize);
         return this.productRepository.findAll(pageable);
