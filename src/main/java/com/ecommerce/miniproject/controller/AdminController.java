@@ -5,6 +5,7 @@ import com.ecommerce.miniproject.dto.ProductDTO;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.repository.OrderRepository;
 import com.ecommerce.miniproject.repository.OrderStatusRepository;
+import com.ecommerce.miniproject.repository.ProductImageRepository;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.service.*;
 import jakarta.persistence.criteria.Order;
@@ -17,6 +18,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,6 +49,9 @@ public class AdminController {
 
     @Autowired
     OrderItemService orderItemService;
+
+    @Autowired
+    ProductImageRepository productImageRepository;
 
 
     @GetMapping("/admin")
@@ -142,10 +148,13 @@ public class AdminController {
     public String productAddPost(@Valid @ModelAttribute("productDTO")ProductDTO productDTO,
                                  BindingResult bindingResult,
                                  Model model,
-                                 @RequestParam("productImage")MultipartFile file,
-                                 @RequestParam("imgName")String imgName)throws IOException{
+                                 @RequestParam("productImage")List<MultipartFile>  fileList)throws IOException{
 
-
+        if (fileList.size()>4){
+            model.addAttribute("categories",categoryService.getAllCategory());
+            model.addAttribute("errorProduct","please add only 4 images");
+            return "productsAdd";
+        }
 
         if (bindingResult.hasErrors()){
             model.addAttribute("categories",categoryService.getAllCategory());
@@ -170,18 +179,42 @@ public class AdminController {
         product.setWeight(productDTO.getWeight());
         product.setDescription(productDTO.getDescription());
 
+        product.setImageName(fileList.get(0).getOriginalFilename());
+        productService.addProduct(product);
 
-        String imageUUID;
-        if(!file.isEmpty()){
-            imageUUID = file.getOriginalFilename();
-            Path fileNameAndPath = Paths.get(uploadDir,imageUUID);
-            Files.write(fileNameAndPath,file.getBytes());
+        for (MultipartFile file : fileList) {
+            String imageUUID = file.getOriginalFilename();
+            Path fileNameAndPath = Paths.get(uploadDir, imageUUID);
+            Files.write(fileNameAndPath, file.getBytes());
         }
 
-        else {
-            imageUUID = imgName;
+        List<ProductImage> productImageList = new ArrayList<>();
+
+        if (fileList.size()>=2) {
+            ProductImage productImage = new ProductImage();
+            productImage.setProduct(product);
+            productImage.setImageName(fileList.get(1).getOriginalFilename());
+            productImageRepository.save(productImage);
+            productImageList.add(productImage);
         }
-        product.setImageName(imageUUID);
+
+        if (fileList.size()>=3) {
+            ProductImage productImage2 = new ProductImage();
+            productImage2.setProduct(product);
+            productImage2.setImageName(fileList.get(2).getOriginalFilename());
+            productImageRepository.save(productImage2);
+            productImageList.add(productImage2);
+        }
+
+        if (fileList.size()==4) {
+            ProductImage productImage3 = new ProductImage();
+            productImage3.setProduct(product);
+            productImage3.setImageName(fileList.get(3).getOriginalFilename());
+            productImageRepository.save(productImage3);
+            productImageList.add(productImage3);
+        }
+
+        product.setProductImages(productImageList);
         productService.addProduct(product);
 
         return "redirect:/admin/products";

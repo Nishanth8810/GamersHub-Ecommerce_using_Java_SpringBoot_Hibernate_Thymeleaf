@@ -60,7 +60,7 @@
                     </div>
                 </div>
 
-                <!--                <p th:if="${errorProduct}" class="text-danger" th:text="${errorProduct}"></p>-->
+                                <p th:if="${errorProduct}" class="text-danger" th:text="${errorProduct}"></p>
                 <div class="form-group">
                     <label for="category">Select Category</label>
                     <select class="form-control" th:field="*{categoryId}" id="category" name="category">
@@ -117,20 +117,18 @@
             <div class="col-sm-5">
                 <p>Product Image</p>
                 <div class="custom-file">
-                    <input type="file"  class="custom-file-input" name="productImage" accept="image/jpeg, image/png"  id="productImage"/>
+                    <input type="file" multiple class="custom-file-input" name="productImage" accept="image/jpeg, image/png"  id="productImage"/>
                     <label class="custom-file-label" for="productImage">Choose file</label>
                 </div>
                 <div class="form-group">
                     <img src="#" id="imgPreview" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">
                 </div>
-                <div th:if="${#fields.hasErrors('imageName')}"
-                     style="margin-bottom: 25px" class="text-danger">
-                    <ul>
-                        <li th:each="err : ${#fields.errors('imageName')}" th:text="${err}"></li>
 
-                    </ul>
-                </div>
                 <input type="hidden" name="imgName" th:value="${productDTO.imageName}">
+                <input type="hidden" name="imgName" th:value="${productDTO.imageName2}">
+                <input type="hidden" name="imgName" th:value="${productDTO.imageName3}">
+                <input type="hidden" name="imgName" th:value="${productDTO.imageName4}">
+
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>

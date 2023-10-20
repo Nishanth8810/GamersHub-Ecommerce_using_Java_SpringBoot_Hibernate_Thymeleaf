@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.security.Principal;
@@ -83,6 +84,7 @@ public class HomeController {
             return "viewProduct";
 
         } else {
+
             model.addAttribute("cartCount", cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().size());
 
             model.addAttribute("total", cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get().getCartItems().stream().map(item -> item.getProduct().getPrice() * item.getQuantity()).reduce(0.0, (a, b) -> a + b));

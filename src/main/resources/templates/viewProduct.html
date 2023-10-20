@@ -57,11 +57,30 @@
 </nav>
 <div class="container mt-5">
     <div class="row">
-        <div class="col-sm-5 d-flex justify-content-center">
-            <img class="mt-5" height="300px" width="300px" src="" th:src="@{${'/productImages/' + product.imageName}}"
-                 alt="">
+        <!-- Carousel -->
+        <div class="col-sm-5">
+            <div id="imageCarousel" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img class="mt-5" height="300px" width="300px" src="" th:src="@{${'/productImages/' + product.imageName}}"
+                             alt="">                    </div>
+                    <div class="carousel-item" th:each="image : ${product.productImages}">
+                        <img class="mt-5" height="300px" width="300px" src="" th:src="@{${'/productImages/' + image.imageName}}"
+                             alt="">                    </div>
+                    <!-- Add more carousel items as needed -->
+                </div>
+                <a class="carousel-control-prev" href="#imageCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#imageCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
         </div>
         <div class="col-sm-7 mt-5">
+            <!-- Product information -->
             <h2 th:text="${product.name}"></h2>
             <p th:text="${product.category.name}"></p>
             <h2>₹ <span th:text="${product.price}"></span></h2>
@@ -71,11 +90,7 @@
             <p th:text="${product.description}"></p>
             <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" class="btn btn-primary">Add to cart</a>
         </div>
-
-
-
     </div>
-
 </div>
 
 
