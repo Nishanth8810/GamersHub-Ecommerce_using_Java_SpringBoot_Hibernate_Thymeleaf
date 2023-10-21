@@ -92,7 +92,7 @@ public class LoginController {
         }
         if (verification==2){
             model.addAttribute("email",email);
-            model.addAttribute("wrongOtp","Entered otp is wrong");
+            model.addAttribute("wrongOtp","OTP is verified");
             return "otpVerification";
 
         }

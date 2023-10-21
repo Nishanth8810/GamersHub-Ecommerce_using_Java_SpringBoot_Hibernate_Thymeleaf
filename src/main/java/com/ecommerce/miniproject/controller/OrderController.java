@@ -3,10 +3,15 @@ package com.ecommerce.miniproject.controller;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.repository.*;
 import com.ecommerce.miniproject.service.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -35,11 +40,21 @@ public class OrderController {
     @Autowired
     OrderStatusRepository orderStatusRepository;
 
+    @InitBinder
+    public void initBinder(WebDataBinder webDataBinder) {
+        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
+        webDataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
+    }
+
 
     @PostMapping("/checkout/confirmOrder")
-    public String confirmOrder(@ModelAttribute("selectedAddress") int id,
+    public String confirmOrder(@Valid @ModelAttribute("selectedAddress") int id,
                                Principal principal,
-                               RedirectAttributes redirectAttributes) {
+                               RedirectAttributes redirectAttributes, BindingResult bindingResult) {
+
+
+
+
 
         double tot = cartService.findCartByUser(userService.getUserByEmail
                         (principal.getName()).get()).get().getCartItems()

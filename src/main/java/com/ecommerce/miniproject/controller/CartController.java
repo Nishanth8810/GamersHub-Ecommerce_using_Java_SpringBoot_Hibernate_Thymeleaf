@@ -7,15 +7,16 @@ import com.ecommerce.miniproject.entity.CartItem;
 import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.repository.CartItemRepository;
 import com.ecommerce.miniproject.service.*;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -109,14 +110,27 @@ public class CartController {
         return "checkout";
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder webDataBinder) {
+        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
+        webDataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
+    }
+
 
     @PostMapping("/checkout")
-    public String postCheckout(@ModelAttribute AddressDTO addressDTO) {
+    public String postCheckout(@Valid @ModelAttribute AddressDTO addressDTO, BindingResult bindingResult) {
+
+
+
 
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
         User user = userService.getUserByEmail(currentPrincipalName).get();
+
+        if (bindingResult.hasErrors()){
+            return "checkout";
+        }
 
         Address address = new Address();
         address.setId(addressDTO.getId());
