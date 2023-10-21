@@ -105,17 +105,17 @@ public class UserController {
 
     @InitBinder
     public void initBinder(WebDataBinder webDataBinder){
-        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
+        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
         webDataBinder.registerCustomEditor(String.class,stringTrimmerEditor);
     }
 
     @PostMapping("user/addressAdd")
-    public String postAddAddress(@Valid @ModelAttribute("addressDTO")AddressDTO addressDTO,
+    public String postAddAddress(@Valid @ModelAttribute AddressDTO addressDTO,
                                  Principal principal, BindingResult bindingResult){
 
 
         if (bindingResult.hasErrors()){
-            return "user";
+            return "user/addressAdd";
         }
 
         String loggedUser=principal.getName();

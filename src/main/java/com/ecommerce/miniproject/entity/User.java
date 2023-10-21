@@ -94,7 +94,11 @@ public class User {
         }
         return false;
     }
-
+//    public String getPassword(User user){
+//        this.password=user.getPassword();
+//        return password;
+//    }
+//
 
 
     public void setId(Integer id) {
