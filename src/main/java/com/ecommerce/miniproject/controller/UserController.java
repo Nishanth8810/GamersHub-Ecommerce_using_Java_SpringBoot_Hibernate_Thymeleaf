@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -94,6 +95,26 @@ public class UserController {
         model.addAttribute("addressDTO",addressDTO);
         return "addressAdd";
     }
+
+
+    @GetMapping("user/address/default/{id}")
+    public String getDefaultAddress(@PathVariable int id, Principal principal, RedirectAttributes redirectAttributes){
+
+        User user= userService.getUserByEmail(principal.getName()).orElseThrow();
+        Address address=addressService.getAddressById(id);
+        addressService.setDefaultAddressForUser(user,address);
+
+        redirectAttributes.addFlashAttribute("message1","Default address changed successfully");
+
+
+
+        return "redirect:/user/address";
+
+    }
+
+
+
+
 
     @GetMapping("user/addressAdd")
     public String addAddress(Model model){

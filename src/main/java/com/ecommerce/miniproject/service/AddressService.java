@@ -37,4 +37,14 @@ public class AddressService {
     public Address getAddressById(int id) {
         return  addressRepository.findById(id).get();
     }
+
+
+    public void setDefaultAddressForUser(User user, Address defaultAddress) {
+        List<Address> userAddresses = addressRepository.findByUser(user);
+        for (Address address : userAddresses) {
+            address.setDefault(address.equals(defaultAddress));
+        }
+        addressRepository.saveAll(userAddresses);
+    }
 }
+

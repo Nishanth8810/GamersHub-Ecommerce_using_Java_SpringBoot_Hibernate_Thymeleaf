@@ -132,8 +132,7 @@
                             <div class="address-item">
                                 <!-- Radio button for selecting the address -->
                                 <label>
-                                    <input type="radio"
-                                           th:name="selectedAddress" th:value="${address.id}" required >
+                                    <input type="radio" th:name="selectedAddress" th:value="${address.id}" th:checked="${address.isDefault}" required>
                                 </label>
                             </div>
                             <div class="address-details">

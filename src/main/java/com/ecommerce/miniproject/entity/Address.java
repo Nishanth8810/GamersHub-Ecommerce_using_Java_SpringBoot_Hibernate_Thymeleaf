@@ -34,6 +34,12 @@ public class Address {
     @OneToMany(mappedBy = "address")
     private List<Orders> orders;
 
+    private boolean isDefault;
+
+    public boolean isDefault(){
+        return isDefault;
+    }
+
 
     @Override
     public String toString() {

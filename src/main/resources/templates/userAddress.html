@@ -43,6 +43,8 @@
 
     <a th:href="@{/user/addressAdd}" style="margin: 20px 0" class="btn btn-primary">Add Address</a>
     <p th:if="${message}" class="text-danger" th:text="${message}"></p>
+    <p th:if="${message1}" class="text-success" th:text="${message1}"></p>
+
 
 
 
@@ -57,6 +59,13 @@
                     <p class="card-text"><strong>Phone No:</strong> <span th:text="${address.phoneNo}"></span></p>
                     <p class="card-text"><strong>City:</strong> <span th:text="${address.city}"></span></p>
                     <p class="card-text"><strong>Land Mark:</strong> <span th:text="${address.landmark}"></span></p>
+
+                    <a th:if="${!address.isDefault()}" th:href="@{/user/address/default/{id}(id=${address.id})}" class="btn btn-primary">Set as Default</a>
+
+                    <span th:if="${address.isDefault()}" class="default-address text-secondary">Default Address</span>
+
+
+                    <br><br>
 
                     <a href="" th:href="@{/user/address/delete/{id}(id=${address.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to delete this User ?') )) return false">Delete</a>
                     <a href="" th:href="@{/user/address/update/{id}(id=${address.id})}" class="btn btn-warning">Update</a>
