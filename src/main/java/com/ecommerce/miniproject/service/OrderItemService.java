@@ -19,10 +19,7 @@ public class OrderItemService {
         orderItemRepository.save(orderItem);
     }
     public boolean orderItemCheck(long id){
-        List<OrderItem> orderItem=orderItemRepository.findByProduct_Id(id);
-        if (!orderItem.isEmpty()){
-            return true;
-        }
-        return false;
+        boolean orderItem=orderItemRepository.findByProduct_Id(id);
+        return !orderItem;
     }
 }

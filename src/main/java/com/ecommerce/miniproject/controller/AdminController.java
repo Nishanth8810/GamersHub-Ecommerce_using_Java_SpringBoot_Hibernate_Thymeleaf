@@ -53,8 +53,7 @@ public class AdminController {
     @PostMapping("/admin/categories/add")
     public String postCatAdd(@ModelAttribute("categoryDTO") CategoryDTO categoryDTO, Model model) {
 
-        boolean isBoolean = categoryService.getCategoryByName(categoryDTO.getName());
-        if (isBoolean) {
+        if (categoryService.getCategoryByName(categoryDTO.getName())) {
             model.addAttribute("categoryDTO", categoryDTO);
             model.addAttribute("errorCategory", "Category with same name already exist");
             return "categoriesAdd";
@@ -70,14 +69,13 @@ public class AdminController {
     @GetMapping("/admin/categories/delete/{id}")
     public String deleteCat(@PathVariable int id, Model model) {
 
-        boolean isPresent = categoryService.getProductByCategoryId(id);
 
-        if (isPresent) {
-            model.addAttribute
-                    ("productPresent", "Product is available in this Category , try deleting product first");
+        if (categoryService.getProductByCategoryId(id)) {
+            model.addAttribute("productPresent", "Product is available in this Category , try deleting product first");
             model.addAttribute("categories", categoryService.getAllCategory());
             return "categories";
         }
+
         categoryService.removeCategoryById(id);
         return "redirect:/admin/categories";
     }
@@ -98,7 +96,8 @@ public class AdminController {
     }
 
     @PostMapping("/admin/categories/update/{id}")
-    public String postUpdateCat(@ModelAttribute("categoryDTO")CategoryDTO categoryDTO,Model model){
+    public String postUpdateCat(@ModelAttribute("categoryDTO")CategoryDTO categoryDTO
+                                ){
     Category category =categoryService.getCategoryById(categoryDTO.getId()).orElseThrow();
     category.setName(categoryDTO.getName());
     category.setDescription(categoryDTO.getDescription());

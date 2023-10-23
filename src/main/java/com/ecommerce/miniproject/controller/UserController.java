@@ -60,9 +60,7 @@ public class UserController {
     @GetMapping("/user/address/delete/{id}")
     public String getDeleteUserAddress(@PathVariable int id, Model model,Principal principal){
 
-        boolean isPresent=orderService.isAddressUsedInOrder(id);
-
-        if (isPresent) {
+        if (orderService.isAddressUsedInOrder(id)) {
             model.addAttribute("message", "This address is associated with an order and cannot be deleted.");
             String loggedUser= principal.getName();
             userService.getUserByEmail(loggedUser);

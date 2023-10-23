@@ -39,14 +39,7 @@ public class ProductService {
     }
 
     public boolean getProductByName(String name){
-        Optional<Product> optionalProduct = productRepository.getProductByName(name);
-        if (optionalProduct.isPresent()){
-            Product product = optionalProduct.get();
-            return true;
-        }
-        else{
-            return false;
-        }
+        return !productRepository.getProductByName(name);
     }
     public Page<Product> findPaginated(int pageNo, int pageSize){
         Pageable pageable= PageRequest.of(pageNo-1,pageSize);

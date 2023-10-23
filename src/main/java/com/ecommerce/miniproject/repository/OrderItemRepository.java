@@ -9,5 +9,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem,Long> {
-    List<OrderItem> findByProduct_Id(Long id);
+    boolean findByProduct_Id(Long id);
 }

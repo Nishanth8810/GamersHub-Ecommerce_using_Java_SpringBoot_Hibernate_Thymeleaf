@@ -56,10 +56,7 @@ public class AdminProductController {
     public String deleteProduct(@PathVariable long id,
                                     RedirectAttributes redirectAttributes) {
 
-        boolean isPresent=orderItemService.orderItemCheck(id);
-        System.out.println(isPresent);
-
-        if (isPresent){
+        if (orderItemService.orderItemCheck(id)){
             redirectAttributes.addFlashAttribute("deleteError","Cannot delete the product because there are existing orders associated with it.");
             return "redirect:/admin/products";
 
@@ -83,9 +80,8 @@ public class AdminProductController {
             model.addAttribute("categories", categoryService.getAllCategory());
             return "productsAdd";
         }
-        boolean isPresent = productService.getProductByName(productDTO.getName());
 
-        if (isPresent) {
+        if (productService.getProductByName(productDTO.getName())) {
             model.addAttribute("product", productDTO);
             model.addAttribute("categories", categoryService.getAllCategory());
             model.addAttribute("errorProduct", "Product with same name already exits");
