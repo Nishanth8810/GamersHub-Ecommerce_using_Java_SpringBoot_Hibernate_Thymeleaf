@@ -51,6 +51,13 @@ public class Orders {
         return !"order cancelled".equalsIgnoreCase(orderStatus.getStatus());
     }
 
+    public boolean isNotReturned(){
+        return !"order returned".equalsIgnoreCase(orderStatus.getStatus());
+    }
+    public boolean isNotDelivered(){
+        return !"order delivered".equalsIgnoreCase(orderStatus.getStatus());
+    }
+
 
 
 

@@ -46,4 +46,14 @@ public class UserOrderController {
         model.addAttribute("orderList",order);
         return "userViewOrder";
     }
+
+    @GetMapping("user/order/return/{id}")
+    public String getReturnOrder(@PathVariable long id){
+        Orders order =orderService.getOrderById(id).get();
+        order.setOrderStatus(orderStatusRepository.findById(7L).get());
+        orderService.saveOrder(order);
+        return "redirect:/user/orders";
+
+
+    }
 }

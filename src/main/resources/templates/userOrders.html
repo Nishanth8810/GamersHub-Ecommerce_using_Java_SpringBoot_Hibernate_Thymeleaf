@@ -75,8 +75,10 @@
                     <p class="card-text"><strong>Status:</strong> <span th:text="${order.orderStatus.status}"></span></p>
                     <p class="card-text"><strong>Total Amount:</strong> <span th:text="${order.amount+'/-'}"></span></p>
 
-                    <a th:if="${order.isNotCancelled()}" th:href="@{/user/order/cancel/{id}(id=${order.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to cancel this order ?') )) return false">Cancel</a>
-                <br><br>
+                    <a th:if="${order.isNotCancelled()} and ${order.isNotReturned()}" th:href="@{/user/order/cancel/{id}(id=${order.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to cancel this order ?') )) return false">Cancel</a>
+                    <a th:if="${!order.isNotDelivered()}" th:href="@{/user/order/return/{id}(id=${order.id})}" class="btn btn-primary" th:onclick="if(!(confirm('Are you sure you want to return this order ?') )) return false">return?</a>
+
+                    <br><br>
                 </div>
             </div>
         </div>
