@@ -35,17 +35,23 @@ public class CategoryService {
 
 
     public boolean getProductByCategoryId(int id){
-        List<Product> optionalProduct=productRepository.findAllByCategory_id(id);
-        return !optionalProduct.isEmpty();
+            return productRepository.existsByCategory_Id(id);
     }
 
-    public boolean getCategoryByName(String name) {
-        Optional<Category> optionalCategory = categoryRepository.getCategoryByname(name);
-        if (optionalCategory.isPresent()) {
-            Category category = optionalCategory.get();
-            return true;
-        } else {
-            return false;
-        }
+//    public boolean getCategoryByName(String name) {
+//        Optional<Category> optionalCategory = categoryRepository.getCategoryByname(name);
+//        if (optionalCategory.isPresent()) {
+//            Category category = optionalCategory.get();
+//            return true;
+//        } else {
+//            return false;
+//        }
+//    }
+//    public boolean getCategoryByName(String name) {
+//        Optional<Category> optionalCategory = categoryRepository.existsByName(name);
+//        return optionalCategory.isPresent();
+//    }
+    public boolean getCategoryByName(String name){
+        return categoryRepository.existsByName(name);
     }
 }

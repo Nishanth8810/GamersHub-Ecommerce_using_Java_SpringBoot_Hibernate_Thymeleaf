@@ -92,9 +92,20 @@ public class AdminController {
             categoryDTO.setDescription(category.get().getDescription());
             model.addAttribute("category", category.get());
             model.addAttribute("categoryDTO", categoryDTO);
-            return "categoriesAdd";
+            return "categoryUpdate";
         } else
             return "404";
+    }
+
+    @PostMapping("/admin/categories/update/{id}")
+    public String postUpdateCat(@ModelAttribute("categoryDTO")CategoryDTO categoryDTO,Model model){
+    Category category =categoryService.getCategoryById(categoryDTO.getId()).orElseThrow();
+    category.setName(categoryDTO.getName());
+    category.setDescription(categoryDTO.getDescription());
+    categoryService.addCategory(category);
+
+    return "redirect:/admin/categories";
+
     }
 
 
