@@ -11,7 +11,6 @@ import com.ecommerce.miniproject.service.CategoryService;
 import com.ecommerce.miniproject.service.CouponService;
 import com.ecommerce.miniproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -160,9 +159,9 @@ public class AdminController {
     @GetMapping("/admin/userManagement/addRole/{id}")
     public String getAddRoleBYId(@PathVariable int id) {
 
-        User user = userService.getUserById(id).get();
+        User user = userService.getUserById(id).orElseThrow();
         List<Role> roles = new ArrayList<>();
-        roles.add(roleRepository.findById(1).get());
+        roles.add(roleRepository.findById(1).orElseThrow());
         user.setRoles(roles);
         userService.saveUser(user);
         return "redirect:/admin/userManagement";

@@ -91,7 +91,7 @@ public class HomeController {
         model.addAttribute("products",productService.getAllProductsByCategory_id(id));
         return "shop";
     }
-    @GetMapping("/shop/viewproduct/{id}")
+    @GetMapping("/shop/viewProduct/{id}")
     public String viewProduct(@PathVariable int id, Model model, Principal principal) {
 
         if (principal == null) {

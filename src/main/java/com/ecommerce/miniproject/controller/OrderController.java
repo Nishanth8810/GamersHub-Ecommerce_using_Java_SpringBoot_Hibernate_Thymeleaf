@@ -56,7 +56,6 @@ public class OrderController {
     public String confirmOrder(@Valid @ModelAttribute("selectedAddress") int id,
                                Principal principal,
                                RedirectAttributes redirectAttributes
-                                        ,@RequestParam("couponCode")String couponCode
                                     ) {
 
 
@@ -64,19 +63,11 @@ public class OrderController {
 //        int discount = coupon.getDiscountAmount();
 
 
-
-
         double total= cartService.findCartByUser(userService.getUserByEmail
                         (principal.getName()).get()).get().getCartItems()
                 .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
                 .reduce(0.0, Double::sum);
 //        total -= discount;
-
-
-
-
-
-
 
 //
 //        double tot = cartService.findCartByUser(userService.getUserByEmail
@@ -87,8 +78,6 @@ public class OrderController {
 //            total=Total;
 //            System.out.println(total);
 //        }
-
-
 
 
 

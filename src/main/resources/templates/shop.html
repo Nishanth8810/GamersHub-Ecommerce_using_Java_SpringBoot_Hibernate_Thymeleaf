@@ -117,7 +117,7 @@
                             <h5 class="card-title" th:text="${product.name}"></h5>
                             <h4>₹ <span th:text="${product.price}"></span></h4>
                             <p th:text="${product.description}"></p>
-                            <a href="#" th:href="@{/shop/viewproduct/{id}(id=${product.id})}"
+                            <a href="#" th:href="@{/shop/viewProduct/{id}(id=${product.id})}"
                                class="btn btn-primary">View Product</a>
                         </div>
                     </div>
