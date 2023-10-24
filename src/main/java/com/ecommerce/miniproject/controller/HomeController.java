@@ -70,7 +70,7 @@ public class HomeController {
 
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("products", productService.getAllProduct());
-        return findPaginated(1,1,model,principal);
+        return findPaginated(1,model,principal);
 //        return "shop";
     }
     @GetMapping("/shop/category/{id}")
@@ -126,11 +126,11 @@ public class HomeController {
 
 
 
-    @GetMapping("/page/{pageNo}/{pageSize}")
+    @GetMapping("/page/{pageNo}")
     public String findPaginated(@PathVariable (value ="pageNo") int pageNo ,
-                                @PathVariable(value = "pageSize") int pageSize, Model model,Principal principal){
+                              Model model,Principal principal){
 
-//       int pageSize=3;
+       int pageSize=3;
         Page<Product> page=productService.findPaginated(pageNo,pageSize);
         List<Product> productList=page.getContent();
 

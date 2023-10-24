@@ -11,12 +11,10 @@ import com.ecommerce.miniproject.service.CategoryService;
 import com.ecommerce.miniproject.service.CouponService;
 import com.ecommerce.miniproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
@@ -174,6 +172,21 @@ public class AdminController {
         userService.saveUser(user);
         return "redirect:/admin/userManagement";
     }
+
+
+    @GetMapping("search/user")
+    public String searchUser(@RequestParam("keyword")String keyword,Model model){
+
+
+        List<User> userList = userService.findUserByKeyword(keyword);
+
+        model.addAttribute("users", userList);
+
+
+
+        return "userManagement";
+    }
+
 
 ///////////////coupon management///////////////
 

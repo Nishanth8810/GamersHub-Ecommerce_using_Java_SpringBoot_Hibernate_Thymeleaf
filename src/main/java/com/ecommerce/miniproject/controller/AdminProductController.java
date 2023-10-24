@@ -62,6 +62,7 @@ public class AdminProductController {
 
         }
         productService.removeProductById(id);
+        redirectAttributes.addFlashAttribute("deleteSuccess","Order Deleted Successfully");
         return "redirect:/admin/products";
     }
 
@@ -150,6 +151,20 @@ public class AdminProductController {
 
         return "productUpdate";
     }
+
+    @GetMapping("/admin/search/products")
+    public String getProductSearch(@RequestParam("keyword")String keyword,Model model){
+
+
+        List<Product> productList=productService.findByName(keyword);
+        model.addAttribute("products", productList);
+        return "products";
+    }
+
+
+
+
+
 //    @PostMapping("/admin/products/update/{id}")
 //    public String postUpdateProduct(@ModelAttribute("productDTO") ProductDTO productDTO,
 //                                    BindingResult bindingResult,
