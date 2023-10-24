@@ -106,7 +106,11 @@
                 <span th:text="${product.weight}"></span> grams.
             </h5>
             <p th:text="${product.description}"></p>
-            <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" class="btn btn-primary">Add to cart</a>
+            <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" id="addToCartButton" class="btn btn-primary">Add to cart</a>
+        </div>
+        <h4 th:if="${alreadyPresent}" class="text-warning" th:text="${alreadyPresent}"></h4>
+        <div id="addToCartSuccessMessage" class="alert alert-success mt-3" style="display: none;">
+            Product added to cart!
         </div>
     </div>
 </div>
@@ -121,5 +125,28 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const addToCartButton = document.getElementById("addToCartButton");
+        const successMessage = document.getElementById("addToCartSuccessMessage");
+
+        addToCartButton.addEventListener("click", function () {
+            // Hide the "Add to Cart" button
+            addToCartButton.style.display = "none";
+
+            // Display the success message with animation
+            successMessage.style.display = "block";
+            successMessage.classList.add("animate__animated", "animate__fadeInUp");
+
+            // Automatically hide the message after a few seconds (adjust the delay as needed)
+            setTimeout(function () {
+                successMessage.style.display = "none";
+                // Show the "Add to Cart" button again
+                addToCartButton.style.display = "block";
+            }, 9000); // Adjust the delay (in milliseconds) as needed
+        });
+    });
+</script>
+
 </body>
 </html>

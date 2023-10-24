@@ -139,4 +139,9 @@ public class UserService {
         userRepository.save(user);
 
     }
+
+    public List<User> findUserByKeyword(String keyword) {
+
+       return userRepository.findByFirstNameContaining(keyword);
+    }
 }

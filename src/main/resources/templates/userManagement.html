@@ -12,6 +12,36 @@
     <title>E-commerce</title>
 </head>
 <body>
+<style>
+    /* Style the container */
+    .container.mt-3 {
+        text-align: center;
+    }
+
+    /* Style the input group */
+    .input-group {
+        max-width: 300px; /* Adjust the width as needed */
+        margin: 0 auto; /* Center the input group */
+    }
+
+    /* Style the search input */
+    .form-control {
+        border: 1px solid #ccc;
+        border-radius: 25px;
+    }
+
+    /* Style the search button */
+    .btn-primary {
+        border-radius: 25px;
+        margin-left: -3px; /* Adjust the position of the button */
+    }
+
+    /* Style the search icon */
+    .fas.fa-search {
+        margin-right: 8px;
+    }
+</style>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light" >
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
@@ -37,8 +67,21 @@
     </div>
 </nav>
 <div class="container">
+    <div class="container mt-3 mb-3">
+        <form class="form-inline" th:action="@{/search/user}" method="get" >
+            <div  class="input-group" >
+                <input type="text" class="form-control" name="keyword"  th:value="${keyword}" placeholder="Search User" aria-label="Search" aria-describedby="search-button">
+                <div class="input-group-append">
+                    <button  class="btn btn-primary" type="submit" id="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
 
-<!--    </form>-->
+
+    <!--    </form>-->
     <table class="table">
         <thead class="thead-light">
         <tr>
@@ -56,6 +99,9 @@
         </tr>
         </thead>
         <tbody>
+        <p th:if="${errorDelete}" class="text-danger" th:text="${errorDelete}"></p>
+        <p th:if="${successDelete}" class="text-success" th:text="${successDelete}"></p>
+
 
         <tr th:each="user, iStat : ${users}">
             <th scope="row" th:text="${iStat.index + 1}">1</th>

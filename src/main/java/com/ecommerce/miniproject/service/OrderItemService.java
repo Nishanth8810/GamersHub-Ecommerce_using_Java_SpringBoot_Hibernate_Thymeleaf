@@ -15,11 +15,11 @@ public class OrderItemService {
     OrderItemRepository orderItemRepository;
 
 
-    public void saveOrderItem(OrderItem orderItem){
+    public void saveOrderItem(OrderItem orderItem) {
         orderItemRepository.save(orderItem);
     }
-    public boolean orderItemCheck(long id){
-        boolean orderItem=orderItemRepository.findByProduct_Id(id);
-        return !orderItem;
+
+    public boolean orderItemCheck(long id) {
+        return orderItemRepository.existsByProduct_Id(id);
     }
 }

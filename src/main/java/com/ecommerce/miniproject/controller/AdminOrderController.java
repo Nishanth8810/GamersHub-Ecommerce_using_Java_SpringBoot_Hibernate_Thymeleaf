@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AdminOrderController {
@@ -97,6 +98,26 @@ public class AdminOrderController {
         Orders orders = orderService.getOrderById(id).get();
         model.addAttribute("orderList", orders);
         return "adminViewOrder";
+    }
+
+
+    @GetMapping("/search/order")
+    public String getOrderById(@RequestParam("keyword")int id,Model model){
+
+
+            try {
+                Orders orders=orderService.getOrderById(id).get();
+                model.addAttribute("userOrder", orders);
+                return "adminOrders";
+            }
+            catch (Exception e){
+                model.addAttribute("errorSearch","Id is not present");
+                model.addAttribute("userOrder", orderService.getAllOrders());
+                return "adminOrders";
+
+            }
+
+
     }
 
 }

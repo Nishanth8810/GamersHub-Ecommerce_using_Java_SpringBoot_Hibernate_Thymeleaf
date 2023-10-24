@@ -13,10 +13,7 @@ import com.ecommerce.miniproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
@@ -148,17 +145,23 @@ public class AdminController {
     }
 
     @GetMapping("/admin/userManagement/delete/{id}")
-    public String getDeleteUserById(@PathVariable int id) {
-        userService.removeUserById(id);
-        return "redirect:/admin/userManagement";
+    public String getDeleteUserById(@PathVariable int id,RedirectAttributes redirectAttributes) {
+        try{
+            userService.removeUserById(id);
+            return "redirect:/admin/userManagement";
+        }
+       catch (Exception e){
+            redirectAttributes.addFlashAttribute("errorDelete","Cannot delete this user because this user is associated with some order,try to block user");
+           return "redirect:/admin/userManagement";
+       }
     }
 
     @GetMapping("/admin/userManagement/addRole/{id}")
     public String getAddRoleBYId(@PathVariable int id) {
 
-        User user = userService.getUserById(id).get();
+        User user = userService.getUserById(id).orElseThrow();
         List<Role> roles = new ArrayList<>();
-        roles.add(roleRepository.findById(1).get());
+        roles.add(roleRepository.findById(1).orElseThrow());
         user.setRoles(roles);
         userService.saveUser(user);
         return "redirect:/admin/userManagement";
@@ -174,6 +177,21 @@ public class AdminController {
         userService.saveUser(user);
         return "redirect:/admin/userManagement";
     }
+
+
+    @GetMapping("search/user")
+    public String searchUser(@RequestParam("keyword")String keyword,Model model){
+
+
+        List<User> userList = userService.findUserByKeyword(keyword);
+
+        model.addAttribute("users", userList);
+
+
+
+        return "userManagement";
+    }
+
 
 ///////////////coupon management///////////////
 
