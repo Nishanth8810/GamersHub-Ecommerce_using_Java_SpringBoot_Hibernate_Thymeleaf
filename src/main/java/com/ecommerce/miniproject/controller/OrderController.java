@@ -10,12 +10,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,6 +39,12 @@ public class OrderController {
     @Autowired
     OrderStatusRepository orderStatusRepository;
 
+    @Autowired CouponService couponService;
+
+    boolean couponApplies=false;
+
+
+
     @InitBinder
     public void initBinder(WebDataBinder webDataBinder) {
         StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
@@ -50,16 +55,41 @@ public class OrderController {
     @PostMapping("/checkout/confirmOrder")
     public String confirmOrder(@Valid @ModelAttribute("selectedAddress") int id,
                                Principal principal,
-                               RedirectAttributes redirectAttributes, BindingResult bindingResult) {
+                               RedirectAttributes redirectAttributes
+                                        ,@RequestParam("couponCode")String couponCode
+                                    ) {
+
+
+//        Coupon coupon= couponService.getByCouponCode(couponCode);
+//        int discount = coupon.getDiscountAmount();
 
 
 
 
-
-        double tot = cartService.findCartByUser(userService.getUserByEmail
+        double total= cartService.findCartByUser(userService.getUserByEmail
                         (principal.getName()).get()).get().getCartItems()
                 .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
                 .reduce(0.0, Double::sum);
+//        total -= discount;
+
+
+
+
+
+
+
+//
+//        double tot = cartService.findCartByUser(userService.getUserByEmail
+//                        (principal.getName()).get()).get().getCartItems()
+//                .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
+//                .reduce(0.0, Double::sum);
+//        if (couponApplies){
+//            total=Total;
+//            System.out.println(total);
+//        }
+
+
+
 
 
         User user = userService.getUserByEmail(principal.getName()).get();
@@ -69,7 +99,7 @@ public class OrderController {
         orders.setPaymentMethod(paymentMethodRepository.findById(1L).get());
         orders.setOrderStatus(orderStatusRepository.findById(1L).get());
         orders.setLocalDateTime(LocalDateTime.now());
-        orders.setAmount((int) tot);
+        orders.setAmount((int) total);
         orderService.saveOrder(orders);
         long orderId = orders.getId();
 
@@ -87,6 +117,31 @@ public class OrderController {
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
         return "redirect:/orderSuccess";
     }
+
+    @PostMapping("order/couponCode")
+    public String getCoupon(@RequestParam("couponCode") String couponCode,Principal principal,RedirectAttributes redirectAttributes
+    ){
+
+      Coupon coupon= couponService.getByCouponCode(couponCode);
+
+     double totalDiscount= cartService.findCartByUser(userService.getUserByEmail
+                        (principal.getName()).get()).get().getCartItems()
+                .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
+                .reduce(0.0, Double::sum);
+        int discount = coupon.getDiscountAmount();
+        totalDiscount -= discount;
+        redirectAttributes.addFlashAttribute("Total",totalDiscount);
+       this.couponApplies=true;
+//        System.out.println(totalDiscount);
+
+
+      return "redirect:/checkout";
+
+    }
+
+
+
+
 
     @GetMapping("/orderSuccess")
     public String getOrderSuccess(Model model, @ModelAttribute("orderId") long orderId) {

@@ -227,6 +227,7 @@ public class AdminProductController {
 
             return "redirect:/admin/products";
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             model.addAttribute("errorProduct", "An error occurred while updating the product.");
             model.addAttribute("categories", categoryService.getAllCategory());
 

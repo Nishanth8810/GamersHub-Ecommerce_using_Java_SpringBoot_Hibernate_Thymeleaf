@@ -1,11 +1,14 @@
 package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.dto.CategoryDTO;
+import com.ecommerce.miniproject.dto.CouponDTO;
 import com.ecommerce.miniproject.entity.Category;
+import com.ecommerce.miniproject.entity.Coupon;
 import com.ecommerce.miniproject.entity.Role;
 import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.service.CategoryService;
+import com.ecommerce.miniproject.service.CouponService;
 import com.ecommerce.miniproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,20 +17,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class AdminController {
-    public static String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/productImages";
+    public static String uploadDir = System.getProperty("user.dir") +
+            "/src/main/resources/static/productImages";
     @Autowired
     CategoryService categoryService;
     @Autowired
     UserService userService;
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    CouponService couponService;
 
 //////////////Admin Section/////////////////
 
@@ -96,25 +105,24 @@ public class AdminController {
     }
 
     @PostMapping("/admin/categories/update/{id}")
-    public String postUpdateCat(@ModelAttribute("categoryDTO")CategoryDTO categoryDTO
-                                ){
-    Category category =categoryService.getCategoryById(categoryDTO.getId()).orElseThrow();
-    category.setName(categoryDTO.getName());
-    category.setDescription(categoryDTO.getDescription());
-    categoryService.addCategory(category);
+    public String postUpdateCat(@ModelAttribute("categoryDTO") CategoryDTO categoryDTO
+    ) {
+        Category category = categoryService.getCategoryById(categoryDTO.getId()).orElseThrow();
+        category.setName(categoryDTO.getName());
+        category.setDescription(categoryDTO.getDescription());
+        categoryService.addCategory(category);
 
-    return "redirect:/admin/categories";
+        return "redirect:/admin/categories";
 
     }
-
-
-
 
 
     ///////
     ///////////
     /////////////////////
     /////////USER MANAGEMENT////////////////////////
+
+
     @GetMapping("/admin/userManagement")
     public String getUserManagement(Model model) {
 
@@ -167,13 +175,79 @@ public class AdminController {
         return "redirect:/admin/userManagement";
     }
 
+///////////////coupon management///////////////
 
 
+    @GetMapping("/admin/coupon")
+    public String getCoupon(Model model) {
+
+        model.addAttribute("coupons", couponService.getAllCoupon());
+        return "adminCoupon";
+
+    }
+
+    @GetMapping("/admin/coupon/add")
+    public String getCouponAdd(Model model) {
+        model.addAttribute("couponDTO", new CouponDTO());
+        return "couponAdd";
+    }
+
+    @PostMapping("/admin/coupon/add")
+    public String postCouponAdd(@ModelAttribute("couponDTO") CouponDTO couponDTO, RedirectAttributes redirectAttributes) {
 
 
+        if (couponService.getCouponByName(couponDTO.getCouponCode())){
+            redirectAttributes.addFlashAttribute("errorCoupon","coupon with same name already exits");
+            return "redirect:/admin/coupon/add";
 
+        }
+        LocalDate currentDate=LocalDate.now();
+        if (currentDate.isAfter(couponDTO.getExpiryDate())){
+            redirectAttributes.addFlashAttribute("errorCoupon","Enter a valid date");
+            return "redirect:/admin/coupon/add";
 
+        }
+
+        Coupon coupon = new Coupon();
+        coupon.setId(couponDTO.getId());
+        coupon.setCouponCode(couponDTO.getCouponCode());
+        coupon.setDiscountAmount(couponDTO.getDiscountAmount());
+        coupon.setExpiryDate(couponDTO.getExpiryDate());
+        coupon.setUsageLimit(couponDTO.getUsageLimit());
+
+        couponService.saveCoupon(coupon);
+
+        return "redirect:/admin/coupon";
+
+    }
+
+    @GetMapping("/admin/coupon/delete/{id}")
+    public String getDeleteCoupon(@PathVariable long id){
+        couponService.deleteCouponById(id);
+        return"redirect:/admin/coupon";
+    }
+
+    @GetMapping("/admin/coupon/update/{id}")
+    public String getUpdateCoupon(Model model, @PathVariable long id){
+
+        Coupon coupon=couponService.getCouponById(id);
+        CouponDTO couponDTO=new CouponDTO();
+        couponDTO.setCouponCode(coupon.getCouponCode());
+        couponDTO.setId(coupon.getId());
+        couponDTO.setExpiryDate(coupon.getExpiryDate());
+        couponDTO.setUsageLimit(coupon.getUsageLimit());
+        couponDTO.setDiscountAmount(coupon.getDiscountAmount());
+        model.addAttribute("couponDTO",couponDTO);
+        return "couponUpdate";
+
+    }
 }
+
+
+
+
+
+
 
 
 

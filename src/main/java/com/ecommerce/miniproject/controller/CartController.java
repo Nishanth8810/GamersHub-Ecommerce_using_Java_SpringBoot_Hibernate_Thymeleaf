@@ -102,6 +102,7 @@ public class CartController {
                 .stream()
                 .map(item -> item.getProduct().getPrice() * item.getQuantity()).reduce(0.0, (a, b) -> a + b));
         model.addAttribute("addressDTO", new AddressDTO());
+//        model.addAttribute("Total", Total);
 
         String loggedUser = principal.getName();
         List<Address> addressList = addressService.getAddressOfUser(loggedUser);
@@ -119,10 +120,6 @@ public class CartController {
 
     @PostMapping("/checkout")
     public String postCheckout(@Valid @ModelAttribute AddressDTO addressDTO, BindingResult bindingResult) {
-
-
-
-
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
