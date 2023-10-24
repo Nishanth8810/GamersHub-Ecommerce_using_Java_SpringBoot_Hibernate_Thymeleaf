@@ -17,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -43,18 +44,19 @@ public class CartController {
 
 
     @GetMapping("/addToCart/{id}")
-    public String addToCart(@PathVariable int id, Principal principal) {
+    public String addToCart(@PathVariable int id, Principal principal, RedirectAttributes redirectAttributes) {
 
         User user = userService.getUserByEmail(principal.getName()).get();
         Cart cart = cartService.findCartByUser(user).get();
-        List<CartItem> cartItemList = cart.getCartItems();
         Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart
                 (productService.getProductById(id).get(), cart);
 
         if (cartItemOptional.isPresent()) {
-            CartItem cartItem = cartItemOptional.get();
-            cartItem.setQuantity(cartItem.getQuantity() + 1);
-            cartItemRepository.save(cartItem);
+//            CartItem cartItem = cartItemOptional.get();
+//            cartItem.setQuantity(cartItem.getQuantity() + 1);
+//            cartItemRepository.save(cartItem);
+            redirectAttributes.addFlashAttribute("alreadyPresent","item is already in your cart :)");
+
         } else {
             CartItem cartItem = new CartItem();
             cartItem.setProduct(productService.getProductById(id).get());

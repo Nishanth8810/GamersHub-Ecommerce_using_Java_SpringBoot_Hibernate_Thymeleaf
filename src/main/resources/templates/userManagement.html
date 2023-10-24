@@ -99,6 +99,9 @@
         </tr>
         </thead>
         <tbody>
+        <p th:if="${errorDelete}" class="text-danger" th:text="${errorDelete}"></p>
+        <p th:if="${successDelete}" class="text-success" th:text="${successDelete}"></p>
+
 
         <tr th:each="user, iStat : ${users}">
             <th scope="row" th:text="${iStat.index + 1}">1</th>

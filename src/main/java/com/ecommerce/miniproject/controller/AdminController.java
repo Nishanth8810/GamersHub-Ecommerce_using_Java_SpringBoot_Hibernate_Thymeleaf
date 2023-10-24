@@ -146,9 +146,15 @@ public class AdminController {
     }
 
     @GetMapping("/admin/userManagement/delete/{id}")
-    public String getDeleteUserById(@PathVariable int id) {
-        userService.removeUserById(id);
-        return "redirect:/admin/userManagement";
+    public String getDeleteUserById(@PathVariable int id,RedirectAttributes redirectAttributes) {
+        try{
+            userService.removeUserById(id);
+            return "redirect:/admin/userManagement";
+        }
+       catch (Exception e){
+            redirectAttributes.addFlashAttribute("errorDelete","Cannot delete this user because this user is associated with some order,try to block user");
+           return "redirect:/admin/userManagement";
+       }
     }
 
     @GetMapping("/admin/userManagement/addRole/{id}")

@@ -46,11 +46,6 @@
         <p>Please fill out this to register</p>
         <form th:action="@{/register}" th:object="${user}" method="post">
             <div class="form-group">
-<!--                <div th:if="${param.success}">-->
-<!--                    <div class="alert alert-info">-->
-<!--                        Registration successful !!!-->
-<!--                    </div>-->
-<!--                </div>-->
                 <label for="firstName">First Name</label>
                 <input type="text" th:field="*{firstName}" name="firstName" id="firstName"  placeholder="Your Firstname" class="form-control form-control-lg">
                 <div th:if="${#fields.hasErrors('firstName')}"
@@ -100,7 +95,9 @@
 
             <input type="submit" value="Register" class="btn btn-primary btn-block" id="registerButton">
 
-
+            <div id="pleaseWait" class="alert alert-info" style="display: none;">
+                Please wait, registering...
+            </div>
 
 
             <span style="margin-top: 10px">Already have an account <a class="linkControl" href="./login.html"
@@ -111,13 +108,25 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const registerButton = document.getElementById("registerButton");
+           const registerButton = document.getElementById("registerButton");
+           const pleaseWaitDiv = document.getElementById("pleaseWait");
 
-        registerButton.addEventListener("click", function () {
-            // Hide the button
-            registerButton.style.display = "none";
-        });
-    });
+           registerButton.addEventListener("click", function () {
+               // Hide the button
+               registerButton.style.display = "none";
+
+               // Show the "Please Wait" message
+               pleaseWaitDiv.style.display = "block";
+           });
+       });
+   document.addEventListener("DOMContentLoaded", function () {
+       const registerButton = document.getElementById("registerButton");
+
+       registerButton.addEventListener("click", function () {
+           // Hide the button
+           registerButton.style.display = "none";
+       });
+   });
 </script>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
