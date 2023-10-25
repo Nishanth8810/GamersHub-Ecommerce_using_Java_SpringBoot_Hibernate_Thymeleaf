@@ -59,20 +59,15 @@ public class UserController {
         return "userAddress";
     }
     @GetMapping("/user/address/delete/{id}")
-    public String getDeleteUserAddress(@PathVariable int id, Model model,Principal principal){
+    public String getDeleteUserAddress(@PathVariable int id,RedirectAttributes redirectAttributes){
 
         if (orderService.isAddressUsedInOrder(id)) {
-            model.addAttribute("message", "This address is associated with an order and cannot be deleted.");
-            String loggedUser= principal.getName();
-            userService.getUserByEmail(loggedUser);
-            List<Address> addressList=addressService.getAddressOfUser(loggedUser);
-            model.addAttribute("userAddress",addressList);
-            return "userAddress";
+            redirectAttributes.addFlashAttribute("message", "This address is associated with an order and cannot be deleted.");
         }
         else {
         addressService.deleteAddressByID(id);
-            return "redirect:/user/address";
         }
+        return "redirect:/user/address";
     }
 
     @GetMapping("user/address/update/{id}")

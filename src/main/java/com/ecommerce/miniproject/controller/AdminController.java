@@ -6,6 +6,7 @@ import com.ecommerce.miniproject.entity.Category;
 import com.ecommerce.miniproject.entity.Coupon;
 import com.ecommerce.miniproject.entity.Role;
 import com.ecommerce.miniproject.entity.User;
+import com.ecommerce.miniproject.repository.ProductVariantsRepository;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.service.CategoryService;
 import com.ecommerce.miniproject.service.CouponService;
@@ -34,6 +35,9 @@ public class AdminController {
 
     @Autowired
     CouponService couponService;
+
+    @Autowired
+    ProductVariantsRepository productVariantsRepository;
 
 //////////////Admin Section/////////////////
 

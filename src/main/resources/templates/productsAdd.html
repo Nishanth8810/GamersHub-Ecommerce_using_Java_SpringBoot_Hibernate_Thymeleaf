@@ -122,16 +122,12 @@
                 </div>
                 <div class="form-group">
                     <img src="#" id="imgPreview" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">
-<!--                    <img src="#" id="imgPreview2" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">-->
-<!--                    <img src="#" id="imgPreview3" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">-->
-<!--                    <img src="#" id="imgPreview4" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">-->
+
                 </div>
 
                 <input type="hidden" name="imgName" th:value="${productDTO.imageName}">
-<!--                <input type="hidden" name="imgName" th:value="${productDTO.imageName2}">-->
-<!--                <input type="hidden" name="imgName" th:value="${productDTO.imageName3}">-->
-<!--                <input type="hidden" name="imgName" th:value="${productDTO.imageName4}">-->
-
+                <p th:if="${errorProductImage}" class="text-danger" th:text="${errorProductImage}">
+                </p>
 
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>

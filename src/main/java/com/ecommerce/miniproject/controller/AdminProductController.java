@@ -6,6 +6,7 @@ import com.ecommerce.miniproject.entity.ProductImage;
 import com.ecommerce.miniproject.repository.ProductImageRepository;
 import com.ecommerce.miniproject.service.CategoryService;
 import com.ecommerce.miniproject.service.OrderItemService;
+import com.ecommerce.miniproject.service.ProductImageService;
 import com.ecommerce.miniproject.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,8 @@ public class AdminProductController {
     ProductImageRepository productImageRepository;
     @Autowired
      OrderItemService orderItemService;
+    @Autowired
+    ProductImageService productImageService;
 
 
     @GetMapping("/admin/products")
@@ -62,7 +65,7 @@ public class AdminProductController {
 
         }
         productService.removeProductById(id);
-        redirectAttributes.addFlashAttribute("deleteSuccess","Order Deleted Successfully");
+        redirectAttributes.addFlashAttribute("deleteSuccess","Product Deleted Successfully");
         return "redirect:/admin/products";
     }
 
@@ -78,6 +81,13 @@ public class AdminProductController {
 
 
         if (bindingResult.hasErrors()) {
+            if (fileList.get(0).isEmpty()){
+                model.addAttribute("errorProductImage", "add at least one image");
+                model.addAttribute("product", productDTO);
+                model.addAttribute("categories", categoryService.getAllCategory());
+                return "productsAdd";
+            }
+
             model.addAttribute("categories", categoryService.getAllCategory());
             return "productsAdd";
         }
@@ -86,6 +96,12 @@ public class AdminProductController {
             model.addAttribute("product", productDTO);
             model.addAttribute("categories", categoryService.getAllCategory());
             model.addAttribute("errorProduct", "Product with same name already exits");
+            return "productsAdd";
+        }
+        if (fileList.get(0).isEmpty()){
+            model.addAttribute("errorProduct", "add at least one image");
+            model.addAttribute("product", productDTO);
+            model.addAttribute("categories", categoryService.getAllCategory());
             return "productsAdd";
         }
         Product product = new Product();
@@ -114,10 +130,10 @@ public class AdminProductController {
             return "productsAdd";
         }
 
-        int maxImages = 3;
+        int maxImages = 10;
 
 
-        for (int i = 1; i <= maxImages && i <= fileList.size(); i++) {
+        for (int i = 1; i <= maxImages && i < fileList.size(); i++) {
             ProductImage productImage = new ProductImage();
             productImage.setProduct(product);
             productImage.setImageName(fileList.get(i).getOriginalFilename());
@@ -165,72 +181,19 @@ public class AdminProductController {
 
 
 
-//    @PostMapping("/admin/products/update/{id}")
-//    public String postUpdateProduct(@ModelAttribute("productDTO") ProductDTO productDTO,
-//                                    BindingResult bindingResult,
-//                                    Model model
-//                                    ,@RequestParam("productImage")
-//                                        List<MultipartFile> fileList) throws IOException {
-//
-//        Product product=productService.getProductById(productDTO.getId()).orElseThrow();
-//
-//        if (bindingResult.hasErrors()) {
-//            model.addAttribute("categories", categoryService.getAllCategory());
-//            return "productUpdate";
-//        }
-//
-//        product.setName(productDTO.getName());
-//        product.setCategory(categoryService.getCategoryById(productDTO.getCategoryId()).get());
-//        product.setPrice(productDTO.getPrice());
-//        product.setWeight(productDTO.getWeight());
-//        product.setDescription(productDTO.getDescription());
-//
-//        product.setImageName(fileList.get(0).getOriginalFilename());
-//        productService.addProduct(product);
-//
-//
-//        for (MultipartFile file : fileList) {
-//            String imageUUID = file.getOriginalFilename();
-//            Path fileNameAndPath = Paths.get(uploadDir, imageUUID);
-//            Files.write(fileNameAndPath, file.getBytes());
-//        }
-//
-//        List<ProductImage> productImageList = new ArrayList<>();
-//
-//        if (fileList.size() > 4) {
-//            model.addAttribute("categories", categoryService.getAllCategory());
-//            model.addAttribute("errorProduct", "please add only 4 images");
-//            return "productsAdd";
-//        }
-//
-//        int maxImages = 3;
-//
-//
-//        for (int i = 1; i <= maxImages && i <= fileList.size(); i++) {
-//            ProductImage productImage = new ProductImage();
-//            productImage.setProduct(productImage.getProduct());
-//            productImage.setImageName(fileList.get(i).getOriginalFilename());
-//            productImageRepository.save(productImage);
-//            productImageList.add(productImage);
-//        }
-//
-//        product.setProductImages(productImageList);
-//        productService.addProduct(product);
-//        return "redirect:/admin/products";
-//
-//
-//    }
-    // ... Other controller methods ...
+
 
     @PostMapping("admin/products/update/{id}")
     public String postUpdateProduct(@ModelAttribute("productDTO") @Valid ProductDTO productDTO,
                                     BindingResult bindingResult,
                                     Model model,
-                                    @RequestParam("productImage") List<MultipartFile> fileList) {
+                                    @RequestParam("productImage") List<MultipartFile> fileList) throws IOException {
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.getAllCategory());
             return "productUpdate";
         }
+
+
 
         try {
             Product product = productService.getProductById(productDTO.getId()).orElseThrow();
@@ -260,11 +223,16 @@ public class AdminProductController {
         product.setDescription(productDTO.getDescription());
     }
 
+
     private void saveProductImages(Product product, List<MultipartFile> fileList) throws IOException {
+
+
+        productImageService.removeImageById(product.getId());
+        product.setImageName(fileList.get(0).getOriginalFilename());
         List<ProductImage> productImageList = new ArrayList<>();
         int maxImages = 3;
 
-        for (int i = 0; i < maxImages && i < fileList.size(); i++) {
+        for (int i = 1; i < maxImages && i < fileList.size(); i++) {
             MultipartFile file = fileList.get(i);
             if (!file.isEmpty()) {
                 String imageUUID = UUID.randomUUID() + "_" + file.getOriginalFilename();
@@ -274,7 +242,6 @@ public class AdminProductController {
                 ProductImage productImage = new ProductImage();
                 productImage.setProduct(product);
                 productImage.setImageName(imageUUID);
-                productImageRepository.save(productImage);
                 productImageList.add(productImage);
             }
         }

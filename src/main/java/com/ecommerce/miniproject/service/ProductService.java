@@ -39,26 +39,13 @@ public class ProductService {
     }
 
     public boolean getProductByName(String name){
-        return !productRepository.getProductByName(name);
+        return productRepository.existsByName(name);
     }
     public Page<Product> findPaginated(int pageNo, int pageSize){
         Pageable pageable= PageRequest.of(pageNo-1,pageSize);
         return this.productRepository.findAll(pageable);
     }
-//
-//    public List<Product> searchProduct(String keyword){
-//
-//       List<Product> searchResult=new ArrayList<>();
-//       List<Product> allProducts= productRepository.findAll();
-//        for (Product product: allProducts) {
-//            if (product.getName().toLowerCase().contains(keyword.toLowerCase())){
-//                searchResult.add(product);
-//            }
-//
-//        }
-//        return searchResult;
-//
-//    }
+
 
     public List<Product> searchProductsByKeyword(String keyword) {
 

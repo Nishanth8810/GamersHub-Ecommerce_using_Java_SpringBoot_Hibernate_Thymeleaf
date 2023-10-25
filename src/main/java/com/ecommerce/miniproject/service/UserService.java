@@ -110,7 +110,7 @@ public class UserService {
         if (!user.getOtp().equals(otp)) {
             return 1;
         }
-        else if ((user.getOtp().equals(otp) && Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() > (2 * 60))) {
+        else if (Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() > 2 * 60) {
                 return 3;
         }
 
@@ -141,7 +141,6 @@ public class UserService {
     }
 
     public List<User> findUserByKeyword(String keyword) {
-
        return userRepository.findByFirstNameContaining(keyword);
     }
 }
