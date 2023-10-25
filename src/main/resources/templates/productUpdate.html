@@ -122,9 +122,9 @@
                 </div>
                 <div class="form-group">
                     <img src="#" id="imgPreview1" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">
-                    <img src="#" id="imgPreview2" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">
-                    <img src="#" id="imgPreview3" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">
-                    <img src="#" id="imgPreview4" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">
+<!--                    <img src="#" id="imgPreview2" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName[1]}}" style="margin-top: 20px" alt=" ">-->
+<!--                    <img src="#" id="imgPreview3" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">-->
+<!--                    <img src="#" id="imgPreview4" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">-->
 
 
                 </div>
@@ -149,26 +149,31 @@
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
 <script>
-    function readURL(input) {
-     if (input.files && input.files.length > 0) {
-         for (var i = 0; i < input.files.length; i++) {
-             var reader = new FileReader();
-             reader.onload = function (e) {
-                 // Use a unique ID for each image preview
-                 $('#imgPreview' + (i + 1)).attr('src', e.target.result).width(100).height(100);
-             }
-             reader.readAsDataURL(input.files[i]);
-         }
-     }
- }
+    function readURLs(input) {
+    if (input.files && input.files.length > 0) {
+        for (let i = 0; i < input.files.length; i++) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const image = document.createElement("img");
+                image.src = e.target.result;
+                image.width = 100;
+                image.height = 100;
+                document.getElementById("imagePreviews").appendChild(image);
+            };
+            reader.readAsDataURL(input.files[i]);
+        }
+    }
+}
 
- $('#productImage').change(function () {
-     // Clear the existing preview images
-     for (var i = 1; i <= 4; i++) {
-         $('#imgPreview' + i).attr('src', '').width(100).height(100);
-     }
-     readURL(this);
- });
+$('#productImages').change(function () {
+    readURLs(this);
+});
+
+$(".custom-file-input").on("change", function () {
+    const fileNames = Array.from(this.files).map((file) => file.name);
+    $(this).siblings(".custom-file-label").addClass("selected").html(fileNames.join(', '));
+});
+
 
 </script>
 </body>

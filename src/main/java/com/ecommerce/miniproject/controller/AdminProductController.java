@@ -75,7 +75,7 @@ public class AdminProductController {
     public String productAddPost(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
                                  BindingResult bindingResult,
                                  Model model,
-                                 @RequestParam("productImage") List<MultipartFile> fileList)
+                                 @RequestParam("productImages") List<MultipartFile> fileList)
             throws IOException {
 
 
@@ -193,8 +193,6 @@ public class AdminProductController {
             return "productUpdate";
         }
 
-
-
         try {
             Product product = productService.getProductById(productDTO.getId()).orElseThrow();
 
@@ -230,7 +228,7 @@ public class AdminProductController {
         productImageService.removeImageById(product.getId());
         product.setImageName(fileList.get(0).getOriginalFilename());
         List<ProductImage> productImageList = new ArrayList<>();
-        int maxImages = 3;
+        int maxImages = 10;
 
         for (int i = 1; i < maxImages && i < fileList.size(); i++) {
             MultipartFile file = fileList.get(i);

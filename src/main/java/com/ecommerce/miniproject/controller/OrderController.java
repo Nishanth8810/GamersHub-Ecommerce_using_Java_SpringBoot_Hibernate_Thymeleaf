@@ -142,9 +142,9 @@ public class OrderController {
                 .reduce(0.0, Double::sum);
         int discount = coupon.getDiscountAmount();
         totalDiscount -= discount;
-//
+
         userBooleanMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), true);
-//
+
         userDoubleMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), totalDiscount);
 
         redirectAttributes.addFlashAttribute("totalDiscount",String.valueOf(totalDiscount));
