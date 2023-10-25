@@ -1,5 +1,6 @@
 package com.ecommerce.miniproject.controller;
 
+import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.repository.*;
 import com.ecommerce.miniproject.service.*;
@@ -13,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class OrderController {
@@ -37,7 +40,39 @@ public class OrderController {
 
     @Autowired CouponService couponService;
 
-    boolean couponApplies=false;
+
+    Map<String, Boolean> userBooleanMap = new HashMap<>();
+
+    Map<String, Double> userDoubleMap = new HashMap<>();
+
+
+
+    @GetMapping("/checkout")
+    public String checkout(@ModelAttribute("totalDiscount") String totalDiscount, Model model, Principal principal) {
+
+        int number = cartService.findCartByUser(userService.getUserByEmail
+                (principal.getName()).get()).get().getCartItems().size();
+        if (number == 0) {
+            return "redirect:/cart";
+        }
+        if (totalDiscount.isEmpty()) {
+            model.addAttribute("total", cartService.findCartByUser
+                            (userService.getUserByEmail(principal.getName()).get()).get().getCartItems()
+                    .stream()
+                    .map(item -> item.getProduct().getPrice() * item.getQuantity()).reduce(0.0, (a, b) -> a + b));
+        } else {
+            model.addAttribute("total", Double.valueOf(totalDiscount));
+        }
+
+        model.addAttribute("addressDTO", new AddressDTO());
+
+
+        String loggedUser = principal.getName();
+        List<Address> addressList = addressService.getAddressOfUser(loggedUser);
+        model.addAttribute("addressList", addressList);
+
+        return "checkout";
+    }
 
 
 
@@ -55,26 +90,18 @@ public class OrderController {
                                     ) {
 
 
-//        Coupon coupon= couponService.getByCouponCode(couponCode);
-//        int discount = coupon.getDiscountAmount();
+        double total;
+        if (userBooleanMap.get(userService.getUserByEmail(principal.getName()).get().getEmail())){
+             total=userDoubleMap.get(userService.getUserByEmail(principal.getName()).get().getEmail());
+        }
+        else {
+             total= cartService.findCartByUser(userService.getUserByEmail
+                            (principal.getName()).get()).get().getCartItems()
+                    .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
+                    .reduce(0.0, Double::sum);
+        }
 
-
-        double total= cartService.findCartByUser(userService.getUserByEmail
-                        (principal.getName()).get()).get().getCartItems()
-                .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
-                .reduce(0.0, Double::sum);
-//        total -= discount;
-
-//
-//        double tot = cartService.findCartByUser(userService.getUserByEmail
-//                        (principal.getName()).get()).get().getCartItems()
-//                .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
-//                .reduce(0.0, Double::sum);
-//        if (couponApplies){
-//            total=Total;
-//            System.out.println(total);
-//        }
-
+        userBooleanMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), false);
 
 
         User user = userService.getUserByEmail(principal.getName()).get();
@@ -115,17 +142,16 @@ public class OrderController {
                 .reduce(0.0, Double::sum);
         int discount = coupon.getDiscountAmount();
         totalDiscount -= discount;
-        redirectAttributes.addFlashAttribute("Total",totalDiscount);
-       this.couponApplies=true;
-//        System.out.println(totalDiscount);
+//
+        userBooleanMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), true);
+//
+        userDoubleMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), totalDiscount);
 
+        redirectAttributes.addFlashAttribute("totalDiscount",String.valueOf(totalDiscount));
 
       return "redirect:/checkout";
 
     }
-
-
-
 
 
     @GetMapping("/orderSuccess")
