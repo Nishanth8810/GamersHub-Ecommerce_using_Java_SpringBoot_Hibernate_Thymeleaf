@@ -1,13 +1,12 @@
 package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.dto.ProductDTO;
-import com.ecommerce.miniproject.entity.Product;
-import com.ecommerce.miniproject.entity.ProductImage;
+import com.ecommerce.miniproject.entity.*;
+import com.ecommerce.miniproject.repository.ProductColorRepository;
 import com.ecommerce.miniproject.repository.ProductImageRepository;
-import com.ecommerce.miniproject.service.CategoryService;
-import com.ecommerce.miniproject.service.OrderItemService;
-import com.ecommerce.miniproject.service.ProductImageService;
-import com.ecommerce.miniproject.service.ProductService;
+import com.ecommerce.miniproject.repository.ProductSizeRepository;
+import com.ecommerce.miniproject.repository.ProductVariantsRepository;
+import com.ecommerce.miniproject.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,9 +35,26 @@ public class AdminProductController {
     @Autowired
     ProductImageRepository productImageRepository;
     @Autowired
-     OrderItemService orderItemService;
+    OrderItemService orderItemService;
     @Autowired
     ProductImageService productImageService;
+
+    @Autowired
+    ProductVariantsService productVariantsService;
+    @Autowired
+    private ProductVariantsRepository productVariantsRepository;
+    @Autowired
+    ProductSizeRepository productSizeRepository;
+
+    @Autowired
+    ProductColorRepository productColorRepository;
+
+    @Autowired
+    ProductColorService productColorService;
+
+    @Autowired
+    ProductSizeService productSizeService;
+
 
 
     @GetMapping("/admin/products")
@@ -51,43 +67,62 @@ public class AdminProductController {
     public String getProductAdd(Model model) {
         model.addAttribute("productDTO", new ProductDTO());
         model.addAttribute("categories", categoryService.getAllCategory());
+        model.addAttribute("sizes", productSizeRepository.findAll());
+        model.addAttribute("colors", productColorRepository.findAll());
+
+
         return "productsAdd";
     }
 
 
     @GetMapping("/admin/product/delete/{id}")
     public String deleteProduct(@PathVariable long id,
-                                    RedirectAttributes redirectAttributes) {
+                                RedirectAttributes redirectAttributes) {
 
-        if (orderItemService.orderItemCheck(id)){
-            redirectAttributes.addFlashAttribute("deleteError","Cannot delete the product because there are existing orders associated with it.");
+        if (orderItemService.orderItemCheck(id)) {
+            redirectAttributes.addFlashAttribute("deleteError", "Cannot delete the product because there are existing orders associated with it.");
             return "redirect:/admin/products";
 
         }
-        productService.removeProductById(id);
-        redirectAttributes.addFlashAttribute("deleteSuccess","Product Deleted Successfully");
-        return "redirect:/admin/products";
-    }
+        try {
+            productService.removeProductById(id);
+            redirectAttributes.addFlashAttribute("deleteSuccess", "Product Deleted Successfully");
+            return "redirect:/admin/products";
 
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("deleteError", "Cannot delete the product because there are existing orders associated with it.");
+            return "redirect:/admin/products";
+
+
+        }
+
+    }
 
 
     @PostMapping("/admin/products/add")
     public String productAddPost(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
                                  BindingResult bindingResult,
                                  Model model,
-                                 @RequestParam("productImages") List<MultipartFile> fileList)
+                                 @RequestParam("productImages") List<MultipartFile> fileList,
+                                 @RequestParam("productColor")String productColors,
+                                 @RequestParam("productSize")String productSizes)
+
             throws IOException {
 
 
-
         if (bindingResult.hasErrors()) {
-            if (fileList.get(0).isEmpty()){
+            if (fileList.get(0).isEmpty()) {
+//                model.addAttribute("productVariants", productVariantsService.getAllVariants());
                 model.addAttribute("errorProductImage", "add at least one image");
                 model.addAttribute("product", productDTO);
                 model.addAttribute("categories", categoryService.getAllCategory());
+                model.addAttribute("sizes", productSizeRepository.findAll());
+                model.addAttribute("colors", productColorRepository.findAll());
                 return "productsAdd";
             }
-
+            model.addAttribute("sizes", productSizeRepository.findAll());
+            model.addAttribute("colors", productColorRepository.findAll());
+            model.addAttribute("productVariants", productVariantsService.getAllVariants());
             model.addAttribute("categories", categoryService.getAllCategory());
             return "productsAdd";
         }
@@ -98,7 +133,7 @@ public class AdminProductController {
             model.addAttribute("errorProduct", "Product with same name already exits");
             return "productsAdd";
         }
-        if (fileList.get(0).isEmpty()){
+        if (fileList.get(0).isEmpty()) {
             model.addAttribute("errorProduct", "add at least one image");
             model.addAttribute("product", productDTO);
             model.addAttribute("categories", categoryService.getAllCategory());
@@ -115,6 +150,30 @@ public class AdminProductController {
 
         product.setImageName(fileList.get(0).getOriginalFilename());
         productService.addProduct(product);
+
+        ProductVariants productVariants= new ProductVariants();
+        ProductColor productColor=productColorRepository.findById(Long.valueOf(productColors)).get();
+        ProductSize productSize=productSizeRepository.findById(Long.valueOf(productColors)).get();
+        productVariants.setProductColor(productColor);
+        productVariants.setProductSize(productSize);
+        productVariants.setProduct(product);
+        System.out.println(productColors+" "+productSizes);
+
+        productVariantsService.saveVariant(productVariants);
+
+
+
+
+
+//
+//        ProductVariants productVariants = new ProductVariants();
+//        productVariants.setSize(productDTO.getSize());
+//        productVariants.setColor(productDTO.getColor());
+//        productVariants.setProduct(product);
+//        productVariantsRepository.save(productVariants);
+
+
+
 
         for (MultipartFile file : fileList) {
             String imageUUID = file.getOriginalFilename();
@@ -169,18 +228,13 @@ public class AdminProductController {
     }
 
     @GetMapping("/admin/search/products")
-    public String getProductSearch(@RequestParam("keyword")String keyword,Model model){
+    public String getProductSearch(@RequestParam("keyword") String keyword, Model model) {
 
 
-        List<Product> productList=productService.findByName(keyword);
+        List<Product> productList = productService.findByName(keyword);
         model.addAttribute("products", productList);
         return "products";
     }
-
-
-
-
-
 
 
     @PostMapping("admin/products/update/{id}")

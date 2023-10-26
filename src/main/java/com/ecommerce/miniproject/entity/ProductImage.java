@@ -15,6 +15,7 @@ public class ProductImage {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
     private Product product;
+
     @Size(min = 1,message = "add at least one image")
     private String imageName;
 

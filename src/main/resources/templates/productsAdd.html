@@ -71,6 +71,27 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label for="productSize">Select Size</label>
+                    <select class="form-control" th:field="*{productSize}" id="productSize" name="productSize">
+                        <option th:each="size :${sizes}"
+                                th:value="${size.id}"
+                                th:text="${size.size}"
+                        >
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="productColor">Select Size</label>
+                    <select class="form-control" th:field="*{productColor}" id="productColor" name="productColor">
+                        <option th:each="color :${colors}"
+                                th:value="${color.id}"
+                                th:text="${color.color}"
+                        >
+                    </select>
+                </div>
+
+
+
+                <div class="form-group">
                     <label for="quantity">quantity</label>
                     <input type="number" class="form-control" required th:field="*{quantity}" name="quantity" id="quantity"
                            placeholder="Quantity">

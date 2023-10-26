@@ -42,7 +42,7 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-4">
-            <form th:action="@{/admin/categories/update" method="post" th:object="${categoryDTO}">
+            <form th:action="@{/admin/categories/update/{id}}" method="post" th:object="${categoryDTO}">
                 <input type="hidden" name="id"  th:field="*{id}">
                 <div class="form-group">
                     <label for="name">Name</label>

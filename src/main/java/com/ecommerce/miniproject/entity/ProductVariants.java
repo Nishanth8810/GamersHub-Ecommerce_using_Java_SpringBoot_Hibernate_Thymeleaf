@@ -13,14 +13,15 @@ import java.util.List;
 @Setter
 public class ProductVariants {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-   private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    @Column
-    private  String size;
-
-    @Column
-    private String color;
+    @ManyToOne
+    @JoinColumn(name = "color_id")
+    private ProductColor productColor;
+    @ManyToOne
+    @JoinColumn(name = "size_id")
+    private ProductSize productSize;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
