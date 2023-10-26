@@ -12,8 +12,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +40,8 @@ public class OrderController {
     @Autowired
     OrderStatusRepository orderStatusRepository;
 
-    @Autowired CouponService couponService;
+    @Autowired
+    CouponService couponService;
 
 
     Map<String, Boolean> userBooleanMap = new HashMap<>();
@@ -46,9 +49,10 @@ public class OrderController {
     Map<String, Double> userDoubleMap = new HashMap<>();
 
 
-
     @GetMapping("/checkout")
-    public String checkout(@ModelAttribute("totalDiscount") String totalDiscount, Model model, Principal principal) {
+    public String checkout(@ModelAttribute("appliedCoupon") String couponCode,
+                           @ModelAttribute("totalDiscount") String totalDiscount,
+                           Model model, Principal principal) {
 
         int number = cartService.findCartByUser(userService.getUserByEmail
                 (principal.getName()).get()).get().getCartItems().size();
@@ -65,6 +69,7 @@ public class OrderController {
         }
 
         model.addAttribute("addressDTO", new AddressDTO());
+        model.addAttribute("couponApplied",couponCode);
 
 
         String loggedUser = principal.getName();
@@ -73,7 +78,6 @@ public class OrderController {
 
         return "checkout";
     }
-
 
 
     @InitBinder
@@ -85,24 +89,27 @@ public class OrderController {
 
     @PostMapping("/checkout/confirmOrder")
     public String confirmOrder(@Valid @ModelAttribute("selectedAddress") int id,
+                               @ModelAttribute("appliedCoupon") String couponCode,
                                Principal principal,
                                RedirectAttributes redirectAttributes
-                                    ) {
+    ) {
 
 
         double total;
-        if (userBooleanMap.get(userService.getUserByEmail(principal.getName()).get().getEmail())){
-             total=userDoubleMap.get(userService.getUserByEmail(principal.getName()).get().getEmail());
-        }
-        else {
-             total= cartService.findCartByUser(userService.getUserByEmail
+        if (userBooleanMap.get(userService.getUserByEmail(principal.getName()).get().getEmail())) {
+            total = userDoubleMap.get(userService.getUserByEmail(principal.getName()).get().getEmail());
+        } else {
+            total = cartService.findCartByUser(userService.getUserByEmail
                             (principal.getName()).get()).get().getCartItems()
                     .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
                     .reduce(0.0, Double::sum);
         }
 
         userBooleanMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), false);
-
+        Coupon coupon=couponService.getByCouponCode(couponCode);
+        int quantity=coupon.getUsageLimit()-1;
+        coupon.setUsageLimit(quantity);
+        couponService.saveCoupon(coupon);
 
         User user = userService.getUserByEmail(principal.getName()).get();
         Orders orders = new Orders();
@@ -125,34 +132,11 @@ public class OrderController {
             orderItem.setOrders(orders);
             orderItemService.saveOrderItem(orderItem);
         }
+
         redirectAttributes.addFlashAttribute("orderId", orderId);
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
         return "redirect:/orderSuccess";
     }
-
-    @PostMapping("order/couponCode")
-    public String getCoupon(@RequestParam("couponCode") String couponCode,Principal principal,RedirectAttributes redirectAttributes
-    ){
-
-      Coupon coupon= couponService.getByCouponCode(couponCode);
-
-     double totalDiscount= cartService.findCartByUser(userService.getUserByEmail
-                        (principal.getName()).get()).get().getCartItems()
-                .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
-                .reduce(0.0, Double::sum);
-        int discount = coupon.getDiscountAmount();
-        totalDiscount -= discount;
-
-        userBooleanMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), true);
-
-        userDoubleMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), totalDiscount);
-
-        redirectAttributes.addFlashAttribute("totalDiscount",String.valueOf(totalDiscount));
-
-      return "redirect:/checkout";
-
-    }
-
 
     @GetMapping("/orderSuccess")
     public String getOrderSuccess(Model model, @ModelAttribute("orderId") long orderId) {
@@ -163,4 +147,50 @@ public class OrderController {
         return "orderSuccess";
 
     }
+
+    @PostMapping("order/couponCode")
+    public String getCoupon(@RequestParam("couponCode") String couponCode, Principal principal, RedirectAttributes redirectAttributes
+    ) {
+
+        Coupon coupon = couponService.getByCouponCode(couponCode);
+        if (coupon==null){
+            redirectAttributes.addFlashAttribute("errorCoupon","Enter valid a coupon");
+            return "redirect:/checkout";
+        }
+
+        if(coupon.getExpiryDate().isBefore(ChronoLocalDate.from(LocalDateTime.now()))){
+
+            redirectAttributes.addFlashAttribute("errorCoupon","Coupon is no longer valid");
+            return "redirect:/checkout";
+        }
+
+        if (coupon.getUsageLimit()<=0){
+            redirectAttributes.addFlashAttribute("errorCoupon","Coupon has reached its limit");
+            return "redirect:/checkout";
+        }
+
+        double totalDiscount = cartService.findCartByUser(userService.getUserByEmail
+                        (principal.getName()).get()).get().getCartItems()
+                .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
+                .reduce(0.0, Double::sum);
+
+        if (totalDiscount<coupon.getDiscountAmount()){
+            redirectAttributes.addFlashAttribute("errorCoupon","this coupon cannot be applied to this order");
+            return "redirect:/checkout";
+        }
+
+        int discount = coupon.getDiscountAmount();
+        totalDiscount -= discount;
+        userBooleanMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), true);
+        userDoubleMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), totalDiscount);
+
+        redirectAttributes.addFlashAttribute("successCoupon","Coupon has applied ");
+        redirectAttributes.addFlashAttribute("totalDiscount", String.valueOf(totalDiscount));
+        redirectAttributes.addFlashAttribute("appliedCoupon",coupon.getCouponCode());
+
+        return "redirect:/checkout";
+
+    }
+
+
 }
