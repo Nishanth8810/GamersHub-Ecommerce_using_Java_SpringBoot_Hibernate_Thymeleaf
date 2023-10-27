@@ -108,6 +108,10 @@
         </div>
         <div class="col-sm-9">
             <div class="row">
+                <div th:if="${noProduct}" class="no-product-message" th:text="${noProduct}">
+<!--                    <p>No products found for keyword: <span th:text="${keyword}"></span></p>-->
+                </div>
+
                 <!-- Loop through your products and create product cards -->
                 <div class="col-md-4" th:each="product : ${products}">
                     <div class="card" style="margin-top: 20px">

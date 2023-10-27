@@ -4,9 +4,11 @@ import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.repository.*;
 import com.ecommerce.miniproject.service.*;
+import com.razorpay.RazorpayException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -191,6 +193,15 @@ public class OrderController {
         return "redirect:/checkout";
 
     }
+
+    ///////////razorPay///////////
+
+    @PreAuthorize("permitAll")
+    @GetMapping({"/createTransaction/{amount}"})
+    public void createTransaction(@PathVariable(name = "amount")Double amount) throws RazorpayException {
+       orderService.createTransaction(amount);
+
+}
 
 
 }
