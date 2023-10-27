@@ -2,15 +2,12 @@ package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.dto.CategoryDTO;
 import com.ecommerce.miniproject.dto.CouponDTO;
-import com.ecommerce.miniproject.entity.Category;
-import com.ecommerce.miniproject.entity.Coupon;
-import com.ecommerce.miniproject.entity.Role;
-import com.ecommerce.miniproject.entity.User;
+import com.ecommerce.miniproject.entity.*;
+import com.ecommerce.miniproject.repository.ProductColorRepository;
+import com.ecommerce.miniproject.repository.ProductSizeRepository;
 import com.ecommerce.miniproject.repository.ProductVariantsRepository;
 import com.ecommerce.miniproject.repository.RoleRepository;
-import com.ecommerce.miniproject.service.CategoryService;
-import com.ecommerce.miniproject.service.CouponService;
-import com.ecommerce.miniproject.service.UserService;
+import com.ecommerce.miniproject.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,7 +34,12 @@ public class AdminController {
     CouponService couponService;
 
     @Autowired
-    ProductVariantsRepository productVariantsRepository;
+    ProductVariantsService productVariantsService;
+    @Autowired
+    ProductSizeRepository productSizeRepository;
+
+    @Autowired
+    ProductColorRepository productColorRepository;
 
 //////////////Admin Section/////////////////
 
@@ -262,6 +264,24 @@ public class AdminController {
         model.addAttribute("couponDTO",couponDTO);
         return "couponUpdate";
 
+    }
+
+
+    //////////////variants///////
+    @GetMapping("/admin/variants")
+    public String getVariants(Model model){
+        model.addAttribute("color",productColorRepository.findAll());
+        model.addAttribute("size",productSizeRepository.findAll());
+        return "variants";
+
+    }
+    @GetMapping("/admin/variants/add")
+    public String getVariantsAdd(Model model){
+        model.addAttribute("variantSize",new ProductSize());
+//        model.addAttribute("variantColor",new ProductColor());
+
+
+        return "variantsAdd";
     }
 }
 

@@ -42,18 +42,10 @@ public class AdminProductController {
     @Autowired
     ProductVariantsService productVariantsService;
     @Autowired
-    private ProductVariantsRepository productVariantsRepository;
-    @Autowired
     ProductSizeRepository productSizeRepository;
 
     @Autowired
     ProductColorRepository productColorRepository;
-
-    @Autowired
-    ProductColorService productColorService;
-
-    @Autowired
-    ProductSizeService productSizeService;
 
 
 
@@ -104,15 +96,14 @@ public class AdminProductController {
                                  BindingResult bindingResult,
                                  Model model,
                                  @RequestParam("productImages") List<MultipartFile> fileList,
-                                 @RequestParam("productColor")String productColors,
-                                 @RequestParam("productSize")String productSizes)
+                                 @RequestParam("productColor")List<String> productColors,
+                                 @RequestParam("productSize")List<String> productSizes)
 
             throws IOException {
 
 
         if (bindingResult.hasErrors()) {
             if (fileList.get(0).isEmpty()) {
-//                model.addAttribute("productVariants", productVariantsService.getAllVariants());
                 model.addAttribute("errorProductImage", "add at least one image");
                 model.addAttribute("product", productDTO);
                 model.addAttribute("categories", categoryService.getAllCategory());
@@ -151,28 +142,17 @@ public class AdminProductController {
         product.setImageName(fileList.get(0).getOriginalFilename());
         productService.addProduct(product);
 
-        ProductVariants productVariants= new ProductVariants();
-        ProductColor productColor=productColorRepository.findById(Long.valueOf(productColors)).get();
-        ProductSize productSize=productSizeRepository.findById(Long.valueOf(productColors)).get();
-        productVariants.setProductColor(productColor);
-        productVariants.setProductSize(productSize);
-        productVariants.setProduct(product);
-        System.out.println(productColors+" "+productSizes);
-
-        productVariantsService.saveVariant(productVariants);
-
-
-
-
-
-//
-//        ProductVariants productVariants = new ProductVariants();
-//        productVariants.setSize(productDTO.getSize());
-//        productVariants.setColor(productDTO.getColor());
-//        productVariants.setProduct(product);
-//        productVariantsRepository.save(productVariants);
-
-
+        List<ProductVariants> productVariantsList = new ArrayList<>();
+        for (int i = 0; i < productColors.size(); i++) {
+            ProductVariants productVariants = new ProductVariants();
+            ProductColor productColor = productColorRepository.findById(Long.valueOf(productColors.get(i))).get();
+            ProductSize productSize = productSizeRepository.findById(Long.valueOf(productSizes.get(i))).get();
+            productVariants.setProductColor(productColor);
+            productVariants.setProductSize(productSize);
+            productVariants.setProduct(product);
+            productVariantsList.add(productVariants);
+        }
+        product.setProductVariants(productVariantsList);
 
 
         for (MultipartFile file : fileList) {
@@ -265,7 +245,6 @@ public class AdminProductController {
         }
 
     }
-
 
     private void updateProductDetails(Product product, ProductDTO productDTO) {
         product.setName(productDTO.getName());

@@ -106,6 +106,19 @@
                 <span th:text="${product.weight}"></span> grams.
             </h5>
             <p th:text="${product.description}"></p>
+
+            <div class="col-sm-6 " th:if="${product.productVariants}">
+                <h6>Select Variant:</h6>
+                <select name="selectedVariant" class="form-control">
+                    <option value="">-- Select Variant --</option>
+                    <div th:each="productVariant : ${product.productVariants}">
+                        <option th:value="${productVariant.id}">
+                            <span th:text="${productVariant.productSize.size} + ' - ' + ${productVariant.productColor.color}"></span>
+                        </option>
+                    </div>
+                </select>
+            </div>
+<br>
             <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" id="addToCartButton" class="btn btn-primary">Add to cart</a>
         </div>
         <h4 th:if="${alreadyPresent}" class="text-warning" th:text="${alreadyPresent}"></h4>
