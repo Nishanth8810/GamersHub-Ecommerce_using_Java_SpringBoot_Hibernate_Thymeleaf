@@ -1,12 +1,12 @@
 package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.dto.ProductDTO;
-import com.ecommerce.miniproject.entity.Product;
-import com.ecommerce.miniproject.entity.ProductImage;
+import com.ecommerce.miniproject.entity.*;
+import com.ecommerce.miniproject.repository.ProductColorRepository;
 import com.ecommerce.miniproject.repository.ProductImageRepository;
-import com.ecommerce.miniproject.service.CategoryService;
-import com.ecommerce.miniproject.service.OrderItemService;
-import com.ecommerce.miniproject.service.ProductService;
+import com.ecommerce.miniproject.repository.ProductSizeRepository;
+import com.ecommerce.miniproject.repository.ProductVariantsRepository;
+import com.ecommerce.miniproject.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,7 +35,18 @@ public class AdminProductController {
     @Autowired
     ProductImageRepository productImageRepository;
     @Autowired
-     OrderItemService orderItemService;
+    OrderItemService orderItemService;
+    @Autowired
+    ProductImageService productImageService;
+
+    @Autowired
+    ProductVariantsService productVariantsService;
+    @Autowired
+    ProductSizeRepository productSizeRepository;
+
+    @Autowired
+    ProductColorRepository productColorRepository;
+
 
 
     @GetMapping("/admin/products")
@@ -48,36 +59,61 @@ public class AdminProductController {
     public String getProductAdd(Model model) {
         model.addAttribute("productDTO", new ProductDTO());
         model.addAttribute("categories", categoryService.getAllCategory());
+        model.addAttribute("sizes", productSizeRepository.findAll());
+        model.addAttribute("colors", productColorRepository.findAll());
+
+
         return "productsAdd";
     }
 
 
     @GetMapping("/admin/product/delete/{id}")
     public String deleteProduct(@PathVariable long id,
-                                    RedirectAttributes redirectAttributes) {
+                                RedirectAttributes redirectAttributes) {
 
-        if (orderItemService.orderItemCheck(id)){
-            redirectAttributes.addFlashAttribute("deleteError","Cannot delete the product because there are existing orders associated with it.");
+        if (orderItemService.orderItemCheck(id)) {
+            redirectAttributes.addFlashAttribute("deleteError", "Cannot delete the product because there are existing orders associated with it.");
             return "redirect:/admin/products";
 
         }
-        productService.removeProductById(id);
-        redirectAttributes.addFlashAttribute("deleteSuccess","Order Deleted Successfully");
-        return "redirect:/admin/products";
-    }
+        try {
+            productService.removeProductById(id);
+            redirectAttributes.addFlashAttribute("deleteSuccess", "Product Deleted Successfully");
+            return "redirect:/admin/products";
 
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("deleteError", "Cannot delete the product because there are existing orders associated with it.");
+            return "redirect:/admin/products";
+
+
+        }
+
+    }
 
 
     @PostMapping("/admin/products/add")
     public String productAddPost(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
                                  BindingResult bindingResult,
                                  Model model,
-                                 @RequestParam("productImage") List<MultipartFile> fileList)
+                                 @RequestParam("productImages") List<MultipartFile> fileList,
+                                 @RequestParam("productColor")List<String> productColors,
+                                 @RequestParam("productSize")List<String> productSizes)
+
             throws IOException {
 
 
-
         if (bindingResult.hasErrors()) {
+            if (fileList.get(0).isEmpty()) {
+                model.addAttribute("errorProductImage", "add at least one image");
+                model.addAttribute("product", productDTO);
+                model.addAttribute("categories", categoryService.getAllCategory());
+                model.addAttribute("sizes", productSizeRepository.findAll());
+                model.addAttribute("colors", productColorRepository.findAll());
+                return "productsAdd";
+            }
+            model.addAttribute("sizes", productSizeRepository.findAll());
+            model.addAttribute("colors", productColorRepository.findAll());
+            model.addAttribute("productVariants", productVariantsService.getAllVariants());
             model.addAttribute("categories", categoryService.getAllCategory());
             return "productsAdd";
         }
@@ -86,6 +122,12 @@ public class AdminProductController {
             model.addAttribute("product", productDTO);
             model.addAttribute("categories", categoryService.getAllCategory());
             model.addAttribute("errorProduct", "Product with same name already exits");
+            return "productsAdd";
+        }
+        if (fileList.get(0).isEmpty()) {
+            model.addAttribute("errorProduct", "add at least one image");
+            model.addAttribute("product", productDTO);
+            model.addAttribute("categories", categoryService.getAllCategory());
             return "productsAdd";
         }
         Product product = new Product();
@@ -99,6 +141,19 @@ public class AdminProductController {
 
         product.setImageName(fileList.get(0).getOriginalFilename());
         productService.addProduct(product);
+
+        List<ProductVariants> productVariantsList = new ArrayList<>();
+        for (int i = 0; i < productColors.size(); i++) {
+            ProductVariants productVariants = new ProductVariants();
+            ProductColor productColor = productColorRepository.findById(Long.valueOf(productColors.get(i))).get();
+            ProductSize productSize = productSizeRepository.findById(Long.valueOf(productSizes.get(i))).get();
+            productVariants.setProductColor(productColor);
+            productVariants.setProductSize(productSize);
+            productVariants.setProduct(product);
+            productVariantsList.add(productVariants);
+        }
+        product.setProductVariants(productVariantsList);
+
 
         for (MultipartFile file : fileList) {
             String imageUUID = file.getOriginalFilename();
@@ -114,10 +169,10 @@ public class AdminProductController {
             return "productsAdd";
         }
 
-        int maxImages = 3;
+        int maxImages = 10;
 
 
-        for (int i = 1; i <= maxImages && i <= fileList.size(); i++) {
+        for (int i = 1; i <= maxImages && i < fileList.size(); i++) {
             ProductImage productImage = new ProductImage();
             productImage.setProduct(product);
             productImage.setImageName(fileList.get(i).getOriginalFilename());
@@ -153,80 +208,20 @@ public class AdminProductController {
     }
 
     @GetMapping("/admin/search/products")
-    public String getProductSearch(@RequestParam("keyword")String keyword,Model model){
+    public String getProductSearch(@RequestParam("keyword") String keyword, Model model) {
 
 
-        List<Product> productList=productService.findByName(keyword);
+        List<Product> productList = productService.findByName(keyword);
         model.addAttribute("products", productList);
         return "products";
     }
 
 
-
-
-
-//    @PostMapping("/admin/products/update/{id}")
-//    public String postUpdateProduct(@ModelAttribute("productDTO") ProductDTO productDTO,
-//                                    BindingResult bindingResult,
-//                                    Model model
-//                                    ,@RequestParam("productImage")
-//                                        List<MultipartFile> fileList) throws IOException {
-//
-//        Product product=productService.getProductById(productDTO.getId()).orElseThrow();
-//
-//        if (bindingResult.hasErrors()) {
-//            model.addAttribute("categories", categoryService.getAllCategory());
-//            return "productUpdate";
-//        }
-//
-//        product.setName(productDTO.getName());
-//        product.setCategory(categoryService.getCategoryById(productDTO.getCategoryId()).get());
-//        product.setPrice(productDTO.getPrice());
-//        product.setWeight(productDTO.getWeight());
-//        product.setDescription(productDTO.getDescription());
-//
-//        product.setImageName(fileList.get(0).getOriginalFilename());
-//        productService.addProduct(product);
-//
-//
-//        for (MultipartFile file : fileList) {
-//            String imageUUID = file.getOriginalFilename();
-//            Path fileNameAndPath = Paths.get(uploadDir, imageUUID);
-//            Files.write(fileNameAndPath, file.getBytes());
-//        }
-//
-//        List<ProductImage> productImageList = new ArrayList<>();
-//
-//        if (fileList.size() > 4) {
-//            model.addAttribute("categories", categoryService.getAllCategory());
-//            model.addAttribute("errorProduct", "please add only 4 images");
-//            return "productsAdd";
-//        }
-//
-//        int maxImages = 3;
-//
-//
-//        for (int i = 1; i <= maxImages && i <= fileList.size(); i++) {
-//            ProductImage productImage = new ProductImage();
-//            productImage.setProduct(productImage.getProduct());
-//            productImage.setImageName(fileList.get(i).getOriginalFilename());
-//            productImageRepository.save(productImage);
-//            productImageList.add(productImage);
-//        }
-//
-//        product.setProductImages(productImageList);
-//        productService.addProduct(product);
-//        return "redirect:/admin/products";
-//
-//
-//    }
-    // ... Other controller methods ...
-
     @PostMapping("admin/products/update/{id}")
     public String postUpdateProduct(@ModelAttribute("productDTO") @Valid ProductDTO productDTO,
                                     BindingResult bindingResult,
                                     Model model,
-                                    @RequestParam("productImage") List<MultipartFile> fileList) {
+                                    @RequestParam("productImage") List<MultipartFile> fileList) throws IOException {
         if (bindingResult.hasErrors()) {
             model.addAttribute("categories", categoryService.getAllCategory());
             return "productUpdate";
@@ -248,8 +243,8 @@ public class AdminProductController {
 
             return "productUpdate";
         }
-    }
 
+    }
 
     private void updateProductDetails(Product product, ProductDTO productDTO) {
         product.setName(productDTO.getName());
@@ -260,11 +255,16 @@ public class AdminProductController {
         product.setDescription(productDTO.getDescription());
     }
 
-    private void saveProductImages(Product product, List<MultipartFile> fileList) throws IOException {
-        List<ProductImage> productImageList = new ArrayList<>();
-        int maxImages = 3;
 
-        for (int i = 0; i < maxImages && i < fileList.size(); i++) {
+    private void saveProductImages(Product product, List<MultipartFile> fileList) throws IOException {
+
+
+        productImageService.removeImageById(product.getId());
+        product.setImageName(fileList.get(0).getOriginalFilename());
+        List<ProductImage> productImageList = new ArrayList<>();
+        int maxImages = 10;
+
+        for (int i = 1; i < maxImages && i < fileList.size(); i++) {
             MultipartFile file = fileList.get(i);
             if (!file.isEmpty()) {
                 String imageUUID = UUID.randomUUID() + "_" + file.getOriginalFilename();
@@ -274,7 +274,6 @@ public class AdminProductController {
                 ProductImage productImage = new ProductImage();
                 productImage.setProduct(product);
                 productImage.setImageName(imageUUID);
-                productImageRepository.save(productImage);
                 productImageList.add(productImage);
             }
         }

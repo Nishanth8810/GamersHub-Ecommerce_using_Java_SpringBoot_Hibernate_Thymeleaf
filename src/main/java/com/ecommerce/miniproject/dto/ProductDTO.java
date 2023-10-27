@@ -29,6 +29,13 @@ public class ProductDTO {
 
     @Size(min = 1,message = "Please add at least one image")
     private String imageName;
+
+    private String productColor;
+
+    private String productSize;
+
+
+
 //
 //    private String imageName2;
 //

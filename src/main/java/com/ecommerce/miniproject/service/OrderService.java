@@ -29,8 +29,6 @@ public class OrderService {
     }
 
     public boolean isAddressUsedInOrder(int id) {
-         return !orderRepository.findByAddressId(id);
-
-
+         return orderRepository.existsByAddressId(id);
     }
 }

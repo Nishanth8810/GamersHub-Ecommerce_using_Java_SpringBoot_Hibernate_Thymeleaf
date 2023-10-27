@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Orders,Long> {
 
-    boolean findByAddressId(int id);
+    boolean existsByAddressId(int id);
     Orders findById(int id);
 }

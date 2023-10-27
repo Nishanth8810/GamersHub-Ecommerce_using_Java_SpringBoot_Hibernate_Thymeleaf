@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product,Long> {
      List<Product> findAllByCategory_id(int id);
 
-    boolean getProductByName(String name);
+    boolean existsByName(String name);
 
     List<Product> findByNameContaining(String name);
 

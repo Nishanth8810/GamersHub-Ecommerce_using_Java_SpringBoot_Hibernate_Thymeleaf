@@ -1,6 +1,7 @@
 package com.ecommerce.miniproject.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -15,6 +16,7 @@ public class ProductImage {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @Size(min = 1,message = "add at least one image")
     private String imageName;
 
 }

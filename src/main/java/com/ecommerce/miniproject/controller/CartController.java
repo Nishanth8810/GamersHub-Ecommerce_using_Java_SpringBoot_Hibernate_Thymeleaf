@@ -42,6 +42,9 @@ public class CartController {
     @Autowired
     CartItemService cartItemService;
 
+    @Autowired
+    OrderController orderController;
+
 
     @GetMapping("/addToCart/{id}")
     public String addToCart(@PathVariable int id, Principal principal, RedirectAttributes redirectAttributes) {
@@ -52,10 +55,7 @@ public class CartController {
                 (productService.getProductById(id).orElseThrow(), cart);
 
         if (cartItemOptional.isPresent()) {
-//            CartItem cartItem = cartItemOptional.get();
-//            cartItem.setQuantity(cartItem.getQuantity() + 1);
-//            cartItemRepository.save(cartItem);
-            redirectAttributes.addFlashAttribute("alreadyPresent","item is already in your cart :)");
+            redirectAttributes.addFlashAttribute("alreadyPresent", "item is already in your cart :)");
 
         } else {
             CartItem cartItem = new CartItem();
@@ -68,50 +68,9 @@ public class CartController {
 
     }
 
-    @GetMapping("/cart")
-    public String cartGet(Model model, Principal principal) {
-        int number = cartService.findCartByUser
-                (userService.getUserByEmail(principal.getName()).get()).get().getCartItems().size();
-        if (number == 0) {
-            return "CartEmpty";
-        }
 
-        model.addAttribute("cartCount", cartService.findCartByUser
-                (userService.getUserByEmail(principal.getName()).get()).get().getCartItems().size());
 
-        model.addAttribute("total", cartService.findCartByUser
-                        (userService.getUserByEmail(principal.getName()).get()).get().getCartItems()
-                .stream()
-                .map(item -> item.getProduct().getPrice() * item.getQuantity())
-                .reduce(0.0, (a, b) -> a + b));
 
-        model.addAttribute("cart", cartService.findCartByUser
-                (userService.getUserByEmail(principal.getName()).get()).get().getCartItems());
-        return "cart";
-    }
-
-    @GetMapping("/checkout")
-    public String checkout(Model model, Principal principal) {
-
-        int number = cartService.findCartByUser(userService.getUserByEmail
-                (principal.getName()).get()).get().getCartItems().size();
-        if (number == 0) {
-            return "redirect:/cart";
-        }
-
-        model.addAttribute("total", cartService.findCartByUser
-                        (userService.getUserByEmail(principal.getName()).get()).get().getCartItems()
-                .stream()
-                .map(item -> item.getProduct().getPrice() * item.getQuantity()).reduce(0.0, (a, b) -> a + b));
-        model.addAttribute("addressDTO", new AddressDTO());
-//        model.addAttribute("Total", Total);
-
-        String loggedUser = principal.getName();
-        List<Address> addressList = addressService.getAddressOfUser(loggedUser);
-        model.addAttribute("addressList", addressList);
-
-        return "checkout";
-    }
 
     @InitBinder
     public void initBinder(WebDataBinder webDataBinder) {
@@ -127,7 +86,7 @@ public class CartController {
         String currentPrincipalName = authentication.getName();
         User user = userService.getUserByEmail(currentPrincipalName).get();
 
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             return "checkout";
         }
 
@@ -152,6 +111,35 @@ public class CartController {
         return "redirect:/cart";
 
 
+    }
+
+    @GetMapping("/cart")
+    public String cartGet(Model model, Principal principal) {
+
+        List<User> userList = userService.getAllUser();
+        for (User user : userList) {
+            orderController.userBooleanMap.put(user.getEmail(), false);
+            orderController.userDoubleMap.put(user.getEmail(), 0.0);
+        }
+
+        int number = cartService.findCartByUser
+                (userService.getUserByEmail(principal.getName()).get()).get().getCartItems().size();
+        if (number == 0) {
+            return "CartEmpty";
+        }
+
+        model.addAttribute("cartCount", cartService.findCartByUser
+                (userService.getUserByEmail(principal.getName()).get()).get().getCartItems().size());
+
+        model.addAttribute("total", cartService.findCartByUser
+                        (userService.getUserByEmail(principal.getName()).get()).get().getCartItems()
+                .stream()
+                .map(item -> item.getProduct().getPrice() * item.getQuantity())
+                .reduce(0.0, (a, b) -> a + b));
+
+        model.addAttribute("cart", cartService.findCartByUser
+                (userService.getUserByEmail(principal.getName()).get()).get().getCartItems());
+        return "cart";
     }
 
     @GetMapping("/cart/increaseQuantity/{id}")
