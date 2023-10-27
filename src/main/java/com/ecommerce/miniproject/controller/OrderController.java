@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -49,6 +50,8 @@ public class OrderController {
     Map<String, Boolean> userBooleanMap = new HashMap<>();
 
     Map<String, Double> userDoubleMap = new HashMap<>();
+    @Autowired
+    private CartRepository cartRepository;
 
 
     @GetMapping("/checkout")
@@ -77,6 +80,8 @@ public class OrderController {
         String loggedUser = principal.getName();
         List<Address> addressList = addressService.getAddressOfUser(loggedUser);
         model.addAttribute("addressList", addressList);
+//        model.addAttribute("orderId", orderId);
+
 
         return "checkout";
     }
@@ -92,10 +97,10 @@ public class OrderController {
     @PostMapping("/checkout/confirmOrder")
     public String confirmOrder(@Valid @ModelAttribute("selectedAddress") int id,
                                @ModelAttribute("appliedCoupon") String couponCode,
+                               @ModelAttribute("paymentMethod") String paymentMethod,
                                Principal principal,
-                               RedirectAttributes redirectAttributes
-    ) {
-
+                               RedirectAttributes redirectAttributes,Model model
+    ) throws RazorpayException {
 
         double total;
         if (userBooleanMap.get(userService.getUserByEmail(principal.getName()).get().getEmail())) {
@@ -107,11 +112,17 @@ public class OrderController {
                     .reduce(0.0, Double::sum);
         }
 
+        TransactionDetails transactionDetails = orderService.createTransaction(total);
+        String RazorOrderId = transactionDetails.getOrderId();
+
         userBooleanMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), false);
         Coupon coupon=couponService.getByCouponCode(couponCode);
-        int quantity=coupon.getUsageLimit()-1;
-        coupon.setUsageLimit(quantity);
-        couponService.saveCoupon(coupon);
+
+        if (coupon!=null){
+            int quantity=coupon.getUsageLimit()-1;
+            coupon.setUsageLimit(quantity);
+            couponService.saveCoupon(coupon);
+        }
 
         User user = userService.getUserByEmail(principal.getName()).get();
         Orders orders = new Orders();
@@ -135,9 +146,13 @@ public class OrderController {
             orderItemService.saveOrderItem(orderItem);
         }
 
+
+        model.addAttribute("orderId", RazorOrderId);
+        model.addAttribute("amount",total*100);
+//
         redirectAttributes.addFlashAttribute("orderId", orderId);
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
-        return "redirect:/orderSuccess";
+        return "razorPayment";
     }
 
     @GetMapping("/orderSuccess")
@@ -193,15 +208,5 @@ public class OrderController {
         return "redirect:/checkout";
 
     }
-
-    ///////////razorPay///////////
-
-    @PreAuthorize("permitAll")
-    @GetMapping({"/createTransaction/{amount}"})
-    public void createTransaction(@PathVariable(name = "amount")Double amount) throws RazorpayException {
-       orderService.createTransaction(amount);
-
-}
-
 
 }
