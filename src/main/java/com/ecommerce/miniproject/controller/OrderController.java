@@ -148,8 +148,8 @@ public class OrderController {
     }
 
     @PostMapping("order/couponCode")
-    public String getCoupon(@RequestParam("couponCode") String couponCode, Principal principal, RedirectAttributes redirectAttributes
-    ) {
+    public String getCoupon(@RequestParam("couponCode") String couponCode, Principal principal,
+                            RedirectAttributes redirectAttributes) {
 
         Coupon coupon = couponService.getByCouponCode(couponCode);
         if (coupon == null) {
@@ -174,7 +174,8 @@ public class OrderController {
                 .reduce(0.0, Double::sum);
 
         if (totalDiscount < coupon.getDiscountAmount()) {
-            redirectAttributes.addFlashAttribute("errorCoupon", "this coupon cannot be applied to this order");
+            redirectAttributes.addFlashAttribute("errorCoupon",
+                    "this coupon cannot be applied to this order");
             return "redirect:/checkout";
         }
 
@@ -214,8 +215,9 @@ public class OrderController {
             model.addAttribute("address", id);
             return "razorPayment";
         } catch (RazorpayException e) {
-            redirectAttributes.addFlashAttribute("errorCoupon", "Failed to initiate Razorpay payment.");
-            return "redirect:/checkout"; // Redirect to the checkout page or an error page
+            redirectAttributes.addFlashAttribute("errorCoupon",
+                    "Failed to initiate Razorpay payment.");
+            return "redirect:/checkout";
         }
     }
 
@@ -234,7 +236,6 @@ public class OrderController {
         orders.setPaymentMethod(paymentMethodRepository.findById(2L).orElse(null));
         orders.setOrderStatus(orderStatusRepository.findById(1L).orElse(null));
         orders.setLocalDateTime(LocalDateTime.now());
-
         orders.setAmount((int) total / 100);
         orderService.saveOrder(orders);
         long orderId = orders.getId();
@@ -280,7 +281,6 @@ public class OrderController {
             orderItem.setOrders(orders);
             orderItemService.saveOrderItem(orderItem);
         }
-
         redirectAttributes.addFlashAttribute("orderId", orderId);
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
         return "redirect:/orderSuccess";
