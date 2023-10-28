@@ -80,7 +80,7 @@ public class OrderController {
         }
 
         model.addAttribute("addressDTO", new AddressDTO());
-        model.addAttribute("couponApplied",couponCode);
+        model.addAttribute("couponApplied", couponCode);
 
 
         String loggedUser = principal.getName();
@@ -98,36 +98,40 @@ public class OrderController {
                                @ModelAttribute("paymentMethod") String paymentMethod,
                                Principal principal,
                                HttpServletRequest servletRequest,
-                               RedirectAttributes redirectAttributes,Model model
-    ) throws RazorpayException {
+                               RedirectAttributes redirectAttributes, Model model
+    ) {
 
         double total;
-        if (userBooleanMap.get(userService.getUserByEmail(principal.getName()).get().getEmail())) {
-            total = userDoubleMap.get(userService.getUserByEmail(principal.getName()).get().getEmail());
+        if (userBooleanMap.get(Objects.requireNonNull(userService.getUserByEmail(principal.getName())
+                        .orElse(null))
+                .getEmail())) {
+            total = userDoubleMap.get(Objects.requireNonNull(userService.getUserByEmail(principal.getName())
+                    .orElse(null)).getEmail());
         } else {
-            total = cartService.findCartByUser(userService.getUserByEmail
-                            (principal.getName()).get()).get().getCartItems()
+            total = Objects.requireNonNull(cartService.findCartByUser(userService.getUserByEmail
+                            (principal.getName()).orElse(null)).orElse(null)).getCartItems()
                     .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
                     .reduce(0.0, Double::sum);
         }
 
 
-        userBooleanMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), false);
-        Coupon coupon=couponService.getByCouponCode(couponCode);
+        userBooleanMap.put(Objects.requireNonNull(userService.getUserByEmail(principal.getName())
+                .orElse(null)).getEmail(), false);
 
-        if (coupon!=null){
-            int quantity=coupon.getUsageLimit()-1;
+        Coupon coupon = couponService.getByCouponCode(couponCode);
+
+        if (coupon != null) {
+            int quantity = coupon.getUsageLimit() - 1;
             coupon.setUsageLimit(quantity);
             couponService.saveCoupon(coupon);
         }
 
         if (Objects.equals(paymentMethod, "razorPay")) {
 
-            return handleRazorpayPayment(total, id, couponCode, principal, model,redirectAttributes,servletRequest);
+            return handleRazorpayPayment(total, id, principal, model, redirectAttributes, servletRequest);
         } else {
-            return handleOtherPaymentMethods(total, id,  principal, redirectAttributes, model);
+            return handleOtherPaymentMethods(total, id, principal, redirectAttributes, model);
         }
-
 
 
     }
@@ -136,7 +140,8 @@ public class OrderController {
     @GetMapping("/orderSuccess")
     public String getOrderSuccess(Model model, @ModelAttribute("orderId") long orderId) {
 
-        Orders orders = orderService.getOrderById(orderId).get();
+        Orders orders = orderService.getOrderById(orderId).orElse(null);
+        assert orders != null;
         model.addAttribute("orderItem", orders.getOrderItems());
         model.addAttribute("total", orders.getAmount());
         return "orderSuccess";
@@ -148,63 +153,66 @@ public class OrderController {
     ) {
 
         Coupon coupon = couponService.getByCouponCode(couponCode);
-        if (coupon==null){
-            redirectAttributes.addFlashAttribute("errorCoupon","Enter valid a coupon");
+        if (coupon == null) {
+            redirectAttributes.addFlashAttribute("errorCoupon", "Enter valid a coupon");
             return "redirect:/checkout";
         }
 
-        if(coupon.getExpiryDate().isBefore(ChronoLocalDate.from(LocalDateTime.now()))){
+        if (coupon.getExpiryDate().isBefore(ChronoLocalDate.from(LocalDateTime.now()))) {
 
-            redirectAttributes.addFlashAttribute("errorCoupon","Coupon is no longer valid");
+            redirectAttributes.addFlashAttribute("errorCoupon", "Coupon is no longer valid");
             return "redirect:/checkout";
         }
 
-        if (coupon.getUsageLimit()<=0){
-            redirectAttributes.addFlashAttribute("errorCoupon","Coupon has reached its limit");
+        if (coupon.getUsageLimit() <= 0) {
+            redirectAttributes.addFlashAttribute("errorCoupon", "Coupon has reached its limit");
             return "redirect:/checkout";
         }
 
-        double totalDiscount = cartService.findCartByUser(userService.getUserByEmail
-                        (principal.getName()).get()).get().getCartItems()
+        double totalDiscount = Objects.requireNonNull(cartService.findCartByUser(userService.getUserByEmail
+                        (principal.getName()).orElse(null)).orElse(null)).getCartItems()
                 .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
                 .reduce(0.0, Double::sum);
 
-        if (totalDiscount<coupon.getDiscountAmount()){
-            redirectAttributes.addFlashAttribute("errorCoupon","this coupon cannot be applied to this order");
+        if (totalDiscount < coupon.getDiscountAmount()) {
+            redirectAttributes.addFlashAttribute("errorCoupon", "this coupon cannot be applied to this order");
             return "redirect:/checkout";
         }
 
         int discount = coupon.getDiscountAmount();
         totalDiscount -= discount;
-        userBooleanMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), true);
-        userDoubleMap.put(userService.getUserByEmail(principal.getName()).get().getEmail(), totalDiscount);
+        userBooleanMap.put(Objects.requireNonNull(userService.getUserByEmail(principal.getName())
+                .orElse(null)).getEmail(), true);
+        userDoubleMap.put(Objects.requireNonNull(userService.getUserByEmail(principal.getName())
+                .orElse(null)).getEmail(), totalDiscount);
 
-        redirectAttributes.addFlashAttribute("successCoupon","Coupon has applied ");
+        redirectAttributes.addFlashAttribute("successCoupon", "Coupon has applied ");
         redirectAttributes.addFlashAttribute("totalDiscount", String.valueOf(totalDiscount));
-        redirectAttributes.addFlashAttribute("appliedCoupon",coupon.getCouponCode());
+        redirectAttributes.addFlashAttribute("appliedCoupon", coupon.getCouponCode());
 
         return "redirect:/checkout";
 
     }
-    private String handleRazorpayPayment(double total, int id, String couponCode,
-                                         Principal principal,Model model,
-                                         RedirectAttributes redirectAttributes,HttpServletRequest
-                                         httpServletRequest){
+
+    private String handleRazorpayPayment(double total, int id,
+                                         Principal principal, Model model,
+                                         RedirectAttributes redirectAttributes, HttpServletRequest
+                                                 httpServletRequest) {
 
         try {
             TransactionDetails transactionDetails = orderService.createTransaction(total);
             String RazorOrderId = transactionDetails.getOrderId();
 
-            HttpSession session= httpServletRequest.getSession();
-            session.setAttribute("orderId",RazorOrderId);
-            session.setAttribute("amount",total*100);
-            session.setAttribute("username",principal.getName());
-            session.setAttribute("address",id);
+            HttpSession session = httpServletRequest.getSession();
+            session.setAttribute("orderId", RazorOrderId);
+            session.setAttribute("amount", total * 100);
+            session.setAttribute("username", principal.getName());
+            session.setAttribute("address", id);
 
             // Other Razorpay setup code
             model.addAttribute("orderId", RazorOrderId);
             model.addAttribute("amount", total * 100);
-            model.addAttribute("address",id);
+            model.addAttribute("address", id);
             return "razorPayment";
         } catch (RazorpayException e) {
             redirectAttributes.addFlashAttribute("errorCoupon", "Failed to initiate Razorpay payment.");
@@ -212,32 +220,28 @@ public class OrderController {
         }
     }
 
-    @PostMapping("/test")
-    public String test(){
-        return "shop";
-    }
     @GetMapping("/orderSuccessful")
-    public String razorOrder(HttpSession httpSession,RedirectAttributes redirectAttributes){
+    public String razorOrder(HttpSession httpSession, RedirectAttributes redirectAttributes) {
 
         double total = Double.parseDouble(httpSession.getAttribute("amount").toString());
-         String username= (String) httpSession.getAttribute("username");
-        int addressId= (int) httpSession.getAttribute("address");
+        String username = (String) httpSession.getAttribute("username");
+        int addressId = (int) httpSession.getAttribute("address");
 
 
-
-        User user = userService.getUserByEmail(username).get();
+        User user = userService.getUserByEmail(username).orElse(null);
         Orders orders = new Orders();
         orders.setAddress(addressService.getAddressById(addressId));
         orders.setUser(user);
-        orders.setPaymentMethod(paymentMethodRepository.findById(2L).get());
-        orders.setOrderStatus(orderStatusRepository.findById(1L).get());
+        orders.setPaymentMethod(paymentMethodRepository.findById(2L).orElse(null));
+        orders.setOrderStatus(orderStatusRepository.findById(1L).orElse(null));
         orders.setLocalDateTime(LocalDateTime.now());
 
-        orders.setAmount((int) total/100);
+        orders.setAmount((int) total / 100);
         orderService.saveOrder(orders);
         long orderId = orders.getId();
 
-        Cart cart = cartService.findCartByUser(user).get();
+        Cart cart = cartService.findCartByUser(user).orElse(null);
+        assert cart != null;
         List<CartItem> cartItemLists = cart.getCartItems();
 
         for (CartItem cartItem : cartItemLists) {
@@ -255,18 +259,19 @@ public class OrderController {
 
     private String handleOtherPaymentMethods(double total, int id, Principal principal,
                                              RedirectAttributes redirectAttributes, Model model) {
-        User user = userService.getUserByEmail(principal.getName()).get();
+        User user = userService.getUserByEmail(principal.getName()).orElse(null);
         Orders orders = new Orders();
         orders.setAddress(addressService.getAddressById(id));
         orders.setUser(user);
-        orders.setPaymentMethod(paymentMethodRepository.findById(1L).get());
-        orders.setOrderStatus(orderStatusRepository.findById(1L).get());
+        orders.setPaymentMethod(paymentMethodRepository.findById(1L).orElse(null));
+        orders.setOrderStatus(orderStatusRepository.findById(1L).orElse(null));
         orders.setLocalDateTime(LocalDateTime.now());
         orders.setAmount((int) total);
         orderService.saveOrder(orders);
         long orderId = orders.getId();
 
-        Cart cart = cartService.findCartByUser(user).get();
+        Cart cart = cartService.findCartByUser(user).orElse(null);
+        assert cart != null;
         List<CartItem> cartItemLists = cart.getCartItems();
 
         for (CartItem cartItem : cartItemLists) {
@@ -281,8 +286,6 @@ public class OrderController {
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
         return "redirect:/orderSuccess";
     }
-
-
 
 
 }
