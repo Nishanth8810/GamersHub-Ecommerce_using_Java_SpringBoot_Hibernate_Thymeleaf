@@ -150,12 +150,10 @@
 
 
                         <br>
-                        <label for="paymentMethodSelect"></label><select name="paymentMethod" id="paymentMethodSelect">
+                        <label for="paymentMethodSelect"></label><select th:name="paymentMethod" id="paymentMethodSelect">
                         <option value="cashOnDelivery">Cash on delivery</option>
-                        <option value="creditCard">Credit Card</option>
-                        <option value="DebitCard
-                         ">Debit Card</option>
-                        <option value="Emi">EMI</option>
+                        <option value="razorPay">RazorPay</option>
+
                         <!--                                    <option value="paypal">P</option>-->
 
                         <!-- Add more payment methods as needed -->
@@ -382,6 +380,8 @@
     </section>
     <!--Section: Block Content-->
 </div>
+
+
 
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"

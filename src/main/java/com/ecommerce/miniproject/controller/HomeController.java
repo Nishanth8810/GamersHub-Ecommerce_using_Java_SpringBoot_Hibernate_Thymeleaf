@@ -147,10 +147,18 @@ public class HomeController {
 
     }
 
+
     @GetMapping("/search/product")
     public String getSearchProduct(@RequestParam("keyword") String keyword,
                                    Model model){
         List<Product> productList=productService.searchProductsByKeyword(keyword);
+        System.out.println(productList);
+        if (productList.isEmpty()){
+            model.addAttribute("noProduct","no results found");
+            model.addAttribute("categories",categoryService.getAllCategory());
+            model.addAttribute("keyword",keyword);
+            return "shop";
+        }
         model.addAttribute("products",productList);
         model.addAttribute("categories",categoryService.getAllCategory());
         model.addAttribute("keyword",keyword);
