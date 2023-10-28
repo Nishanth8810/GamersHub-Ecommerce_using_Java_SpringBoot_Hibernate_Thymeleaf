@@ -17,8 +17,8 @@ import java.util.Optional;
 
 public class OrderService {
 
-    private static final String KEY = "rzp_test_6yikyjM4VI0lBk";
-    private static final String KEY_SECRET = "U3tFVg9E4NV8nwPuSN5mFji6";
+    private static final String KEY = "rzp_test_56kwMexaivSGfE";
+    private static final String KEY_SECRET = "68dL8y42wwAwnGpC1phaxsMl";
 
     private static final String CURRENCY = "INR";
 

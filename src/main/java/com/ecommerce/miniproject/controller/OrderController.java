@@ -7,6 +7,8 @@ import com.ecommerce.miniproject.service.*;
 import com.razorpay.Payment;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,19 +92,12 @@ public class OrderController {
         return "checkout";
     }
 
-
-//    @InitBinder
-//    public void initBinder(WebDataBinder webDataBinder) {
-//        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
-//        webDataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
-//    }
-
-
     @PostMapping("/checkout/confirmOrder")
     public String confirmOrder(@Valid @ModelAttribute("selectedAddress") int id,
                                @ModelAttribute("appliedCoupon") String couponCode,
                                @ModelAttribute("paymentMethod") String paymentMethod,
                                Principal principal,
+                               HttpServletRequest servletRequest,
                                RedirectAttributes redirectAttributes,Model model
     ) throws RazorpayException {
 
@@ -128,7 +123,7 @@ public class OrderController {
 
         if (Objects.equals(paymentMethod, "razorPay")) {
 
-            return handleRazorpayPayment(total, id, couponCode, principal, model,redirectAttributes);
+            return handleRazorpayPayment(total, id, couponCode, principal, model,redirectAttributes,servletRequest);
         } else {
             return handleOtherPaymentMethods(total, id,  principal, redirectAttributes, model);
         }
@@ -191,19 +186,21 @@ public class OrderController {
         return "redirect:/checkout";
 
     }
-//    @GetMapping({"/createTransaction/{amount}"})
-//    public String createTransaction(@PathVariable(name = "amount")Double amount) throws RazorpayException {
-//        orderService.createTransaction(amount);
-//        return "razorPayment";
-//
-//    }
     private String handleRazorpayPayment(double total, int id, String couponCode,
                                          Principal principal,Model model,
-                                         RedirectAttributes redirectAttributes){
+                                         RedirectAttributes redirectAttributes,HttpServletRequest
+                                         httpServletRequest){
 
         try {
             TransactionDetails transactionDetails = orderService.createTransaction(total);
             String RazorOrderId = transactionDetails.getOrderId();
+
+            HttpSession session= httpServletRequest.getSession();
+            session.setAttribute("orderId",RazorOrderId);
+            session.setAttribute("amount",total*100);
+            session.setAttribute("username",principal.getName());
+            session.setAttribute("address",id);
+
             // Other Razorpay setup code
             model.addAttribute("orderId", RazorOrderId);
             model.addAttribute("amount", total * 100);
@@ -215,21 +212,20 @@ public class OrderController {
         }
     }
 
-//    @PostMapping("/test")
-//    public String test(){
-//
-//    }
-    @PostMapping("/razorOrder")
-    public String razorOrder(@ModelAttribute("razorpay_payment_id")String id,
-                             Principal principal) throws RazorpayException {
-        RazorpayClient razorpayClient = new RazorpayClient("rzp_test_6yikyjM4VI0lBk", "U3tFVg9E4NV8nwPuSN5mFji6");
-        Payment payment= razorpayClient.payments.fetch(id);
-        double amount=payment.get("amount");
-        double actualAmount=amount/100.0;
-        JSONObject jsonObject=payment.get("notes");
-        int addressId=jsonObject.getInt("address");
+    @PostMapping("/test")
+    public String test(){
+        return "shop";
+    }
+    @GetMapping("/orderSuccessful")
+    public String razorOrder(HttpSession httpSession,RedirectAttributes redirectAttributes){
 
-        User user = userService.getUserByEmail(principal.getName()).get();
+        double total = Double.parseDouble(httpSession.getAttribute("amount").toString());
+         String username= (String) httpSession.getAttribute("username");
+        int addressId= (int) httpSession.getAttribute("address");
+
+
+
+        User user = userService.getUserByEmail(username).get();
         Orders orders = new Orders();
         orders.setAddress(addressService.getAddressById(addressId));
         orders.setUser(user);
@@ -237,7 +233,7 @@ public class OrderController {
         orders.setOrderStatus(orderStatusRepository.findById(1L).get());
         orders.setLocalDateTime(LocalDateTime.now());
 
-        orders.setAmount((int) actualAmount);
+        orders.setAmount((int) total/100);
         orderService.saveOrder(orders);
         long orderId = orders.getId();
 
@@ -252,10 +248,9 @@ public class OrderController {
             orderItemService.saveOrderItem(orderItem);
         }
 
-//        redirectAttributes.addFlashAttribute("orderId", orderId);
-//        redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(addressId));
-        return "shop";
-
+        redirectAttributes.addFlashAttribute("orderId", orderId);
+        redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(addressId));
+        return "redirect:/orderSuccess";
     }
 
     private String handleOtherPaymentMethods(double total, int id, Principal principal,
@@ -285,8 +280,6 @@ public class OrderController {
         redirectAttributes.addFlashAttribute("orderId", orderId);
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
         return "redirect:/orderSuccess";
-
-        // Then, you can redirect to the orderSuccess page or a relevant page
     }
 
 
