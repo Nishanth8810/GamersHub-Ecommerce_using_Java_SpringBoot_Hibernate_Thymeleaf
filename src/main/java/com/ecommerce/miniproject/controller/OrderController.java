@@ -65,16 +65,17 @@ public class OrderController {
                            @ModelAttribute("totalDiscount") String totalDiscount,
                            Model model, Principal principal) {
 
-        int number = cartService.findCartByUser(userService.getUserByEmail
-                (principal.getName()).get()).get().getCartItems().size();
+        int number = Objects.requireNonNull(cartService.findCartByUser(userService.getUserByEmail
+                (principal.getName()).orElse(null)).orElse(null)).getCartItems().size();
         if (number == 0) {
             return "redirect:/cart";
         }
         if (totalDiscount.isEmpty()) {
-            model.addAttribute("total", cartService.findCartByUser
-                            (userService.getUserByEmail(principal.getName()).get()).get().getCartItems()
+            model.addAttribute("total", Objects.requireNonNull(cartService.findCartByUser
+                            (userService.getUserByEmail(principal.getName())
+                                    .orElse(null)).orElse(null)).getCartItems()
                     .stream()
-                    .map(item -> item.getProduct().getPrice() * item.getQuantity()).reduce(0.0, (a, b) -> a + b));
+                    .map(item -> item.getProduct().getPrice() * item.getQuantity()).reduce(0.0, Double::sum));
         } else {
             model.addAttribute("total", Double.valueOf(totalDiscount));
         }
