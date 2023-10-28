@@ -4,44 +4,38 @@
     <!-- Add your meta tags, stylesheets, and scripts here -->
     <!-- ... -->
     <title></title></head>
-<body>
+<body style="background-color: gray;">
 <div id="razorpay-container">
 
 </div>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script th:inline="javascript">
-    var orderId = [[${RazorOrderId}]];
-    var amount = [[${amount}]];
-
+    window.onload=function(e){
     var options = {
-        key: "rzp_test_6yikyjM4VI0lBk",
-        amount: amount,
-        currency: "INR",
-        name: "GamersHUB",
-        description: "Order Payment",
-        order_id: orderId,
-        handler: function (response) {
-            // Handle successful payment response
-            // You can redirect or perform further actions here
-            window.location.href = '/orderSuccess';
-            alert("Payment successful. Payment ID: " + response.razorpay_payment_id);
+        "key": "rzp_test_6yikyjM4VI0lBk",
+        "amount": /*[[${amount}]]*/,
+        "currency": "INR",
+        "name": "GamerHub",
+        "description": "Test Transaction",
+        "order_id": /*[[${orderId}]]*/,
+        "callback_url": "/razorOrder",
+        "prefill": {
+            "name": "Gaurav Kumar",
+            "email": "gaurav.kumar@example.com",
+            "contact": "9000090000"
         },
-        prefill: {
-            name: "Customer Name",
-            email: "customer@example.com",
-            contact: "9000090000"
+        "notes": {
+            "address": /*[[${address}]]*/
+        },
+        "theme": {
+            "color": "#3399cc"
         }
     };
-
-    var rzp = new Razorpay(options);
-    rzp.on("payment.failed", function (response) {
-        // Handle payment failure
-        alert("Payment failed. Error: " + response.error.description);
-    });
-
-    // Open the Razorpay payment form when the page loads
-    rzp.open();
+    var rzp1 = new Razorpay(options);
+        rzp1.open();
+        e.preventDefault();
+    }
 </script>
 </body>
 </html>
