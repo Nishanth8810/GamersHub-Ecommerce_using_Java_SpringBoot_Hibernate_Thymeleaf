@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Add your meta tags, stylesheets, and scripts here -->
+    <!-- ... -->
+    <title></title></head>
+<body>
+<div id="razorpay-container">
+
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script th:inline="javascript">
+    var orderId = [[${RazorOrderId}]];
+    var amount = [[${amount}]];
+
+    var options = {
+        key: "rzp_test_6yikyjM4VI0lBk",
+        amount: amount,
+        currency: "INR",
+        name: "GamersHUB",
+        description: "Order Payment",
+        order_id: orderId,
+        handler: function (response) {
+            // Handle successful payment response
+            // You can redirect or perform further actions here
+            window.location.href = '/orderSuccess';
+            alert("Payment successful. Payment ID: " + response.razorpay_payment_id);
+        },
+        prefill: {
+            name: "Customer Name",
+            email: "customer@example.com",
+            contact: "9000090000"
+        }
+    };
+
+    var rzp = new Razorpay(options);
+    rzp.on("payment.failed", function (response) {
+        // Handle payment failure
+        alert("Payment failed. Error: " + response.error.description);
+    });
+
+    // Open the Razorpay payment form when the page loads
+    rzp.open();
+</script>
+</body>
+</html>
