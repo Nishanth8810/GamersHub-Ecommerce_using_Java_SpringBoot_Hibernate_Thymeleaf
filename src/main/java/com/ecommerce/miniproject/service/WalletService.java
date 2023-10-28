@@ -14,4 +14,7 @@ public class WalletService {
         walletRepository.save(wallet);
     }
 
+    public Wallet getWalletOfUser(int id) {
+       return walletRepository.findWalletByUserId(id);
+    }
 }

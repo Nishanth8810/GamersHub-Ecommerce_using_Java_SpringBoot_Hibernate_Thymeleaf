@@ -25,8 +25,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/admin}" href="#">
-                        <i class="fas fa-home"></i> admin-home
+                    <a class="nav-link" th:href="@{/user}" href="#">
+                        <i class="fas fa-home"></i> user-home
                     </a>
                 </li>
                 <li class="nav-item">
@@ -46,14 +46,15 @@
                     <h5 class="card-title">Wallet Management</h5>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/user/wallet/add}" method="post" th:object="${walletDTO}">
+                    <form th:action="@{/user/wallet}" method="post" th:object="${walletDTO}">
                         <input type="hidden" name="id" th:field="*{id}">
+                        <p >Current Balance :<span class="text-success" th:text="${balances}"></span> </p>
                         <div class="form-group">
                             <label for="balance">Add Amount to Wallet</label>
                             <input type="number" class="form-control" required th:field="*{balance}" min="1" name="balance" id="balance" placeholder="Enter amount">
                         </div>
                         <p th:if="${errorWallet}" class="text-danger" th:text="${errorWallet}"></p>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit" class="btn btn-primary">Add Amount</button>
                     </form>
                 </div>
             </div>

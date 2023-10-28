@@ -44,6 +44,7 @@
         <div th:each="order, iStat : ${orderDetails}" class="col-md-8 mb-4">
             <div class="card">
                 <div class="card-body">
+                    <p th:if="${successRefund}" class="text-success" th:text="${successRefund}"></p>
 
                     <h5 class="card-title">Order #<span th:text="${order.id}"></span></h5>
 
@@ -71,10 +72,9 @@
                     <p class="card-text"><strong>Address:</strong> <span th:text="${order.address.name}"></span></p>
                     <p class="card-text"><strong>Phone No:</strong> <span th:text="${order.address.phoneNo}"></span></p>
                     <p class="card-text"><strong>Order Date:</strong> <span th:text="${#temporals.format(order.localDateTime, 'yyyy-MM-dd')}"></span></p>
-
                     <p class="card-text"><strong>Status:</strong> <span th:text="${order.orderStatus.status}"></span></p>
-                    <p class="card-text"><strong>Total Amount:</strong> <span th:text="${order.amount+'/-'}"></span></p>
-
+                    <p class="card-text text-danger font-italic"><strong>Payment Method:</strong> <span th:text="${order.paymentMethod.name}"></span></p>
+                    <p class="card-text text-success"><strong>Total Amount:</strong> <span th:text="${order.amount+'/-'}"></span></p>
                     <a th:if="${order.isNotCancelled()} and ${order.isNotReturned()} and ${order.isNotDelivered()}" th:href="@{/user/order/cancel/{id}(id=${order.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to cancel this order ?') )) return false">Cancel</a>
                     <a th:if="${!order.isNotDelivered()}" th:href="@{/user/order/return/{id}(id=${order.id})}" class="btn btn-primary" th:onclick="if(!(confirm('Are you sure you want to return this order ?') )) return false">return?</a>
 
