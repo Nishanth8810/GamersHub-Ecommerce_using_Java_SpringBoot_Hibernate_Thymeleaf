@@ -125,7 +125,7 @@
                         <label for="variantSize">Size:</label>
                         <select name="selectedVariantSize" id="variantSize" class="form-control">
                             <option value="">-- Select Size --</option>
-                            <div th:each="productVariant : ${product.productVariants}">
+                            <div  th:each="productVariant : ${product.productVariants}">
                                 <option th:value="${productVariant.id}">
                                     <span th:text="${productVariant?.productSize?.size}"></span>
                                 </option>

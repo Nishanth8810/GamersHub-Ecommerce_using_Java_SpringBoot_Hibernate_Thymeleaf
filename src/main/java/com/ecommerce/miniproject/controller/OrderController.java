@@ -154,7 +154,6 @@ public class OrderController {
         Cart cart = cartService.findCartByUser(user).orElse(null);
         assert cart != null;
         List<CartItem> cartItemLists = cart.getCartItems();
-
         for (CartItem cartItem : cartItemLists) {
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(cartItem.getProduct());
@@ -289,6 +288,7 @@ public class OrderController {
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setProductVariants(cartItem.getProductVariants());
             orderItem.setOrders(orders);
             orderItemService.saveOrderItem(orderItem);
         }
@@ -319,6 +319,7 @@ public class OrderController {
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setProductVariants(cartItem.getProductVariants());
             orderItem.setOrders(orders);
             orderItemService.saveOrderItem(orderItem);
         }

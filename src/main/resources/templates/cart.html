@@ -86,6 +86,9 @@
                                                 <a  type="button" class="btn btn-sm btn-primary" th:href="@{/cart/decreaseQuantity/{id}(id=${item.id})}">-</a>
                                                 <a type="button" class="btn btn-sm btn-primary" th:href="@{/cart/increaseQuantity/{id}(id=${item.id})}" >+</a>
                                                 <p class="mb-3 text-uppercase small">Quantity: <span th:text="${item.quantity}"></span></p>
+                                                <p class="mb-3 text-uppercase small" th:if="${item.productVariants?.productColor?.color != null or item.productVariants?.productSize?.size != null}">
+                                                    variant: <span th:text="${item.productVariants?.productColor?.color} + ' , ' + ${item.productVariants?.productSize?.size}"></span>
+                                                </p>
 
                                             </div>
                                         </div>

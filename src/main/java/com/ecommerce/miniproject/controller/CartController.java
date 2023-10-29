@@ -1,10 +1,8 @@
 package com.ecommerce.miniproject.controller;
-
 import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.repository.CartItemRepository;
 import com.ecommerce.miniproject.service.*;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -14,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.security.Principal;
 import java.util.List;
 import java.util.Objects;
@@ -48,7 +45,7 @@ public class CartController {
     public String addToCart(@RequestParam("selectedVariantSize") String selectedSize,
                             @RequestParam("selectedVariantColor") String selectedColor,
                             @RequestParam("productId") int productId,
-                            HttpSession session,Principal principal,
+                            Principal principal,
                             RedirectAttributes redirectAttributes) {
 
         System.out.println(selectedColor+"  "+selectedSize);
@@ -62,20 +59,29 @@ public class CartController {
         Cart cart = cartService.findCartByUser(user).orElseThrow();
         Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart
                 (productService.getProductById(productId).orElseThrow(), cart);
-        ProductVariants productVariants=productVariantsService.getVariantById(Integer.parseInt(selectedColor));
 
         if (cartItemOptional.isPresent()) {
             redirectAttributes.addFlashAttribute("alreadyPresent",
                     "item is already in your cart :)");
 
         } else {
-            CartItem cartItem = new CartItem();
-            cartItem.setProduct(productService.getProductById(productId).get());
-            cartItem.setProductVariants(productVariants);
-            cartItem.setCart(cart);
-            cartItem.setQuantity(1);
-            cartItemRepository.save(cartItem);
-            redirectAttributes.addFlashAttribute("addedToCart","Added to cart");
+            if (!selectedColor.isEmpty()){
+                ProductVariants productVariants=productVariantsService.getVariantById(Integer.parseInt(selectedColor));
+                CartItem cartItem = new CartItem();
+                cartItem.setProduct(productService.getProductById(productId).get());
+                cartItem.setProductVariants(productVariants);
+                cartItem.setCart(cart);
+                cartItem.setQuantity(1);
+                cartItemRepository.save(cartItem);
+                redirectAttributes.addFlashAttribute("addedToCart","Added to cart");
+            }else {
+                CartItem cartItem = new CartItem();
+                cartItem.setProduct(productService.getProductById(productId).orElseThrow());
+                cartItem.setCart(cart);
+                cartItem.setQuantity(1);
+                cartItemRepository.save(cartItem);
+                redirectAttributes.addFlashAttribute("addedToCart","Added to cart");
+            }
         }
         return "redirect:/shop/viewProduct/" + productId;
     }
