@@ -138,17 +138,22 @@
             <div class="col-sm-5">
                 <p>Product Images</p>
                 <div class="custom-file">
-                    <input type="file" multiple class="custom-file-input"  name="productImages" accept="image/jpeg, image/png" id="productImages" />
-                    <label class="custom-file-label" for="productImages">Choose files</label>
+                    <input type="file" class="custom-file-input" name="productImage" accept="image/jpeg, image/png" multiple id="productImages"/>
+                    <label class="custom-file-label" for="productImages">Choose file</label>
                 </div>
                 <div class="form-group">
-                    <div id="imagePreviews" style="display: flex; flex-wrap: wrap;"></div>
+                    <div id="imagePreviews" style="margin-top: 20px;">
+                        <!-- Loop through the image filenames and create image tags -->
+                        <div th:each="imageName : ${productDTO.imageName}">
+                            <img th:src="'/productImages/' + ${imageName}" height="100px" width="100px" alt="Image Preview"  src=""/>
+                        </div>
+                    </div>
                 </div>
-
                 <input type="hidden" name="imgName" th:value="${productDTO.imageName}">
-                <p th:if="${errorProductImage}" class="text-danger" th:text="${errorProductImage}"></p>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
+
+
 
         </div>
     </form>
@@ -156,31 +161,32 @@
 
 <script>
     function readURLs(input) {
-    if (input.files && input.files.length > 0) {
-        for (let i = 0; i < input.files.length; i++) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const image = document.createElement("img");
-                image.src = e.target.result;
-                image.width = 100;
-                image.height = 100;
-                document.getElementById("imagePreviews").appendChild(image);
-            };
-            reader.readAsDataURL(input.files[i]);
-        }
-    }
-}
+         const imagePreviews = document.getElementById("imagePreviews");
+         imagePreviews.innerHTML = ""; // Clear existing previews
 
-$('#productImages').change(function () {
-    readURLs(this);
-});
+         if (input.files && input.files.length > 0) {
+             for (let i = 0; i < input.files.length; i++) {
+                 const reader = new FileReader();
+                 reader.onload = function (e) {
+                     const image = document.createElement("img");
+                     image.src = e.target.result;
+                     image.width = 100;
+                     image.height = 100;
+                     imagePreviews.appendChild(image);
+                 };
+                 reader.readAsDataURL(input.files[i]);
+             }
+         }
+     }
 
-$(".custom-file-input").on("change", function () {
-    const fileNames = Array.from(this.files).map((file) => file.name);
-    $(this).siblings(".custom-file-label").addClass("selected").html(fileNames.join(', '));
-});
+     $('#productImages').change(function () {
+         readURLs(this);
+     });
 
-
+     $(".custom-file-input").on("change", function () {
+         const fileNames = Array.from(this.files).map((file) => file.name);
+         $(this).siblings(".custom-file-label").addClass("selected").html(fileNames.join(', '));
+     });
 </script>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"

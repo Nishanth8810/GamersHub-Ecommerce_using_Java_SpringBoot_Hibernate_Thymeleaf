@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -7,7 +16,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <title>E-commerce</title>
@@ -41,40 +49,25 @@
     </div>
 </nav>
 <div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <form th:action="@{/admin/variants/color/add}" method="post" th:object="${variantColor}">
+                <input type="hidden" name="id"  th:field="*{id}">
+                <div class="form-group">
+                    <label for="color">Add new color</label>
+                    <input type="text" class="form-control" required th:field="*{color}" name="color" id="color"  placeholder="Enter color">
+                </div>
+                <p th:if="${errorVariant}" class="text-danger" th:text="${errorVariant}"></p>
+                <!--                <div class="form-group">-->
+                <!--                    <label for="color">Add new color</label>-->
+                <!--                    <input type="text" class="form-control" required th:field="*{color}" name="color" id="color"  placeholder="Enter size">-->
+                <!--                </div>-->
 
-    <a th:href="@{/admin/variants/size/add}" style="margin: 20px 0" class="btn btn-primary">Add size</a>
-    <a th:href="@{/admin/variants/color/add}" style="margin: 20px 0" class="btn btn-primary">Add color</a>
-    <p th:if="${errorDelete}" class="text-danger" th:text="${errorDelete}"></p>
-    <table class="table">
-        <thead class="thead-light">
-        <tr>
-            <th scope="col">Variants</th>
-            <th scope="col">Actions</th> <!-- Add this column for delete buttons -->
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="colors : ${color}">
-            <td th:text="${colors.color}">Larry</td>
-            <td>
-                <!-- Add a delete button with a link to the delete action -->
-                <a th:href="@{/admin/variants/color/delete/{id}(id=${colors.id})}"
-                   class="btn btn-danger"
-                   th:onclick="if(!(confirm('Are you sure you want to delete this Color?'))) return false">Delete</a>
-            </td>
-        </tr>
-        <tr th:each="sizes : ${size}">
-            <td th:text="${sizes.size}">Larry</td>
-            <td>
-                <!-- Add a delete button with a link to the delete action -->
-                <a th:href="@{/admin/variants/size/delete/{id}(id=${sizes.id})}"
-                   class="btn btn-danger"
-                   th:onclick="if(!(confirm('Are you sure you want to delete this Size?'))) return false">Delete</a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
 </div>
-
 
 
 

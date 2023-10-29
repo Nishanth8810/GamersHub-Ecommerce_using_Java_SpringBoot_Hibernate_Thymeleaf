@@ -95,9 +95,9 @@ public class AdminProductController {
     public String productAddPost(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
                                  BindingResult bindingResult,
                                  Model model,
-                                 @RequestParam("productImages") List<MultipartFile> fileList,
-                                 @RequestParam("productColor")List<String> productColors,
-                                 @RequestParam("productSize")List<String> productSizes)
+                                 @RequestParam("productImage") List<MultipartFile> fileList,
+                                 @RequestParam(name = "productColor", required = false) List<String> productColors
+                                ,@RequestParam(name = "productSize" ,required=false)List<String> productSizes)
 
             throws IOException {
 
@@ -143,43 +143,39 @@ public class AdminProductController {
         productService.addProduct(product);
 
         List<ProductVariants> productVariantsList = new ArrayList<>();
-        for (int i = 0; i < productColors.size(); i++) {
+        if (productColors != null && !productColors.isEmpty()) {
+            for (int i = 0; i < productColors.size(); i++) {
+                ProductVariants productVariants = new ProductVariants();
+                ProductColor productColor = productColorRepository.findById(Long.valueOf(productColors.get(i))).get();
+                ProductSize productSize = productSizeRepository.findById(Long.valueOf(productSizes.get(i))).get();
+                productVariants.setProductColor(productColor);
+                productVariants.setProductSize(productSize);
+                productVariants.setProduct(product);
+                productVariantsList.add(productVariants);
+            }
+
+        }
+        else {
             ProductVariants productVariants = new ProductVariants();
-            ProductColor productColor = productColorRepository.findById(Long.valueOf(productColors.get(i))).get();
-            ProductSize productSize = productSizeRepository.findById(Long.valueOf(productSizes.get(i))).get();
-            productVariants.setProductColor(productColor);
-            productVariants.setProductSize(productSize);
             productVariants.setProduct(product);
             productVariantsList.add(productVariants);
         }
         product.setProductVariants(productVariantsList);
-
 
         for (MultipartFile file : fileList) {
             String imageUUID = file.getOriginalFilename();
             Path fileNameAndPath = Paths.get(uploadDir, imageUUID);
             Files.write(fileNameAndPath, file.getBytes());
         }
-
         List<ProductImage> productImageList = new ArrayList<>();
 
-        if (fileList.size() > 4) {
-            model.addAttribute("categories", categoryService.getAllCategory());
-            model.addAttribute("errorProduct", "please add only 4 images");
-            return "productsAdd";
-        }
-
-        int maxImages = 10;
-
-
-        for (int i = 1; i <= maxImages && i < fileList.size(); i++) {
+        for (int i = 1; i < fileList.size(); i++) {
             ProductImage productImage = new ProductImage();
             productImage.setProduct(product);
             productImage.setImageName(fileList.get(i).getOriginalFilename());
             productImageRepository.save(productImage);
             productImageList.add(productImage);
         }
-
         product.setProductImages(productImageList);
         productService.addProduct(product);
         return "redirect:/admin/products";
@@ -200,7 +196,8 @@ public class AdminProductController {
 
 
 //       productDTO.setImageName(product.getImageName());
-
+        model.addAttribute("sizes", productSizeRepository.findAll());
+        model.addAttribute("colors", productColorRepository.findAll());
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("productDTO", productDTO);
 
@@ -257,7 +254,6 @@ public class AdminProductController {
 
 
     private void saveProductImages(Product product, List<MultipartFile> fileList) throws IOException {
-
 
         productImageService.removeImageById(product.getId());
         product.setImageName(fileList.get(0).getOriginalFilename());

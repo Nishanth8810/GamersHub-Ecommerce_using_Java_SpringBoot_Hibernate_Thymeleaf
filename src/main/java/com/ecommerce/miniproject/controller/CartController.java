@@ -1,10 +1,7 @@
 package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.dto.AddressDTO;
-import com.ecommerce.miniproject.entity.Address;
-import com.ecommerce.miniproject.entity.Cart;
-import com.ecommerce.miniproject.entity.CartItem;
-import com.ecommerce.miniproject.entity.User;
+import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.repository.CartItemRepository;
 import com.ecommerce.miniproject.service.*;
 import jakarta.validation.Valid;
@@ -14,10 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
@@ -46,6 +40,8 @@ public class CartController {
 
     @Autowired
     OrderController orderController;
+    @Autowired
+    ProductVariantsService productVariantsService;
 
 
     @GetMapping("/addToCart/{id}")
@@ -53,6 +49,9 @@ public class CartController {
                             RedirectAttributes redirectAttributes) {
 
         User user = userService.getUserByEmail(principal.getName()).orElseThrow();
+        ProductVariants productVariants=productVariantsService.getVariantById(id);
+        System.out.println(productVariants.getId());
+        System.out.println(productVariants.getProduct().getName());
         Cart cart = cartService.findCartByUser(user).orElseThrow();
         Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart
                 (productService.getProductById(id).orElseThrow(), cart);
@@ -63,7 +62,7 @@ public class CartController {
 
         } else {
             CartItem cartItem = new CartItem();
-            cartItem.setProduct(productService.getProductById(id).orElseThrow());
+            cartItem.setProduct(productVariantsService.getVariantById(id).getProduct());
             cartItem.setCart(cart);
             cartItem.setQuantity(1);
             cartItemRepository.save(cartItem);

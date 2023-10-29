@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface ProductVariantsRepository extends JpaRepository<ProductVariants,Long> {
+public interface ProductVariantsRepository extends JpaRepository<ProductVariants,Integer> {
 
 //    List<ProductVariants> findAllByProductSize(ProductSize productSize);
     @Query("SELECT DISTINCT pv.productSize FROM ProductVariants pv")
     List<ProductSize> findAllProductSizes();
+
+    ProductVariants findById(int id);
 
 
 }
