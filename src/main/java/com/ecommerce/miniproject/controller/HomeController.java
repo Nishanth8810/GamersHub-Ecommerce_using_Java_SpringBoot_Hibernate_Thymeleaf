@@ -40,6 +40,7 @@ public class HomeController {
 
 //       }
     }
+
     @GetMapping("/shop")
     public String shop(Model model,Principal principal){
 

@@ -109,12 +109,9 @@ public class UserService {
 
         if (!user.getOtp().equals(otp)) {
             return 1;
-        }
-        else if (Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() > 2 * 60) {
-                return 3;
-        }
-
-        else if (user.getOtp().equals(otp) && Duration.between
+        } else if (Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() > 2 * 60) {
+            return 3;
+        } else if (user.getOtp().equals(otp) && Duration.between
                 (user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() < (2 * 60)) {
             user.setOtpActive(true);
             userRepository.save(user);
@@ -141,6 +138,35 @@ public class UserService {
     }
 
     public List<User> findUserByKeyword(String keyword) {
-       return userRepository.findByFirstNameContaining(keyword);
+        return userRepository.findByFirstNameContaining(keyword);
+    }
+    /////////////forgot Password///////////////
+
+    public void sendOTP(String email){
+        String otp = otpUtil.generateOtp();
+
+        try {
+            emailUtil.sendOtpEmail(email, otp);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Unable to send otp please try again");
+        }
+        User user = userRepository.findUserByEmail(email).orElseThrow();
+        user.setOtpGeneratedTime(LocalDateTime.now());
+        user.setOtp(otp);
+        userRepository.save(user);
+    }
+
+    public int verifyOtpForForgotPassword(String email, String otp) {
+        User user = userRepository.findUserByEmail(email).get();
+
+        if (!user.getOtp().equals(otp)) {
+            return 1;
+        } else if (Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() > 2 * 60) {
+            return 3;
+        } else if (user.getOtp().equals(otp) && Duration.between
+                (user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() < (2 * 60)) {
+            return 2;
+        }
+        return 0;
     }
 }

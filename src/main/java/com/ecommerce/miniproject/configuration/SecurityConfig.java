@@ -20,7 +20,8 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(configurer ->
                         configurer
                                 .requestMatchers("/", "shop/**","register/**","/resources/**","otpScreen/**","verifyAccount/**",
-                                        "/static/**","/images/**","/productImages/**","/css/**","/js/**","/index/**","/resendOTP/**", "/error", "/error/**", "/resources/templates/rr.html", "/error-404/**", "/invalid-url/**","/razorOrder/**","/page/**").permitAll()
+                                        "/static/**","/images/**","/productImages/**","/css/**","/js/**","/index/**","/resendOTP/**", "/error",
+                                        "/error/**", "/resources/templates/rr.html","/forgotPassword","/error-404/**", "/resetPassword","/invalid-url/**","/razorOrder/**","/page/**").permitAll()
                                 .requestMatchers("/admin/**","/admin/userManagement/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
