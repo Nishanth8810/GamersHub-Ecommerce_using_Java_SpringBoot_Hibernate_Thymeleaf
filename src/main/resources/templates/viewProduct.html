@@ -76,6 +76,7 @@
     </div>
 </nav><div class="container mt-5">
     <div class="row">
+
         <!-- Carousel -->
         <div class="col-sm-5">
             <div id="imageCarousel" class="carousel slide" data-ride="carousel">
@@ -101,7 +102,11 @@
             </div>
 
         </div>
+
         <div class="col-sm-7 mt-5">
+            <p th:if="${errorVariant}" class="text-danger" th:text="${errorVariant}"></p>
+            <p th:if="${addedToCart}" class="text-success" th:text="${addedToCart}"></p>
+            <form th:action="@{/addToCart}" method="post">
             <!-- Product information -->
             <h2 th:text="${product.name}"></h2>
             <p th:text="${product.category.name}"></p>
@@ -111,19 +116,39 @@
             </h5>
             <p th:text="${product.description}"></p>
 
-            <div class="col-sm-6 " th:if="${product.productVariants}">
+
+
+            <div class="col-sm-6" th:if="${product.productVariants}">
                 <h6>Select Variant:</h6>
-                <select name="selectedVariant" class="form-control">
-                    <option value="">-- Select Variant --</option>
-                    <div th:each="productVariant : ${product.productVariants}">
-                        <option th:value="${productVariant.id}">
-                            <span th:text="${productVariant.productSize.size} + ' - ' + ${productVariant.productColor.color}"></span>
-                        </option>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="variantSize">Size:</label>
+                        <select name="selectedVariantSize" id="variantSize" class="form-control">
+                            <option value="">-- Select Size --</option>
+                            <div th:each="productVariant : ${product.productVariants}">
+                                <option th:value="${productVariant.id}">
+                                    <span th:text="${productVariant?.productSize?.size}"></span>
+                                </option>
+                            </div>
+                        </select>
                     </div>
-                </select>
+                    <div class="col-md-6">
+                        <label for="variantColor">Color:</label>
+                        <select name="selectedVariantColor" id="variantColor" class="form-control">
+                            <option value="">-- Select Color --</option>
+                            <div th:each="productVariant : ${product.productVariants}">
+                                <option th:value="${productVariant.id}">
+                                    <span th:text="${productVariant?.productColor?.color}"></span>
+                                </option>
+                            </div>
+                        </select>
+                    </div>
+                </div>
             </div>
-<br>
-            <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" id="addToCartButton" class="btn btn-primary">Add to cart</a>
+                <input type="hidden" name="productId" th:value="${product.id}" />
+            <br>
+                <button type="submit" class="btn btn-primary">Add to cart</button>
+            </form>
         </div>
         <h4 th:if="${alreadyPresent}" class="text-warning" th:text="${alreadyPresent}"></h4>
         <div id="addToCartSuccessMessage" class="alert alert-success mt-3" style="display: none;">

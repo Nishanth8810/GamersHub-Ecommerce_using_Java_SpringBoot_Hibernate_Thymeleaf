@@ -4,6 +4,7 @@ import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.repository.CartItemRepository;
 import com.ecommerce.miniproject.service.*;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -43,18 +44,25 @@ public class CartController {
     @Autowired
     ProductVariantsService productVariantsService;
 
-
-    @GetMapping("/addToCart/{id}")
-    public String addToCart(@PathVariable int id, Principal principal,
+    @PostMapping("/addToCart")
+    public String addToCart(@RequestParam("selectedVariantSize") String selectedSize,
+                            @RequestParam("selectedVariantColor") String selectedColor,
+                            @RequestParam("productId") int productId,
+                            HttpSession session,Principal principal,
                             RedirectAttributes redirectAttributes) {
 
+        System.out.println(selectedColor+"  "+selectedSize);
+        if (!Objects.equals(selectedColor, selectedSize)){
+            redirectAttributes.addFlashAttribute("errorVariant",
+                    "This combination of variant is not available");
+            return "redirect:/shop/viewProduct/" + productId;
+        }
+
         User user = userService.getUserByEmail(principal.getName()).orElseThrow();
-        ProductVariants productVariants=productVariantsService.getVariantById(id);
-        System.out.println(productVariants.getId());
-        System.out.println(productVariants.getProduct().getName());
         Cart cart = cartService.findCartByUser(user).orElseThrow();
         Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart
-                (productService.getProductById(id).orElseThrow(), cart);
+                (productService.getProductById(productId).orElseThrow(), cart);
+        ProductVariants productVariants=productVariantsService.getVariantById(Integer.parseInt(selectedColor));
 
         if (cartItemOptional.isPresent()) {
             redirectAttributes.addFlashAttribute("alreadyPresent",
@@ -62,14 +70,16 @@ public class CartController {
 
         } else {
             CartItem cartItem = new CartItem();
-            cartItem.setProduct(productVariantsService.getVariantById(id).getProduct());
+            cartItem.setProduct(productService.getProductById(productId).get());
+            cartItem.setProductVariants(productVariants);
             cartItem.setCart(cart);
             cartItem.setQuantity(1);
             cartItemRepository.save(cartItem);
+            redirectAttributes.addFlashAttribute("addedToCart","Added to cart");
         }
-        return "redirect:/shop/viewProduct/" + id;
-
+        return "redirect:/shop/viewProduct/" + productId;
     }
+
 
     @PostMapping("/checkout")
     public String postCheckout(@Valid @ModelAttribute AddressDTO addressDTO,

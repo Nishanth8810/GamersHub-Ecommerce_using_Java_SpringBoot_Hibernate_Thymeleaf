@@ -160,6 +160,7 @@ public class OrderController {
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
             orderItem.setOrders(orders);
+            orderItem.setProductVariants(cartItem.getProductVariants());
             orderItemService.saveOrderItem(orderItem);
         }
         assert user != null;
