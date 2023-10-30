@@ -41,6 +41,14 @@
         </div>
     </div>
 </nav>
+<div th:each="item : ${productVariant}" class="product-item">
+    <!-- Your product item content goes here -->
+
+<!--    <p class="mb-3 text-uppercase small" th:if="${item.productColor?.color != null or item.productSize?.size != null}">-->
+<!--        variant: <span th:text="${item.productColor?.color} + ' , ' + ${item.productSize?.size}"></span>-->
+<!--    </p>-->
+</div>
+
 <div class="container">
     <h3>Update Product</h3>
     <form th:action="@{/admin/products/update/{id}}" method="post" th:object="${productDTO}" enctype="multipart/form-data">
@@ -48,6 +56,7 @@
             <div class="col-sm-5">
 
                 <input type="hidden" name="id" th:field="*{id}">
+
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" class="form-control"  th:field="*{name}" name="name" id="name"
@@ -69,6 +78,25 @@
                                 th:text="${category.name}"
                         >
                     </select>
+                </div>
+                <div class="form-group">
+                    <label>Select Size</label>
+                    <div th:each="size : ${sizes}">
+                        <label>
+                            <input type="checkbox" th:field="*{productSize}" th:value="${size.id}" />
+                            <span th:text="${size.size}"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Select Color</label>
+                    <div th:each="color : ${colors}">
+                        <label>
+                            <input type="checkbox" th:field="*{productColor}" th:value="${color.id}" />
+                            <span th:text="${color.color}"></span>
+                        </label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="quantity">quantity</label>
@@ -115,25 +143,24 @@
                 </div>
             </div>
             <div class="col-sm-5">
-                <p>Product Image</p>
+                <p>Product Images</p>
                 <div class="custom-file">
-                    <input type="file" multiple class="custom-file-input" name="productImage" accept="image/jpeg, image/png"  id="productImage"/>
-                    <label class="custom-file-label" for="productImage">Choose file</label>
+                    <input type="file" class="custom-file-input" name="productImage" accept="image/jpeg, image/png" multiple id="productImages"/>
+                    <label class="custom-file-label" for="productImages">Choose file</label>
                 </div>
                 <div class="form-group">
-                    <img src="#" id="imgPreview1" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">
-<!--                    <img src="#" id="imgPreview2" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName[1]}}" style="margin-top: 20px" alt=" ">-->
-<!--                    <img src="#" id="imgPreview3" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">-->
-<!--                    <img src="#" id="imgPreview4" height="100px" width="100px" th:src="@{${'/productImages/' + productDTO.imageName}}" style="margin-top: 20px" alt=" ">-->
-
-
+                    <div id="imagePreviews" style="margin-top: 20px;">
+                        <!-- Loop through the image filenames and create image tags -->
+                        <th:block th:each="imageName : ${productDTO.imageName}">
+                            <img th:src="'/productImages/' + ${imageName}" height="100px" width="100px" alt="Image Preview" />
+                        </th:block>
+                    </div>
                 </div>
 
                 <input type="hidden" name="imgName" th:value="${productDTO.imageName}">
-
-
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
+
         </div>
     </form>
 </div>
@@ -150,31 +177,33 @@
         crossorigin="anonymous"></script>
 <script>
     function readURLs(input) {
-    if (input.files && input.files.length > 0) {
-        for (let i = 0; i < input.files.length; i++) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const image = document.createElement("img");
-                image.src = e.target.result;
-                image.width = 100;
-                image.height = 100;
-                document.getElementById("imagePreviews").appendChild(image);
-            };
-            reader.readAsDataURL(input.files[i]);
+        const imagePreviews = document.getElementById("imagePreviews");
+        imagePreviews.innerHTML = ""; // Clear existing previews
+
+        if (input.files && input.files.length > 0) {
+            for (let i = 0; i < input.files.length; i++) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const image = document.createElement("img");
+                    image.src = e.target.result;
+                    image.width = 100;
+                    image.height = 100;
+                    imagePreviews.appendChild(image);
+                };
+                reader.readAsDataURL(input.files[i]);
+            }
         }
     }
-}
 
-$('#productImages').change(function () {
-    readURLs(this);
-});
+    $('#productImages').change(function () {
+        readURLs(this);
+    });
 
-$(".custom-file-input").on("change", function () {
-    const fileNames = Array.from(this.files).map((file) => file.name);
-    $(this).siblings(".custom-file-label").addClass("selected").html(fileNames.join(', '));
-});
-
-
+    $(".custom-file-input").on("change", function () {
+        const fileNames = Array.from(this.files).map((file) => file.name);
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileNames.join(', '));
+    });
 </script>
+
 </body>
 </html>

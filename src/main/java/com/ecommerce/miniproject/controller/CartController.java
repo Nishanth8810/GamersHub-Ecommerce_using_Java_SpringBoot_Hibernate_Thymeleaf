@@ -1,26 +1,20 @@
 package com.ecommerce.miniproject.controller;
-
 import com.ecommerce.miniproject.dto.AddressDTO;
-import com.ecommerce.miniproject.entity.Address;
-import com.ecommerce.miniproject.entity.Cart;
-import com.ecommerce.miniproject.entity.CartItem;
-import com.ecommerce.miniproject.entity.User;
+import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.repository.CartItemRepository;
 import com.ecommerce.miniproject.service.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -44,47 +38,61 @@ public class CartController {
 
     @Autowired
     OrderController orderController;
+    @Autowired
+    ProductVariantsService productVariantsService;
 
+    @PostMapping("/addToCart")
+    public String addToCart(@RequestParam("selectedVariantSize") String selectedSize,
+                            @RequestParam("selectedVariantColor") String selectedColor,
+                            @RequestParam("productId") int productId,
+                            Principal principal,
+                            RedirectAttributes redirectAttributes) {
 
-    @GetMapping("/addToCart/{id}")
-    public String addToCart(@PathVariable int id, Principal principal, RedirectAttributes redirectAttributes) {
+        if (!Objects.equals(selectedColor, selectedSize)){
+            redirectAttributes.addFlashAttribute("errorVariant",
+                    "This combination of variant is not available");
+            return "redirect:/shop/viewProduct/" + productId;
+        }
 
         User user = userService.getUserByEmail(principal.getName()).orElseThrow();
         Cart cart = cartService.findCartByUser(user).orElseThrow();
         Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart
-                (productService.getProductById(id).orElseThrow(), cart);
+                (productService.getProductById(productId).orElseThrow(), cart);
 
         if (cartItemOptional.isPresent()) {
-            redirectAttributes.addFlashAttribute("alreadyPresent", "item is already in your cart :)");
+            redirectAttributes.addFlashAttribute("alreadyPresent",
+                    "item is already in your cart :)");
 
         } else {
-            CartItem cartItem = new CartItem();
-            cartItem.setProduct(productService.getProductById(id).orElseThrow());
-            cartItem.setCart(cart);
-            cartItem.setQuantity(1);
-            cartItemRepository.save(cartItem);
+            if (!selectedColor.isEmpty()){
+                ProductVariants productVariants=productVariantsService.getVariantById(Integer.parseInt(selectedColor));
+                CartItem cartItem = new CartItem();
+                cartItem.setProduct(productService.getProductById(productId).get());
+                cartItem.setProductVariants(productVariants);
+                cartItem.setCart(cart);
+                cartItem.setQuantity(1);
+                cartItemRepository.save(cartItem);
+                redirectAttributes.addFlashAttribute("addedToCart","Added to cart");
+            }else {
+                CartItem cartItem = new CartItem();
+                cartItem.setProduct(productService.getProductById(productId).orElseThrow());
+                cartItem.setCart(cart);
+                cartItem.setQuantity(1);
+                cartItemRepository.save(cartItem);
+                redirectAttributes.addFlashAttribute("addedToCart","Added to cart");
+            }
         }
-        return "redirect:/shop/viewProduct/" + id;
-
+        return "redirect:/shop/viewProduct/" + productId;
     }
 
-
-
-
-
-    @InitBinder
-    public void initBinder(WebDataBinder webDataBinder) {
-        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(false);
-        webDataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
-    }
-
-
+////adding address in checkout///////////
     @PostMapping("/checkout")
-    public String postCheckout(@Valid @ModelAttribute AddressDTO addressDTO, BindingResult bindingResult) {
+    public String postCheckout(@Valid @ModelAttribute AddressDTO addressDTO,
+                               BindingResult bindingResult) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
-        User user = userService.getUserByEmail(currentPrincipalName).get();
+        User user = userService.getUserByEmail(currentPrincipalName).orElse(null);
 
         if (bindingResult.hasErrors()) {
             return "checkout";
@@ -107,10 +115,7 @@ public class CartController {
     @GetMapping("/cart/removeItem/{id}")
     public String removeCart(@PathVariable long id) {
         cartItemService.removeCartItemOfUser(id);
-
         return "redirect:/cart";
-
-
     }
 
     @GetMapping("/cart")
@@ -122,20 +127,23 @@ public class CartController {
             orderController.userDoubleMap.put(user.getEmail(), 0.0);
         }
 
-        int number = cartService.findCartByUser
-                (userService.getUserByEmail(principal.getName()).get()).get().getCartItems().size();
+        int number = Objects.requireNonNull(cartService.findCartByUser
+                (userService.getUserByEmail(principal.getName())
+                        .orElse(null)).orElse(null)).getCartItems().size();
         if (number == 0) {
             return "CartEmpty";
         }
 
         model.addAttribute("cartCount", cartService.findCartByUser
-                (userService.getUserByEmail(principal.getName()).get()).get().getCartItems().size());
+                (userService.getUserByEmail(principal.getName())
+                        .get()).get().getCartItems().size());
 
         model.addAttribute("total", cartService.findCartByUser
-                        (userService.getUserByEmail(principal.getName()).get()).get().getCartItems()
+                        (userService.getUserByEmail(principal.getName()).get())
+                .get().getCartItems()
                 .stream()
                 .map(item -> item.getProduct().getPrice() * item.getQuantity())
-                .reduce(0.0, (a, b) -> a + b));
+                .reduce(0.0, Double::sum));
 
         model.addAttribute("cart", cartService.findCartByUser
                 (userService.getUserByEmail(principal.getName()).get()).get().getCartItems());
@@ -144,8 +152,9 @@ public class CartController {
 
     @GetMapping("/cart/increaseQuantity/{id}")
     public String getIncreaseQuantity(@PathVariable long id) {
-        CartItem cartItem = cartItemRepository.findById(id).get();
+        CartItem cartItem = cartItemRepository.findById(id).orElse(null);
 
+        assert cartItem != null;
         cartItem.setQuantity(cartItem.getQuantity() + 1);
         cartItemRepository.save(cartItem);
 
@@ -155,7 +164,8 @@ public class CartController {
     @GetMapping("/cart/decreaseQuantity/{id}")
     public String getDecreaseQuantity(@PathVariable long id) {
 
-        CartItem cartItem = cartItemRepository.findById(id).get();
+        CartItem cartItem = cartItemRepository.findById(id).orElse(null);
+        assert cartItem != null;
         long quantity = cartItem.getQuantity();
         if (quantity > 1) {
 

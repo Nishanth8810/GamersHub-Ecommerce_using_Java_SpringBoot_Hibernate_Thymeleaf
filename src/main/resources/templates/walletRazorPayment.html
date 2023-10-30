@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Add your meta tags, stylesheets, and scripts here -->
+    <!-- ... -->
+    <title></title></head>
+<body style="background-color: gray;">
+<div id="razorpay-container">
+
+</div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script th:inline="javascript">
+    window.onload = function (e) {
+        var options = {
+            "key": "rzp_test_56kwMexaivSGfE",
+            "amount": /*[[${amount}]]*/,
+            "currency": "INR",
+            "name": "Wallet",
+            "description": "Test Transaction",
+            "order_id": /*[[${orderId}]]*/,
+            "prefill": {
+                "name": "Gaurav Kumar",
+                "email": "gaurav.kumar@example.com",
+                "contact": "9000090000"
+            },
+            "notes": {
+                "address": "null"
+            },
+            "theme": {
+                "color": "#3399cc"
+            },
+            "modal": {
+                "ondismiss": function () {
+                    // Failure handler
+                    alert("Payment failed. Please try again.");
+                    window.location.href = '/user/wallet'; // Redirect to a failure page
+                }
+            },
+            "handler": function (response) {
+                // Success handler
+                alert("Payment successful. Payment ID: " + response.razorpay_payment_id);
+                window.location.href = '/walletOrderSuccessful'; // Redirect to a success page
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        rzp1.open();
+        e.preventDefault();
+    }
+</script>
+
+</body>
+</html>

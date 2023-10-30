@@ -1,5 +1,6 @@
 package com.ecommerce.miniproject.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -17,9 +18,11 @@ public class ProductVariants {
     private Integer id;
 
     @ManyToOne
+    @Nullable
     @JoinColumn(name = "color_id")
     private ProductColor productColor;
     @ManyToOne
+    @Nullable
     @JoinColumn(name = "size_id")
     private ProductSize productSize;
 

@@ -42,7 +42,7 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-4">
-            <form th:action="@{/admin/variants/add}" method="post" th:object="${variantSize}">
+            <form th:action="@{/admin/variants/size/add}" method="post" th:object="${variantSize}">
                 <input type="hidden" name="id"  th:field="*{id}">
                 <div class="form-group">
                     <label for="size">Add new size</label>

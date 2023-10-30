@@ -49,6 +49,8 @@ public class OrderController {
 
     @Autowired
     CouponService couponService;
+    @Autowired
+    WalletService walletService;
 
 
     Map<String, Boolean> userBooleanMap = new HashMap<>();
@@ -77,16 +79,12 @@ public class OrderController {
         } else {
             model.addAttribute("total", Double.valueOf(totalDiscount));
         }
-
         model.addAttribute("addressDTO", new AddressDTO());
         model.addAttribute("couponApplied", couponCode);
-
 
         String loggedUser = principal.getName();
         List<Address> addressList = addressService.getAddressOfUser(loggedUser);
         model.addAttribute("addressList", addressList);
-//        model.addAttribute("orderId", orderId);
-
 
         return "checkout";
     }
@@ -128,12 +126,54 @@ public class OrderController {
         if (Objects.equals(paymentMethod, "razorPay")) {
 
             return handleRazorpayPayment(total, id, principal, model, redirectAttributes, servletRequest);
-        } else {
+        }
+        if (Objects.equals(paymentMethod, "wallet")){
+            return handleWalletPayment(total,id,principal,redirectAttributes,model);
+
+        }
+        else {
             return handleOtherPaymentMethods(total, id, principal, redirectAttributes, model);
         }
 
 
     }
+
+    private String handleWalletPayment(double total, int id, Principal principal,
+                                       RedirectAttributes redirectAttributes, Model model) {
+        User user = userService.getUserByEmail(principal.getName()).orElse(null);
+        Orders orders = new Orders();
+        orders.setAddress(addressService.getAddressById(id));
+        orders.setUser(user);
+        orders.setPaymentMethod(paymentMethodRepository.findById(3L).orElse(null));
+        orders.setOrderStatus(orderStatusRepository.findById(1L).orElse(null));
+        orders.setLocalDateTime(LocalDateTime.now());
+        orders.setAmount((int) total);
+        orderService.saveOrder(orders);
+        long orderId = orders.getId();
+
+        Cart cart = cartService.findCartByUser(user).orElse(null);
+        assert cart != null;
+        List<CartItem> cartItemLists = cart.getCartItems();
+        for (CartItem cartItem : cartItemLists) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setOrders(orders);
+            orderItem.setProductVariants(cartItem.getProductVariants());
+            orderItemService.saveOrderItem(orderItem);
+        }
+        assert user != null;
+        Wallet wallet=walletService.getWalletOfUser(user.getId());
+        double newBalance=wallet.getBalance()-total;
+        wallet.setBalance(newBalance);
+        walletService.saveWallet(wallet);
+
+        redirectAttributes.addFlashAttribute("orderId", orderId);
+        redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
+        return "redirect:/orderSuccess";
+    }
+
+
 
 
     @GetMapping("/orderSuccess")
@@ -148,8 +188,8 @@ public class OrderController {
     }
 
     @PostMapping("order/couponCode")
-    public String getCoupon(@RequestParam("couponCode") String couponCode, Principal principal, RedirectAttributes redirectAttributes
-    ) {
+    public String getCoupon(@RequestParam("couponCode") String couponCode, Principal principal,
+                            RedirectAttributes redirectAttributes) {
 
         Coupon coupon = couponService.getByCouponCode(couponCode);
         if (coupon == null) {
@@ -174,7 +214,8 @@ public class OrderController {
                 .reduce(0.0, Double::sum);
 
         if (totalDiscount < coupon.getDiscountAmount()) {
-            redirectAttributes.addFlashAttribute("errorCoupon", "this coupon cannot be applied to this order");
+            redirectAttributes.addFlashAttribute("errorCoupon",
+                    "this coupon cannot be applied to this order");
             return "redirect:/checkout";
         }
 
@@ -214,8 +255,9 @@ public class OrderController {
             model.addAttribute("address", id);
             return "razorPayment";
         } catch (RazorpayException e) {
-            redirectAttributes.addFlashAttribute("errorCoupon", "Failed to initiate Razorpay payment.");
-            return "redirect:/checkout"; // Redirect to the checkout page or an error page
+            redirectAttributes.addFlashAttribute("errorCoupon",
+                    "Failed to initiate Razorpay payment.");
+            return "redirect:/checkout";
         }
     }
 
@@ -234,7 +276,6 @@ public class OrderController {
         orders.setPaymentMethod(paymentMethodRepository.findById(2L).orElse(null));
         orders.setOrderStatus(orderStatusRepository.findById(1L).orElse(null));
         orders.setLocalDateTime(LocalDateTime.now());
-
         orders.setAmount((int) total / 100);
         orderService.saveOrder(orders);
         long orderId = orders.getId();
@@ -247,6 +288,7 @@ public class OrderController {
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setProductVariants(cartItem.getProductVariants());
             orderItem.setOrders(orders);
             orderItemService.saveOrderItem(orderItem);
         }
@@ -277,10 +319,10 @@ public class OrderController {
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setProductVariants(cartItem.getProductVariants());
             orderItem.setOrders(orders);
             orderItemService.saveOrderItem(orderItem);
         }
-
         redirectAttributes.addFlashAttribute("orderId", orderId);
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
         return "redirect:/orderSuccess";

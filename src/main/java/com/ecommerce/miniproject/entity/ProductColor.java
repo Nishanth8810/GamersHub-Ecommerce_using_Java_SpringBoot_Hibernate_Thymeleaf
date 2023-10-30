@@ -1,5 +1,6 @@
 package com.ecommerce.miniproject.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ public class ProductColor {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Nullable
     private String color;
 
 }

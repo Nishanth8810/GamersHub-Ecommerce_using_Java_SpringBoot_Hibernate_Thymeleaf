@@ -275,13 +275,53 @@ public class AdminController {
         return "variants";
 
     }
-    @GetMapping("/admin/variants/add")
-    public String getVariantsAdd(Model model){
+    @GetMapping("/admin/variants/size/add")
+    public String getVariantsSizeAdd(Model model){
         model.addAttribute("variantSize",new ProductSize());
-//        model.addAttribute("variantColor",new ProductColor());
+        return "variantsSizeAdd";
+    }
+    @GetMapping("/admin/variants/color/add")
+    public String getVariantsColorAdd(Model model){
+        model.addAttribute("variantColor",new ProductColor());
+        return "variantsColorAdd";
+    }
+    @PostMapping("/admin/variants/size/add")
+    public String postVariantsSizeAdd(@ModelAttribute("variantSize")ProductSize productSize){
+
+        productSizeRepository.save(productSize);
+
+        return "redirect:/admin/variants";
+    }
 
 
-        return "variantsAdd";
+    @PostMapping("/admin/variants/color/add")
+    public String postVariantsColorAdd(@ModelAttribute("variantColor")ProductColor productColor){
+
+        productColorRepository.save(productColor);
+
+        return "redirect:/admin/variants";
+    }
+    @GetMapping("/admin/variants/color/delete/{id}")
+    public String deleteColorById(@PathVariable long id,RedirectAttributes redirectAttributes){
+        try{
+            productColorRepository.deleteById(id);
+        }catch (Exception e){
+            redirectAttributes.addFlashAttribute("errorDelete",
+                    "This variant is associated with some product");
+        }
+        return "redirect:/admin/variants";
+    }
+    @GetMapping("/admin/variants/size/delete/{id}")
+    public String deleteSizeById(@PathVariable long id,RedirectAttributes redirectAttributes){
+        try {
+            productSizeRepository.deleteById(id);
+        }catch (Exception e){
+            redirectAttributes.addFlashAttribute("errorDelete",
+                    "This variant is associated with some product");
+
+        }
+
+        return "redirect:/admin/variants";
     }
 }
 

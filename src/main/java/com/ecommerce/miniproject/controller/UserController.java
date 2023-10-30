@@ -192,7 +192,6 @@ public class UserController {
             model.addAttribute("errorConfirmPass","Passwords must be same");
         }
         else {
-
        boolean f= bCryptPasswordEncoder.matches(oldPass,user.getPassword());
        if (f){
           user.setPassword(bCryptPasswordEncoder.encode(newPass));

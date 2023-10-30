@@ -31,25 +31,24 @@ public class HomeController {
 
     @Autowired
     CartService cartService;
-    @GetMapping({"/","home","index"})
-    public String home(Model model){
-//
-           model.addAttribute("products",productService.getAllProduct());
-           return "index";
-//        return findPaginated(1,model);
 
-//       }
+    @GetMapping({"/", "home", "index"})
+    public String home(Model model) {
+
+        model.addAttribute("products", productService.getAllProduct());
+        return "index";
+
     }
-    @GetMapping("/shop")
-    public String shop(Model model,Principal principal){
 
-        if (principal==null){
-            model.addAttribute("categories",categoryService.getAllCategory());
-            model.addAttribute("products",productService.getAllProduct());
+    @GetMapping("/shop")
+    public String shop(Model model, Principal principal) {
+
+        if (principal == null) {
+            model.addAttribute("categories", categoryService.getAllCategory());
+            model.addAttribute("products", productService.getAllProduct());
             return "shop";
         }
 
-        //Create cart for user
         Optional<Cart> cartOptional = cartService
                 .findCartByUser(userService.getUserByEmail(principal.getName()).get());
         if (cartOptional.isEmpty()) {
@@ -63,34 +62,36 @@ public class HomeController {
 
 
         model.addAttribute("total", cartService.findCartByUser(userService.getUserByEmail
-                (principal.getName()).get()).get().getCartItems()
+                        (principal.getName()).get()).get().getCartItems()
                 .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
                 .reduce(0.0, (a, b) -> a + b));
 
 
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("products", productService.getAllProduct());
-        return findPaginated(1,model,principal);
+        return findPaginated(1, model, principal);
 //        return "shop";
     }
-    @GetMapping("/shop/category/{id}")
-    public String shopByCategory(@PathVariable int id, Model model, Principal principal){
 
-        if (principal==null){
-            model.addAttribute("categories",categoryService.getAllCategory());
-            model.addAttribute("products",productService.getAllProductsByCategory_id(id));
+    @GetMapping("/shop/category/{id}")
+    public String shopByCategory(@PathVariable int id, Model model, Principal principal) {
+
+        if (principal == null) {
+            model.addAttribute("categories", categoryService.getAllCategory());
+            model.addAttribute("products", productService.getAllProductsByCategory_id(id));
             return "shop";
 
         }
-        model.addAttribute("total",cartService.findCartByUser
-                (userService.getUserByEmail(principal.getName()).get()).get().getCartItems()
-                .stream().map(item->item.getProduct().getPrice()*item.getQuantity())
+        model.addAttribute("total", cartService.findCartByUser
+                        (userService.getUserByEmail(principal.getName()).get()).get().getCartItems()
+                .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
                 .reduce(0.0, (a, b) -> a + b));
 
-        model.addAttribute("categories",categoryService.getAllCategory());
-        model.addAttribute("products",productService.getAllProductsByCategory_id(id));
+        model.addAttribute("categories", categoryService.getAllCategory());
+        model.addAttribute("products", productService.getAllProductsByCategory_id(id));
         return "shop";
     }
+
     @GetMapping("/shop/viewProduct/{id}")
     public String viewProduct(@PathVariable int id, Model model, Principal principal) {
 
@@ -102,13 +103,13 @@ public class HomeController {
         } else {
 
             model.addAttribute("cartCount", cartService
-                            .findCartByUser
+                    .findCartByUser
                             (userService.getUserByEmail(principal.getName()).get())
-                            .get().getCartItems().size());
+                    .get().getCartItems().size());
 
             model.addAttribute("total",
                     cartService.findCartByUser(userService.getUserByEmail(principal.getName())
-                            .get()).get().getCartItems()
+                                    .get()).get().getCartItems()
                             .stream()
                             .map(item -> item.getProduct()
                                     .getPrice() * item.getQuantity())
@@ -120,25 +121,22 @@ public class HomeController {
     }
 
 
-
     /////////////////Pagination//////////////////////////
 
 
-
-
     @GetMapping("/page/{pageNo}")
-    public String findPaginated(@PathVariable (value ="pageNo") int pageNo ,
-                              Model model,Principal principal){
+    public String findPaginated(@PathVariable(value = "pageNo") int pageNo,
+                                Model model, Principal principal) {
 
-       int pageSize=3;
-        Page<Product> page=productService.findPaginated(pageNo,pageSize);
-        List<Product> productList=page.getContent();
+        int pageSize = 6;
+        Page<Product> page = productService.findPaginated(pageNo, pageSize);
+        List<Product> productList = page.getContent();
 
         model.addAttribute("cartCount",
                 cartService.findCartByUser
                                 (userService.getUserByEmail(principal.getName()).get())
                         .get().getCartItems().size());
-        model.addAttribute("categories",categoryService.getAllCategory());
+        model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("products", productList);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
@@ -150,18 +148,18 @@ public class HomeController {
 
     @GetMapping("/search/product")
     public String getSearchProduct(@RequestParam("keyword") String keyword,
-                                   Model model){
-        List<Product> productList=productService.searchProductsByKeyword(keyword);
+                                   Model model) {
+        List<Product> productList = productService.searchProductsByKeyword(keyword);
         System.out.println(productList);
-        if (productList.isEmpty()){
-            model.addAttribute("noProduct","no results found");
-            model.addAttribute("categories",categoryService.getAllCategory());
-            model.addAttribute("keyword",keyword);
+        if (productList.isEmpty()) {
+            model.addAttribute("noProduct", "no results found");
+            model.addAttribute("categories", categoryService.getAllCategory());
+            model.addAttribute("keyword", keyword);
             return "shop";
         }
-        model.addAttribute("products",productList);
-        model.addAttribute("categories",categoryService.getAllCategory());
-        model.addAttribute("keyword",keyword);
+        model.addAttribute("products", productList);
+        model.addAttribute("categories", categoryService.getAllCategory());
+        model.addAttribute("keyword", keyword);
         return "shop";
     }
 

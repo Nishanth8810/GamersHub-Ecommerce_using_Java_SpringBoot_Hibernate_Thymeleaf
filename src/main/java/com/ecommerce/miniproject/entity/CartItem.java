@@ -22,6 +22,10 @@ public class CartItem {
     private int quantity;
 
     @ManyToOne
+    @JoinColumn(name = "productVariant_id")
+    private ProductVariants productVariants;
+
+    @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;
     @Override
