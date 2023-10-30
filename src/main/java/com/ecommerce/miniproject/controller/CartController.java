@@ -48,7 +48,6 @@ public class CartController {
                             Principal principal,
                             RedirectAttributes redirectAttributes) {
 
-        System.out.println(selectedColor+"  "+selectedSize);
         if (!Objects.equals(selectedColor, selectedSize)){
             redirectAttributes.addFlashAttribute("errorVariant",
                     "This combination of variant is not available");
@@ -86,7 +85,7 @@ public class CartController {
         return "redirect:/shop/viewProduct/" + productId;
     }
 
-
+////adding address in checkout///////////
     @PostMapping("/checkout")
     public String postCheckout(@Valid @ModelAttribute AddressDTO addressDTO,
                                BindingResult bindingResult) {
