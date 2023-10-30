@@ -60,7 +60,7 @@
                     </div>
                 </div>
 
-                                <p th:if="${errorProduct}" class="text-danger" th:text="${errorProduct}"></p>
+                <p th:if="${errorProduct}" class="text-danger" th:text="${errorProduct}"></p>
                 <div class="form-group">
                     <label for="category">Select Category</label>
                     <select class="form-control" th:field="*{categoryId}" id="category" name="category">
@@ -70,27 +70,6 @@
                         >
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>Select Size</label>
-                    <div th:each="size : ${sizes}">
-                        <label>
-                            <input type="checkbox" th:field="*{productSize}" th:value="${size.id}" />
-                            <span th:text="${size.size}"></span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Select Color</label>
-                    <div th:each="color : ${colors}">
-                        <label>
-                            <input type="checkbox" th:field="*{productColor}" th:value="${color.id}" />
-                            <span th:text="${color.color}"></span>
-                        </label>
-                    </div>
-                </div>
-
-
                 <div class="form-group">
                     <label for="quantity">quantity</label>
                     <input type="number" class="form-control" required th:field="*{quantity}" name="quantity" id="quantity"
@@ -144,50 +123,49 @@
                 <div class="form-group">
                     <div id="imagePreviews" style="margin-top: 20px;">
                         <!-- Loop through the image filenames and create image tags -->
-                        <div th:each="imageName : ${productDTO.imageName}">
-                            <img th:src="'/productImages/' + ${imageName}" height="100px" width="100px" alt="Image Preview"  src=""/>
-                        </div>
+                        <th:block th:each="imageName : ${productDTO.imageName}">
+                            <img th:src="'/productImages/' + ${imageName}" height="100px" width="100px" alt="Image Preview" />
+                        </th:block>
                     </div>
                 </div>
                 <input type="hidden" name="imgName" th:value="${productDTO.imageName}">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
-
-
-
         </div>
     </form>
 </div>
 
 <script>
     function readURLs(input) {
-         const imagePreviews = document.getElementById("imagePreviews");
-         imagePreviews.innerHTML = ""; // Clear existing previews
+           const imagePreviews = document.getElementById("imagePreviews");
+           imagePreviews.innerHTML = ""; // Clear existing previews
 
-         if (input.files && input.files.length > 0) {
-             for (let i = 0; i < input.files.length; i++) {
-                 const reader = new FileReader();
-                 reader.onload = function (e) {
-                     const image = document.createElement("img");
-                     image.src = e.target.result;
-                     image.width = 100;
-                     image.height = 100;
-                     imagePreviews.appendChild(image);
-                 };
-                 reader.readAsDataURL(input.files[i]);
-             }
-         }
-     }
+           if (input.files && input.files.length > 0) {
+               for (let i = 0; i < input.files.length; i++) {
+                   const reader = new FileReader();
+                   reader.onload = function (e) {
+                       const image = document.createElement("img");
+                       image.src = e.target.result;
+                       image.width = 100;
+                       image.height = 100;
+                       imagePreviews.appendChild(image);
+                   };
+                   reader.readAsDataURL(input.files[i]);
+               }
+           }
+       }
 
-     $('#productImages').change(function () {
-         readURLs(this);
-     });
+       $('#productImages').change(function () {
+           readURLs(this);
+       });
 
-     $(".custom-file-input").on("change", function () {
-         const fileNames = Array.from(this.files).map((file) => file.name);
-         $(this).siblings(".custom-file-label").addClass("selected").html(fileNames.join(', '));
-     });
+       $(".custom-file-input").on("change", function () {
+           const fileNames = Array.from(this.files).map((file) => file.name);
+           $(this).siblings(".custom-file-label").addClass("selected").html(fileNames.join(', '));
+       });
 </script>
+
+
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
