@@ -26,4 +26,7 @@ public class ProductVariantsService {
     public ProductVariants  getVariantById(int id) {
         return productVariantsRepository.findById(id);
     }
+    public Optional<ProductVariants> getProductVariantByProductId(int id){
+        return productVariantsRepository.findByProductId(id);
+    }
 }

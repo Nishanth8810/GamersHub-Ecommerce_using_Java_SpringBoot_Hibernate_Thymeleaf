@@ -128,7 +128,7 @@ public class HomeController {
     public String findPaginated(@PathVariable(value = "pageNo") int pageNo,
                                 Model model, Principal principal) {
 
-        int pageSize = 3;
+        int pageSize = 6;
         Page<Product> page = productService.findPaginated(pageNo, pageSize);
         List<Product> productList = page.getContent();
 

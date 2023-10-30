@@ -34,13 +34,4 @@ public class ProductDTO {
 
     private String productSize;
 
-
-
-//
-//    private String imageName2;
-//
-//    private String imageName3;
-//
-//    private String imageName4;
-//    private List<MultipartFile> imageFiles = new ArrayList<>();
 }

@@ -41,6 +41,14 @@
         </div>
     </div>
 </nav>
+<div th:each="item : ${productVariant}" class="product-item">
+    <!-- Your product item content goes here -->
+
+<!--    <p class="mb-3 text-uppercase small" th:if="${item.productColor?.color != null or item.productSize?.size != null}">-->
+<!--        variant: <span th:text="${item.productColor?.color} + ' , ' + ${item.productSize?.size}"></span>-->
+<!--    </p>-->
+</div>
+
 <div class="container">
     <h3>Update Product</h3>
     <form th:action="@{/admin/products/update/{id}}" method="post" th:object="${productDTO}" enctype="multipart/form-data">
@@ -48,6 +56,7 @@
             <div class="col-sm-5">
 
                 <input type="hidden" name="id" th:field="*{id}">
+
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" class="form-control"  th:field="*{name}" name="name" id="name"
@@ -147,6 +156,7 @@
                         </th:block>
                     </div>
                 </div>
+
                 <input type="hidden" name="imgName" th:value="${productDTO.imageName}">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </div>
