@@ -2,6 +2,8 @@ package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.entity.*;
+import com.ecommerce.miniproject.enums.CouponManagementMessages;
+import com.ecommerce.miniproject.enums.OrderManagementMessages;
 import com.ecommerce.miniproject.repository.CartRepository;
 import com.ecommerce.miniproject.repository.OrderStatusRepository;
 import com.ecommerce.miniproject.repository.PaymentMethodRepository;
@@ -168,7 +170,7 @@ public class OrderController {
         assert user != null;
         Wallet wallet=walletService.getWalletOfUser(user.getId());
         if (wallet.getBalance()<total){
-            redirectAttributes.addFlashAttribute("walletError","Insufficient amount in wallet");
+            redirectAttributes.addFlashAttribute("walletError", OrderManagementMessages.WALLET_INSUFFICIENT.getMessage());
             return "redirect:/checkout";
         }
         double newBalance=wallet.getBalance()-total;
@@ -200,18 +202,18 @@ public class OrderController {
 
         Coupon coupon = couponService.getByCouponCode(couponCode);
         if (coupon == null) {
-            redirectAttributes.addFlashAttribute("errorCoupon", "Enter valid a coupon");
+            redirectAttributes.addFlashAttribute("errorCoupon", CouponManagementMessages.COUPON_VALID.getMessage());
             return "redirect:/checkout";
         }
 
         if (coupon.getExpiryDate().isBefore(ChronoLocalDate.from(LocalDateTime.now()))) {
 
-            redirectAttributes.addFlashAttribute("errorCoupon", "Coupon is no longer valid");
+            redirectAttributes.addFlashAttribute("errorCoupon", CouponManagementMessages.COUPON_NOT_VALID.getMessage());
             return "redirect:/checkout";
         }
 
         if (coupon.getUsageLimit() <= 0) {
-            redirectAttributes.addFlashAttribute("errorCoupon", "Coupon has reached its limit");
+            redirectAttributes.addFlashAttribute("errorCoupon", CouponManagementMessages.COUPON_LIMIT.getMessage());
             return "redirect:/checkout";
         }
 
@@ -222,7 +224,7 @@ public class OrderController {
 
         if (totalDiscount < coupon.getDiscountAmount()) {
             redirectAttributes.addFlashAttribute("errorCoupon",
-                    "this coupon cannot be applied to this order");
+                    CouponManagementMessages.COUPON_CANNOT_APPLIED.getMessage());
             return "redirect:/checkout";
         }
 
@@ -233,7 +235,7 @@ public class OrderController {
         userDoubleMap.put(Objects.requireNonNull(userService.getUserByEmail(principal.getName())
                 .orElse(null)).getEmail(), totalDiscount);
 
-        redirectAttributes.addFlashAttribute("successCoupon", "Coupon has applied ");
+        redirectAttributes.addFlashAttribute("successCoupon", CouponManagementMessages.COUPON_SUCCESS.getMessage());
         redirectAttributes.addFlashAttribute("totalDiscount", String.valueOf(totalDiscount));
         redirectAttributes.addFlashAttribute("appliedCoupon", coupon.getCouponCode());
 
@@ -263,7 +265,7 @@ public class OrderController {
             return "razorPayment";
         } catch (RazorpayException e) {
             redirectAttributes.addFlashAttribute("errorCoupon",
-                    "Failed to initiate Razorpay payment.");
+                    OrderManagementMessages.WALLET_ERROR.getMessage());
             return "redirect:/checkout";
         }
     }

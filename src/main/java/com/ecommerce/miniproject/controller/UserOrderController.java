@@ -4,6 +4,7 @@ import com.ecommerce.miniproject.entity.Orders;
 import com.ecommerce.miniproject.entity.PaymentMethod;
 import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.entity.Wallet;
+import com.ecommerce.miniproject.enums.UserManagementMessages;
 import com.ecommerce.miniproject.repository.OrderStatusRepository;
 import com.ecommerce.miniproject.repository.PaymentMethodRepository;
 import com.ecommerce.miniproject.service.OrderService;
@@ -46,7 +47,7 @@ public class UserOrderController {
             double newBalance=orders.getAmount()+ wallet.getBalance();
             wallet.setBalance(newBalance);
             walletService.saveWallet(wallet);
-            redirectAttributes.addFlashAttribute("successRefund","Your amount has been successfully refunded , kindly check your wallet!");
+            redirectAttributes.addFlashAttribute("successRefund", UserManagementMessages.SUCCESS_REFUND.getMessage());
             return "redirect:/user/orders";
         }
         orders.setOrderStatus(orderStatusRepository.findById(5L).orElseThrow());

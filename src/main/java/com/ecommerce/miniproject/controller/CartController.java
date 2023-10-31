@@ -1,6 +1,7 @@
 package com.ecommerce.miniproject.controller;
 import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.entity.*;
+import com.ecommerce.miniproject.enums.CartManagementMessages;
 import com.ecommerce.miniproject.repository.CartItemRepository;
 import com.ecommerce.miniproject.service.*;
 import jakarta.validation.Valid;
@@ -50,7 +51,7 @@ public class CartController {
 
         if (!Objects.equals(selectedColor, selectedSize)){
             redirectAttributes.addFlashAttribute("errorVariant",
-                    "This combination of variant is not available");
+                    CartManagementMessages.ERROR_VARIANT.getMessage());
             return "redirect:/shop/viewProduct/" + productId;
         }
 
@@ -61,7 +62,7 @@ public class CartController {
 
         if (cartItemOptional.isPresent()) {
             redirectAttributes.addFlashAttribute("alreadyPresent",
-                    "item is already in your cart :)");
+                    CartManagementMessages.ALREADY_PRESENT.getMessage());
 
         } else {
             if (!selectedColor.isEmpty()){
@@ -72,14 +73,14 @@ public class CartController {
                 cartItem.setCart(cart);
                 cartItem.setQuantity(1);
                 cartItemRepository.save(cartItem);
-                redirectAttributes.addFlashAttribute("addedToCart","Added to cart");
+                redirectAttributes.addFlashAttribute("addedToCart",CartManagementMessages.ADDED_CART.getMessage());
             }else {
                 CartItem cartItem = new CartItem();
                 cartItem.setProduct(productService.getProductById(productId).orElseThrow());
                 cartItem.setCart(cart);
                 cartItem.setQuantity(1);
                 cartItemRepository.save(cartItem);
-                redirectAttributes.addFlashAttribute("addedToCart","Added to cart");
+                redirectAttributes.addFlashAttribute("addedToCart",CartManagementMessages.ADDED_CART.getMessage());
             }
         }
         return "redirect:/shop/viewProduct/" + productId;

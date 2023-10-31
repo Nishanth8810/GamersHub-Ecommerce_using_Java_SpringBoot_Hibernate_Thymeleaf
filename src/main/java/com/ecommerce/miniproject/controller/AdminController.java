@@ -3,6 +3,9 @@ package com.ecommerce.miniproject.controller;
 import com.ecommerce.miniproject.dto.CategoryDTO;
 import com.ecommerce.miniproject.dto.CouponDTO;
 import com.ecommerce.miniproject.entity.*;
+import com.ecommerce.miniproject.enums.CategoryManagementMessages;
+import com.ecommerce.miniproject.enums.CouponManagementMessages;
+import com.ecommerce.miniproject.enums.UserManagementMessages;
 import com.ecommerce.miniproject.repository.ProductColorRepository;
 import com.ecommerce.miniproject.repository.ProductSizeRepository;
 import com.ecommerce.miniproject.repository.RoleRepository;
@@ -23,8 +26,6 @@ import java.util.Optional;
 
 @Controller
 public class AdminController {
-    public static String uploadDir = System.getProperty("user.dir") +
-            "/src/main/resources/static/productImages";
     @Autowired
     CategoryService categoryService;
     @Autowired
@@ -69,7 +70,7 @@ public class AdminController {
 
         if (categoryService.getCategoryByName(categoryDTO.getName())) {
             model.addAttribute("categoryDTO", categoryDTO);
-            model.addAttribute("errorCategory", "Category with same name already exist");
+            model.addAttribute("errorCategory",CategoryManagementMessages.DUPLICATE_CATEGORY_NAME.getMessage());
             return "categoriesAdd";
         }
         Category category = new Category();
@@ -85,7 +86,7 @@ public class AdminController {
 
 
         if (categoryService.getProductByCategoryId(id)) {
-            model.addAttribute("productPresent", "Product is available in this Category , try deleting product first");
+            model.addAttribute("productPresent",CategoryManagementMessages.ERROR_DELETE.getMessage());
             model.addAttribute("categories", categoryService.getAllCategory());
             return "categories";
         }
@@ -159,7 +160,7 @@ public class AdminController {
             return "redirect:/admin/userManagement";
         }
        catch (Exception e){
-            redirectAttributes.addFlashAttribute("errorDelete","Cannot delete this user because this user is associated with some order,try to block user");
+            redirectAttributes.addFlashAttribute("errorDelete", UserManagementMessages.ERROR_DELETE.getMessage());
            return "redirect:/admin/userManagement";
        }
     }
@@ -223,13 +224,13 @@ public class AdminController {
 
 
         if (couponService.getCouponByName(couponDTO.getCouponCode())){
-            redirectAttributes.addFlashAttribute("errorCoupon","coupon with same name already exits");
+            redirectAttributes.addFlashAttribute("errorCoupon", CouponManagementMessages.ERROR_COUPON.getMessage());
             return "redirect:/admin/coupon/add";
 
         }
         LocalDate currentDate=LocalDate.now();
         if (currentDate.isAfter(couponDTO.getExpiryDate())){
-            redirectAttributes.addFlashAttribute("errorCoupon","Enter a valid date");
+            redirectAttributes.addFlashAttribute("errorCoupon",CouponManagementMessages.ERROR_DATE.getMessage());
             return "redirect:/admin/coupon/add";
 
         }
@@ -335,8 +336,8 @@ public class AdminController {
         try{
             productColorRepository.deleteById(id);
         }catch (Exception e){
-            redirectAttributes.addFlashAttribute("errorDelete",
-                    "This variant is associated with some product");
+            redirectAttributes.addFlashAttribute("errorDelete",CategoryManagementMessages.ERROR_VARIANT_DELETE.getMessage()
+                    );
         }
         return "redirect:/admin/variants";
     }
@@ -348,7 +349,7 @@ public class AdminController {
             productSizeRepository.deleteById(id);
         }catch (Exception e){
             redirectAttributes.addFlashAttribute("errorDelete",
-                    "This variant is associated with some product");
+                    CategoryManagementMessages.ERROR_VARIANT_DELETE.getMessage());
         }
         return "redirect:/admin/variants";
     }

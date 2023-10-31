@@ -4,6 +4,7 @@ import com.ecommerce.miniproject.dto.WalletDTO;
 import com.ecommerce.miniproject.entity.TransactionDetails;
 import com.ecommerce.miniproject.entity.User;
 import com.ecommerce.miniproject.entity.Wallet;
+import com.ecommerce.miniproject.enums.OrderManagementMessages;
 import com.ecommerce.miniproject.service.OrderService;
 import com.ecommerce.miniproject.service.UserService;
 import com.ecommerce.miniproject.service.WalletService;
@@ -68,7 +69,7 @@ public class WalletController {
             model.addAttribute("amount", total * 100);
         } catch (RazorpayException e) {
             redirectAttributes.addFlashAttribute("errorWallet",
-                    "Failed to initiate Razorpay payment.");
+                    OrderManagementMessages.WALLET_ERROR.getMessage());
         }
     }
     @GetMapping("/walletOrderSuccessful")

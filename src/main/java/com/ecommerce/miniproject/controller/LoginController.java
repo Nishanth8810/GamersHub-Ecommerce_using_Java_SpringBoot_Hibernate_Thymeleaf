@@ -3,6 +3,7 @@ package com.ecommerce.miniproject.controller;
 import com.ecommerce.miniproject.dto.UserDTO;
 import com.ecommerce.miniproject.entity.Role;
 import com.ecommerce.miniproject.entity.User;
+import com.ecommerce.miniproject.enums.UserManagementMessages;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.service.UserService;
 import jakarta.mail.MessagingException;
@@ -98,19 +99,19 @@ public class LoginController {
 
         if (verification == 1) {
             model.addAttribute("email", email);
-            model.addAttribute("wrongOtp", "Entered otp is wrong");
+            model.addAttribute("wrongOtp", UserManagementMessages.ERROR_OTP.getMessage());
             return "otpVerification";
 
         }
         if (verification == 2) {
             model.addAttribute("email", email);
-            model.addAttribute("wrongOtp", "OTP is verified");
+            model.addAttribute("wrongOtp", UserManagementMessages.OTP_VERIFIED.getMessage());
             return "login";
 
         }
         if (verification == 3) {
             model.addAttribute("email", email);
-            model.addAttribute("wrongOtp", "OTP Timeout");
+            model.addAttribute("wrongOtp", UserManagementMessages.OTP_VERIFIED.getMessage());
             return "otpVerification";
 
         }
@@ -161,19 +162,19 @@ public class LoginController {
 
         if (verification == 1) {
             model.addAttribute("email", email);
-            model.addAttribute("wrongOtp", "Entered otp is wrong");
+            model.addAttribute("wrongOtp", UserManagementMessages.ERROR_OTP.getMessage());
             return "otpVerificationForgot";
 
         }
         if (verification == 2) {
             model.addAttribute("email", email);
-            model.addAttribute("wrongOtp", "OTP is verified");
+            model.addAttribute("wrongOtp", UserManagementMessages.OTP_VERIFIED.getMessage());
             return "changePasswordForgot";
 
         }
         if (verification == 3) {
             model.addAttribute("email", email);
-            model.addAttribute("wrongOtp", "OTP Timeout");
+            model.addAttribute("wrongOtp", UserManagementMessages.OTP_TIMEOUT.getMessage());
             return "otpVerificationForgot";
 
         }
@@ -189,11 +190,11 @@ public class LoginController {
 
         User user = userService.getUserByEmail(email).orElseThrow();
         if (!Objects.equals(newPass, confirmPass)) {
-            model.addAttribute("errorConfirmPass", "Passwords must be same");
+            model.addAttribute("errorConfirmPass", UserManagementMessages.PASSWORD_NOT_SAME.getMessage());
         } else {
             user.setPassword(bCryptPasswordEncoder.encode(newPass));
             userService.saveUser(user);
-             redirectAttributes.addFlashAttribute("passSuccess", "password changed");
+             redirectAttributes.addFlashAttribute("passSuccess", UserManagementMessages.PASSWORD_SUCCESS.getMessage());
             return "redirect:/login";
         }
     return "changePasswordForgot";

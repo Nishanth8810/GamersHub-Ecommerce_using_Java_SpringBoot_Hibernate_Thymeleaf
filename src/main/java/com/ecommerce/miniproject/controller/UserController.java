@@ -4,6 +4,7 @@ import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.dto.UserDTO;
 import com.ecommerce.miniproject.entity.Address;
 import com.ecommerce.miniproject.entity.User;
+import com.ecommerce.miniproject.enums.UserManagementMessages;
 import com.ecommerce.miniproject.service.AddressService;
 import com.ecommerce.miniproject.service.OrderService;
 import com.ecommerce.miniproject.service.UserService;
@@ -62,7 +63,7 @@ public class UserController {
     public String getDeleteUserAddress(@PathVariable int id,RedirectAttributes redirectAttributes){
 
         if (orderService.isAddressUsedInOrder(id)) {
-            redirectAttributes.addFlashAttribute("message", "This address is associated with an order and cannot be deleted.");
+            redirectAttributes.addFlashAttribute("message", UserManagementMessages.ADDRESS_ORDER.getMessage());
         }
         else {
         addressService.deleteAddressByID(id);
@@ -99,7 +100,7 @@ public class UserController {
         Address address=addressService.getAddressById(id);
         addressService.setDefaultAddressForUser(user,address);
 
-        redirectAttributes.addFlashAttribute("message1","Default address changed successfully");
+        redirectAttributes.addFlashAttribute("message1",UserManagementMessages.DEFAULT_ADDRESS.getMessage());
 
 
 
@@ -189,14 +190,14 @@ public class UserController {
         User user=userService.getUserByEmail(loggedUser).get();
 
         if (!Objects.equals(newPass, confirmPass)){
-            model.addAttribute("errorConfirmPass","Passwords must be same");
+            model.addAttribute("errorConfirmPass", UserManagementMessages.PASSWORD_NOT_SAME.getMessage());
         }
         else {
        boolean f= bCryptPasswordEncoder.matches(oldPass,user.getPassword());
        if (f){
           user.setPassword(bCryptPasswordEncoder.encode(newPass));
           userService.saveUser(user);
-          model.addAttribute("passSuccess","password changed");
+          model.addAttribute("passSuccess",UserManagementMessages.PASSWORD_SUCCESS.getMessage());
        }
         }
         return "changePassword";

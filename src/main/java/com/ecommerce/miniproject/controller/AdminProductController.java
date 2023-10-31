@@ -2,6 +2,7 @@ package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.dto.ProductDTO;
 import com.ecommerce.miniproject.entity.*;
+import com.ecommerce.miniproject.enums.ProductManagementMessages;
 import com.ecommerce.miniproject.repository.ProductColorRepository;
 import com.ecommerce.miniproject.repository.ProductImageRepository;
 import com.ecommerce.miniproject.repository.ProductSizeRepository;
@@ -70,21 +71,18 @@ public class AdminProductController {
 
         if (orderItemService.orderItemCheck(id)) {
             redirectAttributes.addFlashAttribute("deleteError",
-                    "Cannot delete the product because there are existing" +
-                            " orders associated with it.");
+                    ProductManagementMessages.ERROR_PRODUCT_DELETE.getMessage());
             return "redirect:/admin/products";
 
         }
         try {
             productService.removeProductById(id);
             redirectAttributes.addFlashAttribute("deleteSuccess",
-                    "Product Deleted Successfully");
+                    ProductManagementMessages.PRODUCT_DELETE_SUCCESSFUL.getMessage());
             return "redirect:/admin/products";
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("deleteError",
-                    "Cannot delete the product because there are " +
-                            "existing orders associated with it.");
+            redirectAttributes.addFlashAttribute("deleteError", ProductManagementMessages.ERROR_PRODUCT_DELETE.getMessage());
             return "redirect:/admin/products";
         }
     }
@@ -126,11 +124,11 @@ public class AdminProductController {
         if (productService.getProductByName(productDTO.getName())) {
             model.addAttribute("product", productDTO);
             model.addAttribute("categories", categoryService.getAllCategory());
-            model.addAttribute("errorProduct", "Product with same name already exits");
+            model.addAttribute("errorProduct", ProductManagementMessages.PRODUCT_NAME_ERROR.getMessage());
             return "productsAdd";
         }
         if (fileList.get(0).isEmpty()) {
-            model.addAttribute("errorProduct", "add at least one image");
+            model.addAttribute("errorProduct", ProductManagementMessages.PRODUCT_IMAGE_ERROR.getMessage());
             model.addAttribute("product", productDTO);
             model.addAttribute("categories", categoryService.getAllCategory());
             return "productsAdd";
@@ -237,7 +235,7 @@ public class AdminProductController {
             return "productUpdate";
         }
      if (fileList.isEmpty()){
-         model.addAttribute("errorProduct", "An error occurred while updating the product.");
+         model.addAttribute("errorProduct", ProductManagementMessages.PRODUCT_IMAGE_ERROR.getMessage());
          model.addAttribute("categories", categoryService.getAllCategory());
          return "productUpdate";
      }
@@ -253,7 +251,7 @@ public class AdminProductController {
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            model.addAttribute("errorProduct", "An error occurred while updating the product.");
+            model.addAttribute("errorProduct", ProductManagementMessages.PRODUCT_UPDATE_ERROR.getMessage());
             model.addAttribute("categories", categoryService.getAllCategory());
             return "productUpdate";
         }

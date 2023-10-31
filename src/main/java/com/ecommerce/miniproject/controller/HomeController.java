@@ -2,6 +2,7 @@ package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.entity.Cart;
 import com.ecommerce.miniproject.entity.Product;
+import com.ecommerce.miniproject.enums.ProductManagementMessages;
 import com.ecommerce.miniproject.service.CartService;
 import com.ecommerce.miniproject.service.CategoryService;
 import com.ecommerce.miniproject.service.ProductService;
@@ -152,7 +153,7 @@ public class HomeController {
         List<Product> productList = productService.searchProductsByKeyword(keyword);
         System.out.println(productList);
         if (productList.isEmpty()) {
-            model.addAttribute("noProduct", "no results found");
+            model.addAttribute("noProduct", ProductManagementMessages.PRODUCT_NOT_FOUND.getMessage());
             model.addAttribute("categories", categoryService.getAllCategory());
             model.addAttribute("keyword", keyword);
             return "shop";
