@@ -55,4 +55,8 @@ public class ProductService {
     public List<Product> findByName(String keyword) {
        return productRepository.findByNameContaining(keyword);
     }
+
+    public List<Product> getProductsByPriceRange(Double minPrice, Double maxPrice) {
+      return   productRepository.findByPriceBetween(minPrice,maxPrice);
+    }
 }

@@ -14,4 +14,5 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     List<Product> findByNameContaining(String name);
 
     Boolean existsByCategory_Id(int id);
+    List<Product> findByPriceBetween(Double minPrice, Double maxPrice);
 }

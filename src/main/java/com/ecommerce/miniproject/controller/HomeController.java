@@ -47,6 +47,8 @@ public class HomeController {
         if (principal == null) {
             model.addAttribute("categories", categoryService.getAllCategory());
             model.addAttribute("products", productService.getAllProduct());
+            model.addAttribute("minPrice",0);
+            model.addAttribute("maxPrice",0);
             return "shop";
         }
 
@@ -70,6 +72,8 @@ public class HomeController {
 
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("products", productService.getAllProduct());
+        model.addAttribute("minPrice",0);
+        model.addAttribute("maxPrice",0);
         return findPaginated(1, model, principal);
 //        return "shop";
     }
@@ -163,5 +167,19 @@ public class HomeController {
         model.addAttribute("keyword", keyword);
         return "shop";
     }
+    @GetMapping("/filterProducts")
+    public String filterProducts(@RequestParam("minPrice") Double minPrice, @RequestParam("maxPrice") Double maxPrice, Model model) {
+
+        List<Product> filteredProducts = productService.getProductsByPriceRange(minPrice, maxPrice);
+
+        model.addAttribute("categories", categoryService.getAllCategory());
+        model.addAttribute("minPrice",minPrice);
+        model.addAttribute("maxPrice",maxPrice);
+
+        model.addAttribute("products", filteredProducts);
+
+        return "shop";
+    }
+
 
 }
