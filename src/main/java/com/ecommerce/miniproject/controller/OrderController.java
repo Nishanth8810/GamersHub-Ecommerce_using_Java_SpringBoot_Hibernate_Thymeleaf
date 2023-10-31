@@ -79,8 +79,11 @@ public class OrderController {
         } else {
             model.addAttribute("total", Double.valueOf(totalDiscount));
         }
+        User user=userService.getUserByEmail(principal.getName()).orElseThrow();
+        Wallet wallet=walletService.getWalletOfUser(user.getId());
         model.addAttribute("addressDTO", new AddressDTO());
         model.addAttribute("couponApplied", couponCode);
+        model.addAttribute("walletAmount",wallet.getBalance());
 
         String loggedUser = principal.getName();
         List<Address> addressList = addressService.getAddressOfUser(loggedUser);
@@ -164,6 +167,10 @@ public class OrderController {
         }
         assert user != null;
         Wallet wallet=walletService.getWalletOfUser(user.getId());
+        if (wallet.getBalance()<total){
+            redirectAttributes.addFlashAttribute("walletError","Insufficient amount in wallet");
+            return "redirect:/checkout";
+        }
         double newBalance=wallet.getBalance()-total;
         wallet.setBalance(newBalance);
         walletService.saveWallet(wallet);

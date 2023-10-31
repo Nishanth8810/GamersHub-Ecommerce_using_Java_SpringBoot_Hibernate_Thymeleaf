@@ -16,8 +16,7 @@ public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+    private int userId;
     private Double balance;
-
 
 }

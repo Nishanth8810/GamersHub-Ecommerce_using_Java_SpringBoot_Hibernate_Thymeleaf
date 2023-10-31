@@ -177,7 +177,7 @@ public class LoginController {
             return "otpVerificationForgot";
 
         }
-        return "shop";
+        return "login";
     }
 
 

@@ -5,9 +5,11 @@ import com.ecommerce.miniproject.dto.CouponDTO;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.repository.ProductColorRepository;
 import com.ecommerce.miniproject.repository.ProductSizeRepository;
-import com.ecommerce.miniproject.repository.ProductVariantsRepository;
 import com.ecommerce.miniproject.repository.RoleRepository;
-import com.ecommerce.miniproject.service.*;
+import com.ecommerce.miniproject.service.CategoryService;
+import com.ecommerce.miniproject.service.CouponService;
+import com.ecommerce.miniproject.service.ProductVariantsService;
+import com.ecommerce.miniproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -254,6 +256,7 @@ public class AdminController {
     @GetMapping("/admin/coupon/update/{id}")
     public String getUpdateCoupon(Model model, @PathVariable long id){
 
+
         Coupon coupon=couponService.getCouponById(id);
         CouponDTO couponDTO=new CouponDTO();
         couponDTO.setCouponCode(coupon.getCouponCode());
@@ -263,6 +266,18 @@ public class AdminController {
         couponDTO.setDiscountAmount(coupon.getDiscountAmount());
         model.addAttribute("couponDTO",couponDTO);
         return "couponUpdate";
+
+    }
+    @PostMapping("/admin/coupon/update")
+            public String couponUpdate(CouponDTO couponDTO){
+
+        Coupon coupon=couponService.getByCouponCode(couponDTO.getCouponCode());
+        coupon.setCouponCode(couponDTO.getCouponCode());
+        coupon.setDiscountAmount(couponDTO.getDiscountAmount());
+        coupon.setUsageLimit(couponDTO.getUsageLimit());
+        coupon.setExpiryDate(couponDTO.getExpiryDate());
+        couponService.saveCoupon(coupon);
+      return "redirect:/admin/coupon";
 
     }
 
@@ -275,19 +290,28 @@ public class AdminController {
         return "variants";
 
     }
+
+
     @GetMapping("/admin/variants/size/add")
     public String getVariantsSizeAdd(Model model){
         model.addAttribute("variantSize",new ProductSize());
         return "variantsSizeAdd";
     }
+
+
     @GetMapping("/admin/variants/color/add")
     public String getVariantsColorAdd(Model model){
         model.addAttribute("variantColor",new ProductColor());
         return "variantsColorAdd";
     }
-    @PostMapping("/admin/variants/size/add")
-    public String postVariantsSizeAdd(@ModelAttribute("variantSize")ProductSize productSize){
 
+
+    @PostMapping("/admin/variants/size/add")
+    public String postVariantsSizeAdd(@ModelAttribute("variantSize")ProductSize productSize,RedirectAttributes redirectAttributes){
+        if(productSizeRepository.existsById(productSize.getId())){
+            redirectAttributes.addFlashAttribute("alreadyPresent");
+            return "/admin/variants/size/add";
+        }
         productSizeRepository.save(productSize);
 
         return "redirect:/admin/variants";
@@ -295,12 +319,17 @@ public class AdminController {
 
 
     @PostMapping("/admin/variants/color/add")
-    public String postVariantsColorAdd(@ModelAttribute("variantColor")ProductColor productColor){
-
-        productColorRepository.save(productColor);
+    public String postVariantsColorAdd(@ModelAttribute("variantColor")ProductColor productColor,RedirectAttributes redirectAttributes){
+        if(productColorRepository.existsById(productColor.getId())){
+            redirectAttributes.addFlashAttribute("alreadyPresent");
+            return "redirect:/admin/variants/color/add";
+        }
+                productColorRepository.save(productColor);
 
         return "redirect:/admin/variants";
     }
+
+
     @GetMapping("/admin/variants/color/delete/{id}")
     public String deleteColorById(@PathVariable long id,RedirectAttributes redirectAttributes){
         try{
@@ -311,6 +340,8 @@ public class AdminController {
         }
         return "redirect:/admin/variants";
     }
+
+
     @GetMapping("/admin/variants/size/delete/{id}")
     public String deleteSizeById(@PathVariable long id,RedirectAttributes redirectAttributes){
         try {
@@ -318,11 +349,10 @@ public class AdminController {
         }catch (Exception e){
             redirectAttributes.addFlashAttribute("errorDelete",
                     "This variant is associated with some product");
-
         }
-
         return "redirect:/admin/variants";
     }
+
 }
 
 

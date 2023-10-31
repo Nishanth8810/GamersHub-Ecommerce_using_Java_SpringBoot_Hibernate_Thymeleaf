@@ -4,6 +4,7 @@ import com.ecommerce.miniproject.dto.UserDTO;
 import com.ecommerce.miniproject.entity.Cart;
 import com.ecommerce.miniproject.entity.Role;
 import com.ecommerce.miniproject.entity.User;
+import com.ecommerce.miniproject.entity.Wallet;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.repository.UserRepository;
 import com.ecommerce.miniproject.util.EmailUtil;
@@ -37,6 +38,9 @@ public class UserService {
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    WalletService walletService;
 
     public List<User> getAllUser() {
 
@@ -98,8 +102,11 @@ public class UserService {
         user.setActive(true);
         user.setOtp(otp);
         user.setOtpGeneratedTime(LocalDateTime.now());
-//
         userRepository.save(user);
+         Wallet wallet=new Wallet();
+         wallet.setBalance(0.0);
+         wallet.setUserId(user.getId());
+         walletService.saveWallet(wallet);
 
     }
 

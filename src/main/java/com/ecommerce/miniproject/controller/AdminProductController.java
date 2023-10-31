@@ -70,7 +70,8 @@ public class AdminProductController {
 
         if (orderItemService.orderItemCheck(id)) {
             redirectAttributes.addFlashAttribute("deleteError",
-                    "Cannot delete the product because there are existing orders associated with it.");
+                    "Cannot delete the product because there are existing" +
+                            " orders associated with it.");
             return "redirect:/admin/products";
 
         }
@@ -243,6 +244,7 @@ public class AdminProductController {
 
         try {
             Product product = productService.getProductById(productDTO.getId()).orElseThrow();
+            System.out.println( productDTO.getImageName());
 
             updateProductDetails(product, productDTO);
             saveProductImages(product, fileList);

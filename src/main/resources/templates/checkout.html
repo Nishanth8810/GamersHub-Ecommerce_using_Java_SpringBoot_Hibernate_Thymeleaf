@@ -121,7 +121,7 @@
                 <div class="col-lg-8 mb-4">
                     <form th:action="@{/checkout/confirmOrder}" method="post" >
                         <input type="hidden" id="appliedCoupon" name="appliedCoupon" th:value="${appliedCoupon}" required>
-
+                        <p th:if="${walletError}" class="text-danger" th:text="${walletError}"></p>
 
                         <h5 class="mb-2">Billing details</h5>
                         <!--<input type="hidden" name="id" th:value="${address.id}" />-->
@@ -142,8 +142,7 @@
                                 <span class="address-landmark" th:text="${address.landmark}"></span>
                             </div>
                         </div>
-
-
+                        <p class="text-success">Wallet balance : Rs <span th:text="${walletAmount}+'/-'"></span></p>
                         <br>
                         <label for="paymentMethodSelect"></label><select th:name="paymentMethod" id="paymentMethodSelect">
                         <option value="cashOnDelivery">Cash on delivery</option>

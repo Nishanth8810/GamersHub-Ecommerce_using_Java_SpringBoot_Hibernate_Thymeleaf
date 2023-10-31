@@ -61,7 +61,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/cart}" href="#">
+                    <a class="nav-link" th:href="@{/cart}" sec:authorize="isAuthenticated()" href="#">
                         <i class="fas fa-shopping-cart"></i> Cart
                         <span class="badge badge-danger" th:text="${cartCount}">0</span>
                     </a>

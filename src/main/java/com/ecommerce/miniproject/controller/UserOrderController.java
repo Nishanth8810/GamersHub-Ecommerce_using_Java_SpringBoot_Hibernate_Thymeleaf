@@ -39,7 +39,8 @@ public class UserOrderController {
 
         Orders orders= orderService.getOrderById(id).orElseThrow();
           User user=orders.getUser();
-        boolean isWallet=orders.getPaymentMethod()==paymentMethodService.findById(3L).orElseThrow();
+        boolean isWallet = orders.getPaymentMethod() == paymentMethodService.findById(3L).orElse(null) ||
+                (paymentMethodService.findById(2L).isPresent() && orders.getPaymentMethod() == paymentMethodService.findById(2L).get());
         if (isWallet){
             Wallet wallet=walletService.getWalletOfUser(user.getId());
             double newBalance=orders.getAmount()+ wallet.getBalance();
