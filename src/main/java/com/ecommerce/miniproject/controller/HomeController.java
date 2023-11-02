@@ -1,12 +1,14 @@
 package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.entity.Cart;
+import com.ecommerce.miniproject.entity.Category;
 import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.enums.ProductManagementMessages;
 import com.ecommerce.miniproject.service.CartService;
 import com.ecommerce.miniproject.service.CategoryService;
 import com.ecommerce.miniproject.service.ProductService;
 import com.ecommerce.miniproject.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -67,7 +69,7 @@ public class HomeController {
         model.addAttribute("total", cartService.findCartByUser(userService.getUserByEmail
                         (principal.getName()).get()).get().getCartItems()
                 .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
-                .reduce(0.0, (a, b) -> a + b));
+                .reduce(0.0, Double::sum));
 
 
         model.addAttribute("categories", categoryService.getAllCategory());
@@ -79,7 +81,7 @@ public class HomeController {
     }
 
     @GetMapping("/shop/category/{id}")
-    public String shopByCategory(@PathVariable int id, Model model, Principal principal) {
+    public String shopByCategory(@PathVariable int id, Model model, Principal principal, HttpSession httpSession) {
 
         if (principal == null) {
             model.addAttribute("categories", categoryService.getAllCategory());
@@ -90,10 +92,13 @@ public class HomeController {
         model.addAttribute("total", cartService.findCartByUser
                         (userService.getUserByEmail(principal.getName()).get()).get().getCartItems()
                 .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
-                .reduce(0.0, (a, b) -> a + b));
+                .reduce(0.0, Double::sum));
+
+        httpSession.setAttribute("categoryId",id);
 
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("products", productService.getAllProductsByCategory_id(id));
+
         return "shop";
     }
 
@@ -118,7 +123,7 @@ public class HomeController {
                             .stream()
                             .map(item -> item.getProduct()
                                     .getPrice() * item.getQuantity())
-                            .reduce(0.0, (a, b) -> a + b));
+                            .reduce(0.0, Double::sum));
 
             model.addAttribute("product", productService.getProductById(id).get());
             return "viewProduct";
@@ -152,21 +157,32 @@ public class HomeController {
 
 
     @GetMapping("/search/product")
-    public String getSearchProduct(@RequestParam("keyword") String keyword,
-                                   Model model) {
-        List<Product> productList = productService.searchProductsByKeyword(keyword);
-        System.out.println(productList);
+    public String getSearchProduct(
+            @RequestParam("keyword") String keyword,
+            Model model,
+            HttpSession httpSession
+    ) {
+        List<Product> productList;
+        List<Category> categoriesList = categoryService.getAllCategory();
+        String noProductMessage = ProductManagementMessages.PRODUCT_NOT_FOUND.getMessage();
+
+        if (httpSession.getAttribute("categoryId") != null) {
+            int categoryId = (int) httpSession.getAttribute("categoryId");
+            productList = productService.searchProductsByKeyword(keyword, categoryId);
+        } else {
+            productList = productService.findByName(keyword);
+        }
+
         if (productList.isEmpty()) {
-            model.addAttribute("noProduct", ProductManagementMessages.PRODUCT_NOT_FOUND.getMessage());
-            model.addAttribute("categories", categoryService.getAllCategory());
-            model.addAttribute("keyword", keyword);
-            return "shop";
+            model.addAttribute("noProduct", noProductMessage);
         }
         model.addAttribute("products", productList);
-        model.addAttribute("categories", categoryService.getAllCategory());
+        model.addAttribute("categories", categoriesList);
         model.addAttribute("keyword", keyword);
+
         return "shop";
     }
+
     @GetMapping("/filterProducts")
     public String filterProducts(@RequestParam("minPrice") Double minPrice, @RequestParam("maxPrice") Double maxPrice, Model model) {
 

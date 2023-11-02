@@ -270,8 +270,7 @@ public class AdminController {
 
     }
     @PostMapping("/admin/coupon/update")
-            public String couponUpdate(CouponDTO couponDTO){
-
+    public String couponUpdate(CouponDTO couponDTO){
         Coupon coupon=couponService.getByCouponCode(couponDTO.getCouponCode());
         coupon.setCouponCode(couponDTO.getCouponCode());
         coupon.setDiscountAmount(couponDTO.getDiscountAmount());

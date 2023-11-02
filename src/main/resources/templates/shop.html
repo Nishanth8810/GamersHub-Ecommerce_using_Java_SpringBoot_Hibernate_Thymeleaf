@@ -129,7 +129,7 @@
                     <h5 class="card-title">Filter By Category</h5>
                     <ul class="list-group list-group-flush">
                         <a th:href="@{/shop}">
-                            <li class="list-group-item category-list-item">All Products</li>
+                            <li class="list-group-item category-list-item" >All Products</li>
                         </a>
                         <a href="" th:each="category, iStat : ${categories}" th:href="@{/shop/category/{id}(id=${category.id})}">
                             <li class="list-group-item" th:text="${category.name}"></li>
