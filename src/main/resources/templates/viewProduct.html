@@ -145,9 +145,24 @@
                     </div>
                 </div>
             </div>
+
                 <input type="hidden" name="productId" th:value="${product.id}" />
             <br>
-                <button type="submit" class="btn btn-primary">Add to cart</button>
+                <div th:if="${product.quantity > 0}">
+                    <!-- Product details here -->
+                    <button type="submit" class="btn btn-primary">Add to cart</button>
+
+                </div>
+<!--                <button type="submit" class="btn btn-primary">Add to cart</button>-->
+                <div th:if="${product.quantity == 0}">
+                    <p>Out of Stock</p>
+                </div>
+                <h5>Rating:</h5>
+<!--                <div class="rating">-->
+<!--                    <span class="fa fa-star" th:each="i : ${#numbers.sequence(1, product.rating)}"></span>-->
+<!--                    <span class="fa fa-star-o" th:each="i : ${#numbers.sequence(product.rating + 1, 5)}"></span>-->
+<!--                </div>-->
+
             </form>
         </div>
         <h4 th:if="${alreadyPresent}" class="text-warning" th:text="${alreadyPresent}"></h4>
