@@ -122,6 +122,7 @@
                     <form th:action="@{/checkout/confirmOrder}" method="post" >
                         <input type="hidden" id="appliedCoupon" name="appliedCoupon" th:value="${appliedCoupon}" required>
                         <p th:if="${walletError}" class="text-danger" th:text="${walletError}"></p>
+                        <p th:if="${stockError}" class="text-danger" th:text="${stockError}"></p>
 
                         <h5 class="mb-2">Billing details</h5>
                         <!--<input type="hidden" name="id" th:value="${address.id}" />-->

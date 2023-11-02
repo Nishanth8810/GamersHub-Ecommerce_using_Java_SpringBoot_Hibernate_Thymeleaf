@@ -50,6 +50,8 @@ public class UserOrderController {
             wallet.setBalance(newBalance);
             walletService.saveWallet(wallet);
             redirectAttributes.addFlashAttribute("successRefund", UserManagementMessages.SUCCESS_REFUND.getMessage());
+            orders.setOrderStatus(orderStatusRepository.findById(5L).orElseThrow());
+            orderService.saveOrder(orders);
             return "redirect:/user/orders";
         }
         orders.setOrderStatus(orderStatusRepository.findById(5L).orElseThrow());

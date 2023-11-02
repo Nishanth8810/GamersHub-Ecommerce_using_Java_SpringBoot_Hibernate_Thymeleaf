@@ -51,7 +51,7 @@
                 <p th:if="${errorInventory}" class="text-danger" th:text="${errorInventory}"></p>
 
                 <label for="quantity">Quantity</label>
-                <input type="number" class="form-control" th:field="*{quantity}" name="quantity" id="quantity"
+                <input type="number" class="form-control" min="0" th:field="*{quantity}" name="quantity" id="quantity"
                                                   placeholder="Price">
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>

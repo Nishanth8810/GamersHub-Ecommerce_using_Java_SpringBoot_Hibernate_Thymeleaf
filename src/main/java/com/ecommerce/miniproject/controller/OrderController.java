@@ -105,6 +105,20 @@ public class OrderController {
                                HttpServletRequest servletRequest,
                                RedirectAttributes redirectAttributes, Model model
     ) {
+        User user=userService.getUserByEmail(principal.getName()).orElseThrow();
+        Cart cart = cartService.findCartByUser(user).orElse(null);
+        assert cart != null;
+        List<CartItem> cartItemLists = cart.getCartItems();
+        for (CartItem cartItem : cartItemLists) {
+            Product product = cartItem.getProduct();
+            System.out.println(product.getQuantity());
+            System.out.println(cartItem.getQuantity());
+          if ( product.getQuantity()<cartItem.getQuantity()){
+              redirectAttributes.addFlashAttribute("stockError","No stock available");
+              return "redirect:/checkout";
+          }
+        }
+
 
         double total;
         if (userBooleanMap.get(Objects.requireNonNull(userService.getUserByEmail(principal.getName())
@@ -124,6 +138,7 @@ public class OrderController {
                 .orElse(null)).getEmail(), false);
 
         Coupon coupon = couponService.getByCouponCode(couponCode);
+
 
         if (coupon != null) {
             int quantity = coupon.getUsageLimit() - 1;
