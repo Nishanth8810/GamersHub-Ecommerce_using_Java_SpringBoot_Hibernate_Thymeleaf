@@ -117,7 +117,6 @@
             <p th:text="${product.description}"></p>
 
 
-
             <div class="col-sm-6" th:if="${product.productVariants}">
                 <h6>Select Variant:</h6>
                 <div class="row">
@@ -158,11 +157,14 @@
                     <p>Out of Stock</p>
                 </div>
                 <h5>Rating:</h5>
-<!--                <div class="rating">-->
-<!--                    <span class="fa fa-star" th:each="i : ${#numbers.sequence(1, product.rating)}"></span>-->
-<!--                    <span class="fa fa-star-o" th:each="i : ${#numbers.sequence(product.rating + 1, 5)}"></span>-->
-<!--                </div>-->
+                <div th:if="${rating==null}">No reviews yet!</div>
+                <div th:if="${rating!=null}" class="rating">
+                    <span class="fa fa-star" th:each="i : ${#numbers.sequence(1,rating)}"></span>
+                    <span class="fa fa-star-o" th:each="i : ${#numbers.sequence(rating + 1, 5)}"></span><span th:text="${rating}"></span><span th:if="${rateCount != null}" th:text="'(' + ${rateCount} + ')'"></span>
 
+                    <!--                    <p th:text="${rating.review}"></p>-->
+
+                </div>
             </form>
         </div>
         <h4 th:if="${alreadyPresent}" class="text-warning" th:text="${alreadyPresent}"></h4>

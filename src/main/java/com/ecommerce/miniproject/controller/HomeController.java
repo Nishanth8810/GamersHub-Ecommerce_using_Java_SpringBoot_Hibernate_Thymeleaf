@@ -3,7 +3,9 @@ package com.ecommerce.miniproject.controller;
 import com.ecommerce.miniproject.entity.Cart;
 import com.ecommerce.miniproject.entity.Category;
 import com.ecommerce.miniproject.entity.Product;
+import com.ecommerce.miniproject.entity.Rating;
 import com.ecommerce.miniproject.enums.ProductManagementMessages;
+import com.ecommerce.miniproject.repository.RatingRepository;
 import com.ecommerce.miniproject.service.CartService;
 import com.ecommerce.miniproject.service.CategoryService;
 import com.ecommerce.miniproject.service.ProductService;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 
@@ -34,6 +37,8 @@ public class HomeController {
 
     @Autowired
     CartService cartService;
+    @Autowired
+    RatingRepository ratingRepository;
 
     @GetMapping({"/", "home", "index"})
     public String home(Model model) {
@@ -49,8 +54,8 @@ public class HomeController {
         if (principal == null) {
             model.addAttribute("categories", categoryService.getAllCategory());
             model.addAttribute("products", productService.getAllProduct());
-            model.addAttribute("minPrice",0);
-            model.addAttribute("maxPrice",0);
+            model.addAttribute("minPrice", 0);
+            model.addAttribute("maxPrice", 0);
             return "shop";
         }
 
@@ -74,8 +79,8 @@ public class HomeController {
 
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("products", productService.getAllProduct());
-        model.addAttribute("minPrice",0);
-        model.addAttribute("maxPrice",0);
+        model.addAttribute("minPrice", 0);
+        model.addAttribute("maxPrice", 0);
         return findPaginated(1, model, principal);
 //        return "shop";
     }
@@ -94,7 +99,7 @@ public class HomeController {
                 .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
                 .reduce(0.0, Double::sum));
 
-        httpSession.setAttribute("categoryId",id);
+        httpSession.setAttribute("categoryId", id);
 
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("products", productService.getAllProductsByCategory_id(id));
@@ -125,7 +130,25 @@ public class HomeController {
                                     .getPrice() * item.getQuantity())
                             .reduce(0.0, Double::sum));
 
-            model.addAttribute("product", productService.getProductById(id).get());
+            List<Rating> ratingList = ratingRepository.findByProductId(id);
+            if (ratingList.isEmpty()) {
+                model.addAttribute("product", productService.getProductById(id).orElseThrow());
+                model.addAttribute("rating", null);
+                return "viewProduct";
+            }
+
+            List<Integer> ratingValues = ratingList.stream()
+                    .map(Rating::getRatingValue)
+                    .toList();
+            double averageRating = ratingValues.stream()
+                    .mapToDouble(Integer::doubleValue)
+                    .average()
+                    .orElse(0.0);
+            String formattedAverageRating = String.format("%.2f", averageRating);
+            double formattedAverageRatingDouble = Double.parseDouble(formattedAverageRating);
+            model.addAttribute("product", productService.getProductById(id).orElseThrow());
+            model.addAttribute("rating",formattedAverageRatingDouble);
+            model.addAttribute("rateCount",ratingValues.size());
             return "viewProduct";
         }
     }
@@ -189,8 +212,8 @@ public class HomeController {
         List<Product> filteredProducts = productService.getProductsByPriceRange(minPrice, maxPrice);
 
         model.addAttribute("categories", categoryService.getAllCategory());
-        model.addAttribute("minPrice",minPrice);
-        model.addAttribute("maxPrice",maxPrice);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
 
         model.addAttribute("products", filteredProducts);
 
