@@ -10,8 +10,10 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -64,4 +66,15 @@ public class OrderService {
 
         return new TransactionDetails(orderId,currency,amount);
     }
+    public List<LocalDateTime> getOrderDates(){
+      List<Orders> order=orderRepository.findAll();
+        return order.stream()
+                .map(Orders::getLocalDateTime)
+                .collect(Collectors.toList());
+    }
+    public int getOrderCount(){
+        List<Orders> order=orderRepository.findAll();
+      return order.size();
+    }
+
 }

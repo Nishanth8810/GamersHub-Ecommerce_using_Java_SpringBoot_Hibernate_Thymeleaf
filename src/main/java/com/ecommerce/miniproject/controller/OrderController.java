@@ -4,10 +4,7 @@ import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.enums.CouponManagementMessages;
 import com.ecommerce.miniproject.enums.OrderManagementMessages;
-import com.ecommerce.miniproject.repository.CartRepository;
-import com.ecommerce.miniproject.repository.OrderStatusRepository;
-import com.ecommerce.miniproject.repository.PaymentMethodRepository;
-import com.ecommerce.miniproject.repository.ProductRepository;
+import com.ecommerce.miniproject.repository.*;
 import com.ecommerce.miniproject.service.*;
 import com.razorpay.RazorpayException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,6 +60,8 @@ public class OrderController {
     private CartRepository cartRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+     CartItemRepository cartItemRepository;
 
 
     @GetMapping("/checkout")
@@ -111,8 +110,6 @@ public class OrderController {
         List<CartItem> cartItemLists = cart.getCartItems();
         for (CartItem cartItem : cartItemLists) {
             Product product = cartItem.getProduct();
-            System.out.println(product.getQuantity());
-            System.out.println(cartItem.getQuantity());
           if ( product.getQuantity()<cartItem.getQuantity()){
               redirectAttributes.addFlashAttribute("stockError","No stock available");
               return "redirect:/checkout";
@@ -349,6 +346,7 @@ public class OrderController {
         assert cart != null;
         List<CartItem> cartItemLists = cart.getCartItems();
 
+
         for (CartItem cartItem : cartItemLists) {
             OrderItem orderItem = new OrderItem();
             orderItem.setProduct(cartItem.getProduct());
@@ -362,6 +360,7 @@ public class OrderController {
             orderItem.setOrders(orders);
             orderItemService.saveOrderItem(orderItem);
         }
+       cartItemRepository.deleteAll(cartItemLists);
         redirectAttributes.addFlashAttribute("orderId", orderId);
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
         return "redirect:/orderSuccess";

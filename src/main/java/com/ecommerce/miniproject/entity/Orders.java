@@ -38,7 +38,6 @@ public class Orders {
     private List<OrderItem> orderItems;
 
 
-
     @Column(name = "order_placed_time")
     private LocalDateTime localDateTime;
 

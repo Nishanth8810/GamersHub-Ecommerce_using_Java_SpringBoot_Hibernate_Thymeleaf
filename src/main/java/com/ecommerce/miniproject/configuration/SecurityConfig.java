@@ -21,7 +21,7 @@ public class SecurityConfig {
                         configurer
                                 .requestMatchers("/", "shop/**","register/**","/resources/**","otpScreen/**","verifyAccount/**",
                                         "/static/**","/images/**","/productImages/**","/css/**","/js/**","/index/**","/resendOTP/**", "/error",
-                                        "/error/**", "/resources/templates/error.html","/changePasswordForgot/**","/forgotVerifyAccount/**","/changePassword/**","/forgotPassword","/error-404/**", "/resetPassword","/invalid-url/**","/razorOrder/**","/page/**").permitAll()
+                                        "/error/**", "/resources/templates/rr.html","/changePasswordForgot/**","/forgotVerifyAccount/**","/changePassword/**","/forgotPassword","/error-404/**", "/resetPassword","/invalid-url/**","/razorOrder/**","/page/**").permitAll()
                                 .requestMatchers("/admin/**","/admin/userManagement/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )

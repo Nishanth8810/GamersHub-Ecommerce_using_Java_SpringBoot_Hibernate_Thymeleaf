@@ -5,6 +5,7 @@ import com.ecommerce.miniproject.entity.Category;
 import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.entity.Rating;
 import com.ecommerce.miniproject.enums.ProductManagementMessages;
+import com.ecommerce.miniproject.repository.OrderRepository;
 import com.ecommerce.miniproject.repository.RatingRepository;
 import com.ecommerce.miniproject.service.CartService;
 import com.ecommerce.miniproject.service.CategoryService;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,6 +41,8 @@ public class HomeController {
     CartService cartService;
     @Autowired
     RatingRepository ratingRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     @GetMapping({"/", "home", "index"})
     public String home(Model model) {
