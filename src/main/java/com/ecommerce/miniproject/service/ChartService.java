@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 @Service
@@ -37,6 +38,52 @@ public class ChartService {
         }
 
         return List.of(xAsis, yAxis);
+    }
+    public List<List<Object>> monthlyReport() {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime firstDayOfMonth = today.with(TemporalAdjusters.firstDayOfMonth());
+        LocalDateTime lastDayOfMonth = today.with(TemporalAdjusters.lastDayOfMonth());
+        List<Orders> ordersListMonthly = new ArrayList<>();
+        List<Object> xAxis = new ArrayList<>();
+        List<Object> yAxis = new ArrayList<>();
+        List<Object> yAxis2 = new ArrayList<>();
+
+        while (!firstDayOfMonth.isAfter(today)) {
+            ordersListMonthly = orderRepository.findByLocalDateTimeBetween(
+                    firstDayOfMonth.with(LocalTime.MIN),
+                    lastDayOfMonth.with(LocalTime.MAX)
+            );
+            String dateString = firstDayOfMonth.toLocalDate().toString();
+            xAxis.add(dateString);
+            yAxis.add(ordersListMonthly.size());
+            yAxis2.add(ordersListMonthly.stream().mapToInt(Orders::getAmount).sum());
+            firstDayOfMonth = firstDayOfMonth.plusMonths(1);
+        }
+
+        return List.of(xAxis, yAxis);
+    }
+    public List<List<Object>> yearlyReport() {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime firstDayOfYear = today.with(TemporalAdjusters.firstDayOfYear());
+        LocalDateTime lastDayOfYear = today.with(TemporalAdjusters.lastDayOfYear());
+        List<Orders> ordersListYearly = new ArrayList<>();
+        List<Object> xAxis = new ArrayList<>();
+        List<Object> yAxis = new ArrayList<>();
+        List<Object> yAxis2 = new ArrayList<>();
+
+        while (!firstDayOfYear.isAfter(today)) {
+            ordersListYearly = orderRepository.findByLocalDateTimeBetween(
+                    firstDayOfYear.with(LocalTime.MIN),
+                    lastDayOfYear.with(LocalTime.MAX)
+            );
+            String dateString = String.valueOf(firstDayOfYear.getYear());
+            xAxis.add(dateString);
+            yAxis.add(ordersListYearly.size());
+            yAxis2.add(ordersListYearly.stream().mapToInt(Orders::getAmount).sum());
+            firstDayOfYear = firstDayOfYear.plusMonths(1);
+        }
+
+        return List.of(xAxis, yAxis);
     }
 
 }

@@ -17,31 +17,6 @@
 
 <script th:inline="javascript">
 
-<!--    /* Define your data dynamically using Thymeleaf */-->
-<!--    var data = [[(${data})]];-->
-<!--    var labels = [[(${labels})]];-->
-
-<!--    var ctx = document.getElementById('myChart').getContext('2d');-->
-<!--    var myChart = new Chart(ctx, {-->
-<!--        type: 'bar', // Change the chart type as needed-->
-<!--        data: {-->
-<!--            labels: labels,-->
-<!--            datasets: [{-->
-<!--                label: 'Total orders (daily)',-->
-<!--                data: data,-->
-<!--                backgroundColor: 'rgba(75, 192, 192, 0.2)',-->
-<!--                borderColor: 'rgba(75, 192, 192, 1)',-->
-<!--                borderWidth: 1-->
-<!--            }]-->
-<!--        },-->
-<!--        options: {-->
-<!--            scales: {-->
-<!--                y: {-->
-<!--                    beginAtZero: true-->
-<!--                }-->
-<!--            }-->
-<!--        }-->
-<!--    });-->
     var xValues = [[(${data})]];
 var yValues = [[(${labels})]];
 var barColors = ["red", "green","blue","orange","brown"];

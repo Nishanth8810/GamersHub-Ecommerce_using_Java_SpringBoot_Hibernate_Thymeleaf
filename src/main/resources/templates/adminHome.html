@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     <title>E-commerce</title>
@@ -108,6 +109,17 @@
     <h1 class="display-4">Welcome back, <span th:text="${#authentication.principal.firstName}"></span></h1>
     <p>Easily manage your data from this admin </p>
 </div>
+<div style="width: 100%; margin: 0 auto;">
+    <button class="btn-primary"  onclick="weeklyChart()">Weekly Chart</button>
+    <button class="btn-primary" onclick="monthlyChart()">Monthly Chart</button>
+    <button class="btn-primary" onclick="yearlyChart()">Yearly Chart</button>
+    <canvas id="myChart"></canvas>
+    <canvas id="myCharts" style="width:50%;max-width:500px"></canvas>
+
+</div>
+<!--<canvas id="myCharts" style="width:50%;max-width:500px"></canvas>-->
+
+
 <div  class="container-fluid">
     <div class="row">
         <div class="col-sm-3">
@@ -227,6 +239,70 @@
 </div>
 
 
+<script th:inline="javascript">
+    var xValues = [[(${data})]];
+    var yValues = [[(${labels})]];
+    var barColors = ["red", "green", "blue", "orange", "brown"];
+    var myChart; // Declare the variable here
+
+    // Create the chart initially
+    myChart = new Chart("myCharts", {
+        type: "bar",
+        data: {
+            labels: xValues,
+            datasets: [{
+                label: 'weekly orders',
+                backgroundColor: barColors,
+                data: yValues
+            }]
+        },
+        options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: "Weekly Orders"
+            }
+        }
+    });
+
+    // Function to update chart data
+    function weeklyChart() {
+        // Generate new data values (you can fetch these from your server or other source)
+        var newXValues =[[(${data})]];
+        var newYValues =[[(${labels})]];
+
+        // Update the chart data
+        myChart.data.labels = newXValues;
+        myChart.data.datasets[0].data = newYValues;
+
+        // Redraw the chart
+        myChart.update();
+    }
+      function monthlyChart() {
+        // Generate new data values (you can fetch these from your server or other source)
+        var newXValues = [[(${monthlyData})]];
+        var newYValues = [[(${monthlyLabel})]];
+
+        // Update the chart data
+        myChart.data.labels = newXValues;
+        myChart.data.datasets[0].data = newYValues;
+
+        // Redraw the chart
+        myChart.update();
+    }
+      function yearlyChart() {
+        // Generate new data values (you can fetch these from your server or other source)
+        var newXValues = [[(${yearlyData})]];
+        var newYValues = [[(${yearlyLabel})]];
+
+        // Update the chart data
+        myChart.data.labels = newXValues;
+        myChart.data.datasets[0].data = newYValues;
+
+        // Redraw the chart
+        myChart.update();
+    }
+</script>
 
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>

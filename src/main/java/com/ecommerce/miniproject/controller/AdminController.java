@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class AdminController {
@@ -43,11 +40,35 @@ public class AdminController {
     ProductColorRepository productColorRepository;
     @Autowired
     OrderService orderService;
+    @Autowired
+    ChartService chartService;
 
 //////////////Admin Section/////////////////
 
     @GetMapping("/admin")
     public String adminHome(Model model) {
+
+
+        List<List<Object>> weekly = chartService.weeklyReport();
+        Collections.reverse(weekly.get(0));
+        Collections.reverse(weekly.get(1));
+        model.addAttribute("data", weekly.get(0));
+        model.addAttribute("labels", weekly.get(1));
+
+        List<List<Object>> monthly=chartService.monthlyReport();
+        Collections.reverse(monthly.get(0));
+        Collections.reverse(monthly.get(1));
+        model.addAttribute("monthlyData", monthly.get(0));
+        model.addAttribute("monthlyLabel", monthly.get(1));
+
+        List<List<Object>> yearly=chartService.yearlyReport();
+        Collections.reverse(yearly.get(0));
+        Collections.reverse(yearly.get(1));
+        model.addAttribute("yearlyData", yearly.get(0));
+        model.addAttribute("yearlyLabel", yearly.get(1));
+
+
+
         HashMap<String,Integer> summary=orderService.todayOrderCount();
         HashMap<String,Integer> weeklySummary=orderService.weeklyOrderCount();
         HashMap<String,Integer> monthlySummary=orderService.monthlyOrderCount();
