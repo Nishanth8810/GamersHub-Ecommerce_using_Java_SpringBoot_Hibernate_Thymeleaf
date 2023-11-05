@@ -9,10 +9,7 @@ import com.ecommerce.miniproject.enums.UserManagementMessages;
 import com.ecommerce.miniproject.repository.ProductColorRepository;
 import com.ecommerce.miniproject.repository.ProductSizeRepository;
 import com.ecommerce.miniproject.repository.RoleRepository;
-import com.ecommerce.miniproject.service.CategoryService;
-import com.ecommerce.miniproject.service.CouponService;
-import com.ecommerce.miniproject.service.ProductVariantsService;
-import com.ecommerce.miniproject.service.UserService;
+import com.ecommerce.miniproject.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,11 +41,28 @@ public class AdminController {
 
     @Autowired
     ProductColorRepository productColorRepository;
+    @Autowired
+    OrderService orderService;
 
 //////////////Admin Section/////////////////
 
     @GetMapping("/admin")
-    public String adminHome() {
+    public String adminHome(Model model) {
+        HashMap<String,Integer> summary=orderService.todayOrderCount();
+        HashMap<String,Integer> weeklySummary=orderService.weeklyOrderCount();
+        HashMap<String,Integer> monthlySummary=orderService.monthlyOrderCount();
+        HashMap<String,Integer> yearlySummary=orderService.yearlyOrderCount();
+
+
+        model.addAttribute("orderCount",summary.get("orderCount"));
+        model.addAttribute("revenue",summary.get("revenue"));
+        model.addAttribute("weeklyOrderCount",weeklySummary.get("weeklyOrderCount"));
+        model.addAttribute("weeklyRevenue",weeklySummary.get("weeklyRevenue"));
+        model.addAttribute("monthlyOrderCount",monthlySummary.get("monthlyOrderCount"));
+        model.addAttribute("monthlyRevenue",monthlySummary.get("monthlyRevenue"));
+        model.addAttribute("yearlyOrderCount",yearlySummary.get("yearlyOrderCount"));
+        model.addAttribute("yearlyRevenue",yearlySummary.get("yearlyRevenue"));
+
         return "adminHome";
     }
 

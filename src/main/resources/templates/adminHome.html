@@ -103,12 +103,49 @@
         </div>
     </div>
 </nav>
-<div class="jumbotron text-center">
+<div class="jumbotron text-center ">
+    <h1 class="display-5">Admin dashboard</h1>
     <h1 class="display-4">Welcome back, <span th:text="${#authentication.principal.firstName}"></span></h1>
     <p>Easily manage your data from this admin </p>
 </div>
 <div  class="container-fluid">
     <div class="row">
+        <div class="col-sm-3">
+            <div class="card" style="background-color:MediumSeaGreen;">
+                <div class="card-body">
+                    <h4  class="card-title">TODAY</h4>
+                    <h5 class="card-text">ORDER COUNT:<span th:text="${orderCount}"></span></h5>
+                    <p class="card-text">REVENUE:<span th:text="${revenue}"></span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card" style="background-color:MediumSeaGreen;">
+                <div class="card-body">
+                    <h4  class="card-title">THIS WEEK</h4>
+                    <p class="card-text">ORDER COUNT:<span th:text="${weeklyOrderCount}"></span></p>
+                    <p class="card-text">REVENUE:<span th:text="${weeklyRevenue}"></span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card" style="background-color:MediumSeaGreen;">
+                <div class="card-body">
+                    <h4  class="card-title">THIS MONTH</h4>
+                    <p class="card-text">ORDER COUNT:<span th:text="${monthlyOrderCount}"></span></p>
+                    <p class="card-text">REVENUE:<span th:text="${monthlyRevenue}"></span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card" style="background-color:MediumSeaGreen;">
+                <div class="card-body">
+                    <h4  class="card-title">THIS YEAR</h4>
+                    <p class="card-text">ORDER COUNT:<span th:text="${yearlyOrderCount}"></span></p>
+                    <p class="card-text">REVENUE:<span th:text="${yearlyRevenue}"></span></p>
+                </div>
+            </div>
+        </div>
         <div class="col-sm-3">
             <div class="card" style="background-color:white;">
                 <div class="card-body">

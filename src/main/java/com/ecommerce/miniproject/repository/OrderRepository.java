@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Orders,Long> {
 
@@ -16,6 +17,6 @@ public interface OrderRepository extends JpaRepository<Orders,Long> {
 //    @Query("SELECT DATE(o.orderDate) AS orderDate, COUNT(o.id) AS orderCount FROM Orders o GROUP BY DATE(o.orderDate)")
 //    List<Map<String, Object>> getOrderCountsByDate();
 
-  List  <Orders> findByLocalDateTimeBetween(LocalDateTime localDateTime,LocalDateTime localDateTime1);
-
+  List<Orders> findByLocalDateTimeBetween(LocalDateTime localDateTime,LocalDateTime localDateTime1);
+    Orders findFirstByOrderByLocalDateTimeAsc();
 }

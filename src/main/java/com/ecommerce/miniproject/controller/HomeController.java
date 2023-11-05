@@ -54,6 +54,7 @@ public class HomeController {
 
     @GetMapping("/shop")
     public String shop(Model model, Principal principal) {
+//        System.out.println(orderRepository.findFirstByOrderByLocalDateTimeAsc().toString());
 
         if (principal == null) {
             model.addAttribute("categories", categoryService.getAllCategory());
