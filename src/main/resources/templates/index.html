@@ -90,141 +90,57 @@
     </header>
     <!-- end header section -->
     <!-- slider section -->
-    <section class="slider_section ">
-        <div class="slider_bg_box">
-            <img src="images/cover3.jpg" alt="">
-        </div>
-        <div id="customCarousel1" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <div class="container ">
-                        <div class="row">
-                            <div class="col-md-7">
-                                <div class="detail-box">
-                                    <h1>
-                                         New Arrivals
-                                    </h1>
-                                    <p>
-                                    </p>
-                                    <div class="btn-box">
-                                        <a href="" class="btn1">
-                                            Contact Us
-                                        </a>
-                                        <a href="" class="btn2">
-                                            About Us
-                                        </a>
+    <div class="container">
+        <section class="slider_section">
+            <div id="customCarousel1" class="carousel slide" data-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img th:src="'/bannerImages/' + ${bannerImage.get(0).name}"  alt="Mother Boards Image" src="">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="detail-box">
+                                        <h1>New Arrivals</h1>
+                                        <p>Discover our latest products.</p>
+                                        <div class="btn-box">
+                                            <a href="#" class="btn btn-primary">Contact Us</a>
+                                            <a href="#" class="btn btn-secondary">About Us</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="carousel-item">
-                    <div class="container ">
-                        <div class="row">
-                            <div class="col-md-7">
-                                <div class="detail-box">
-                                    <h1>
-                                        Mother Boards
-                                    </h1>
-                                    <p>
-                                        ASUS Pro Workstation motherboards are designed for professionals in AI training, deep learning, animation, or 3D rendering. Featuring expandable graphics, ...                    </p>
-                                    <div class="btn-box">
-                                        <a href="" class="btn1">
-                                            Contact Us
-                                        </a>
-                                        <a href="" class="btn2">
-                                            About Us
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <div class="container ">
-                        <div class="row">
-                            <div class="col-md-7">
-                                <div class="detail-box">
-                                    <h1>
-                                        RAMs
-                                    </h1>
-                                    <p>
-                                        ALKETRON – Quantum Cache - Over Clocked Extreme Gaming Memory - 8GB DDR3 RAM -1866MHz - CL10 - UDIMM - PC3-14900u for Gaming Desktop PC - 3 Year Warranty.                    </p>
-                                    <div class="btn-box">
-                                        <a href="" class="btn1">
-                                            Contact Us
-                                        </a>
-                                        <a href="" class="btn2">
-                                            About Us
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <div class="container ">
-                        <div class="row">
-                            <div class="col-md-7">
-                                <div class="detail-box">
-                                    <h1>
-                                        graphics cards
-                                    </h1>
-                                    <p>
-                                        Shop Online for Graphics Cards | Choose from a great collection of graphics cards from popular brands like MSI, Gigabyte, Zotac, Asus, PNY, and more.
-                                    </p>
-                                    <div class="btn-box">
-                                        <a href="" class="btn1">
-                                            Contact Us
-                                        </a>
-                                        <a href="" class="btn2">
-                                            About Us
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <div class="container ">
-                        <div class="row">
-                            <div class="col-md-7">
-                                <div class="detail-box">
-                                    <h1>
-                                        CPUs
-                                    </h1>
-                                    <p>
-                                        Intel Core i7 12700F 12 Gen Desktop PC Processor 12 Core CPU with 25MB Cache and up to 4.9 GHz Clock Speed LGA 1700 4K (Graphic Card Required) ... MSI B550M Pro- ...                    </p>
-                                    <div class="btn-box">
-                                        <a href="" class="btn1">
-                                            Contact Us
-                                        </a>
-                                        <a href="" class="btn2">
-                                            About Us
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <ol class="carousel-indicators">
-                <li data-target="#customCarousel1" data-slide-to="0" class="active"></li>
-                <li data-target="#customCarousel1" data-slide-to="1"></li>
-                <li data-target="#customCarousel1" data-slide-to="2"></li>
-                <li data-target="#customCarousel1" data-slide-to="3"></li>
-                <li data-target="#customCarousel1" data-slide-to="4"></li>
-            </ol>
-        </div>
 
-    </section>
-    <!-- end slider section -->
-</div>
+                    <div th:each="banner,i :${bannerImage}" th:if="${i.index!=0}" class="carousel-item">
+                        <img th:src="'/bannerImages/' + ${banner.name}"  alt="Mother Boards Image" src="">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="detail-box">
+                                        <h1>Mother Boards</h1>
+                                        <p>ASUS Pro Workstation motherboards are designed for professionals in AI training, deep learning, animation, or 3D rendering.</p>
+                                        <div class="btn-box">
+                                            <a href="#" class="btn btn-primary">Contact Us</a>
+                                            <a href="#" class="btn btn-secondary">About Us</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add more carousel items with images and content here -->
+
+                </div>
+                <ol class="carousel-indicators">
+                    <li data-target="#customCarousel1" data-slide-to="0" class="active"></li>
+                    <li data-target="#customCarousel1" data-slide-to="1"></li>
+                    <!-- Add indicators for additional carousel items -->
+
+                </ol>
+            </div>
+        </section>
 
 
 <!-- service section -->

@@ -48,16 +48,17 @@ public class ChartService {
         List<Object> yAxis = new ArrayList<>();
         List<Object> yAxis2 = new ArrayList<>();
 
-        while (!firstDayOfMonth.isAfter(today)) {
+        while (lastDayOfMonth.plusDays(1).isAfter(orderRepository.findFirstByOrderByLocalDateTimeAsc().getLocalDateTime().toLocalDate().atStartOfDay())) {
             ordersListMonthly = orderRepository.findByLocalDateTimeBetween(
                     firstDayOfMonth.with(LocalTime.MIN),
                     lastDayOfMonth.with(LocalTime.MAX)
             );
-            String dateString = firstDayOfMonth.toLocalDate().toString();
+            String dateString = firstDayOfMonth.toLocalDate().getMonth().toString();
             xAxis.add(dateString);
             yAxis.add(ordersListMonthly.size());
             yAxis2.add(ordersListMonthly.stream().mapToInt(Orders::getAmount).sum());
-            firstDayOfMonth = firstDayOfMonth.plusMonths(1);
+            firstDayOfMonth = firstDayOfMonth.minusMonths(1);
+            lastDayOfMonth=lastDayOfMonth.minusMonths(1);
         }
 
         return List.of(xAxis, yAxis);
@@ -71,7 +72,9 @@ public class ChartService {
         List<Object> yAxis = new ArrayList<>();
         List<Object> yAxis2 = new ArrayList<>();
 
-        while (!firstDayOfYear.isAfter(today)) {
+        while (lastDayOfYear.plusDays(1).isAfter(orderRepository
+                .findFirstByOrderByLocalDateTimeAsc().getLocalDateTime()
+                .toLocalDate().atStartOfDay())) {
             ordersListYearly = orderRepository.findByLocalDateTimeBetween(
                     firstDayOfYear.with(LocalTime.MIN),
                     lastDayOfYear.with(LocalTime.MAX)
@@ -80,7 +83,8 @@ public class ChartService {
             xAxis.add(dateString);
             yAxis.add(ordersListYearly.size());
             yAxis2.add(ordersListYearly.stream().mapToInt(Orders::getAmount).sum());
-            firstDayOfYear = firstDayOfYear.plusMonths(1);
+            firstDayOfYear = firstDayOfYear.minusYears(1);
+            lastDayOfYear=lastDayOfYear.minusYears(1);
         }
 
         return List.of(xAxis, yAxis);

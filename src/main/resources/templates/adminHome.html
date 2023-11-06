@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link th:href="@{/css/style.css}" rel="stylesheet" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
@@ -109,14 +111,18 @@
     <h1 class="display-4">Welcome back, <span th:text="${#authentication.principal.firstName}"></span></h1>
     <p>Easily manage your data from this admin </p>
 </div>
-<div style="width: 100%; margin: 0 auto;">
+<div style="width: 100%; margin-left:6rem; margin-top:0; display:inline">
     <button class="btn-primary"  onclick="weeklyChart()">Weekly Chart</button>
     <button class="btn-primary" onclick="monthlyChart()">Monthly Chart</button>
     <button class="btn-primary" onclick="yearlyChart()">Yearly Chart</button>
-    <canvas id="myChart"></canvas>
-    <canvas id="myCharts" style="width:50%;max-width:500px"></canvas>
+<!--    <canvas id="myChart"></canvas>-->
+    <canvas id="myCharts" style="width:50%;max-width:500px;max-height:400px"></canvas>
+    <canvas id="myChartPie" style="width:50%;max-width:500px;height:300px;"></canvas>
 
 </div>
+<!--<canvas id="myChartPie" style="width:50%;max-width:500px"></canvas>-->
+
+
 <!--<canvas id="myCharts" style="width:50%;max-width:500px"></canvas>-->
 
 
@@ -229,7 +235,16 @@
                 <div class="card-body">
                     <h4 class="card-title">Sales report</h4>
                     <p class="card-text">Manage sale related section here.</p>
-                    <a href="#" th:href="@{/admin/sales}" class="card-link btn btn-primary">Manage</a>
+                    <a href="#" th:href="@{/admin/salesReport}" class="card-link btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card" style="background-color:white;">
+                <div class="card-body">
+                    <h4 class="card-title">Banner management</h4>
+                    <p class="card-text">Manage sale related section here.</p>
+                    <a href="#" th:href="@{/admin/banner}" class="card-link btn btn-primary">Manage</a>
                 </div>
             </div>
         </div>
@@ -274,6 +289,8 @@
         // Update the chart data
         myChart.data.labels = newXValues;
         myChart.data.datasets[0].data = newYValues;
+        myChart.data.datasets[0].label = 'weekly orders';
+
 
         // Redraw the chart
         myChart.update();
@@ -286,6 +303,8 @@
         // Update the chart data
         myChart.data.labels = newXValues;
         myChart.data.datasets[0].data = newYValues;
+        myChart.data.datasets[0].label = 'monthly orders';
+
 
         // Redraw the chart
         myChart.update();
@@ -298,10 +317,39 @@
         // Update the chart data
         myChart.data.labels = newXValues;
         myChart.data.datasets[0].data = newYValues;
+        myChart.data.datasets[0].label = 'yearly orders';
+
 
         // Redraw the chart
         myChart.update();
     }
+
+<!--var xValues = ["Italy", "France", "Spain", "USA", "Argentina"];-->
+<!--var yValues = [55, 49, 44, 24, 15];-->
+<!--var barColors = [-->
+<!--  "#b91d47",-->
+<!--  "#00aba9",-->
+<!--  "#2b5797",-->
+<!--  "#e8c3b9",-->
+<!--  "#1e7145"-->
+<!--];-->
+
+<!--new Chart("myChartPie", {-->
+<!--  type: "pie",-->
+<!--  data: {-->
+<!--    labels: xValues,-->
+<!--    datasets: [{-->
+<!--      backgroundColor: barColors,-->
+<!--      data: yValues-->
+<!--    }]-->
+<!--  },-->
+<!--  options: {-->
+<!--    title: {-->
+<!--      display: true,-->
+<!--      text: "World Wide Wine Production 2018"-->
+<!--    }-->
+<!--  }-->
+<!--});-->
 </script>
 
 

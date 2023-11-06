@@ -39,6 +39,19 @@ public class Address {
     public boolean isDefault(){
         return isDefault;
     }
+    public String getFullAddress(){
+        return "Address{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", phoneNo=" + phoneNo +
+                ", pincode=" + pincode +
+                ", address='" + address + '\'' +
+                ", city='" + city + '\'' +
+                ", landmark='" + landmark + '\'' +
+                ", user=" + user +
+                ", orders=" + orders +
+                '}';
+    }
 
 
     @Override

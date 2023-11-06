@@ -92,6 +92,7 @@
                    th:onclick="if (!(confirm('Are you sure you want to return this order ?'))) return false">return?</a>
 
                 <br><br>
+                <a th:href="@{/invoice/{id}(id=${order.id})}" class="btn buntan">Download Invoice</a>
 
                 <!-- Review Section - Display for delivered orders -->
                 <div th:if="${!order.isNotDelivered()}">

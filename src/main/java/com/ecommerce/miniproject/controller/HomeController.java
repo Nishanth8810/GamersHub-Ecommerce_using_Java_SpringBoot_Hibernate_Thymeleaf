@@ -5,6 +5,7 @@ import com.ecommerce.miniproject.entity.Category;
 import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.entity.Rating;
 import com.ecommerce.miniproject.enums.ProductManagementMessages;
+import com.ecommerce.miniproject.repository.BannerImageRepository;
 import com.ecommerce.miniproject.repository.OrderRepository;
 import com.ecommerce.miniproject.repository.RatingRepository;
 import com.ecommerce.miniproject.service.CartService;
@@ -43,11 +44,14 @@ public class HomeController {
     RatingRepository ratingRepository;
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private BannerImageRepository bannerImageRepository;
 
     @GetMapping({"/", "home", "index"})
     public String home(Model model) {
 
         model.addAttribute("products", productService.getAllProduct());
+        model.addAttribute("bannerImage",bannerImageRepository.findAll());
         return "index";
 
     }

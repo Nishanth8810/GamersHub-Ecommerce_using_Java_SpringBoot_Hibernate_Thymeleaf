@@ -28,5 +28,8 @@ public class OrderItem {
     @JoinColumn(name = "productVariant_id")
     private ProductVariants productVariants;
 
+    public Double getSubtotal(){
+        return product.getPrice()*quantity;
+    }
 
 }
