@@ -41,58 +41,90 @@
 
     <a th:href="@{/user/orders}"></a>
 
-        <div th:each="order, iStat : ${orderDetails}" class="col-md-8 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <p th:if="${successRefund}" class="text-success" th:text="${successRefund}"></p>
+    <!-- ... (previous HTML code) ... -->
 
-                    <h5 class="card-title">Order #<span th:text="${order.id}"></span></h5>
-
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Image</th>
-                            <th>Variant</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="item : ${order.orderItems}">
-                            <td th:text="${item.product.name}"></td>
-                            <td>
-                                <img  th:src="@{${'/productImages/' + item.product.imageName}}"  alt="Product Image" width="100" height="100" src="">
-                            </td>
-                            <td>
-                                <p class="mb-3 text-uppercase small" th:if="${item.productVariants?.productColor?.color != null or item.productVariants?.productSize?.size != null}">
-                                    variant: <span th:text="${item.productVariants?.productColor?.color} + ' , ' + ${item.productVariants?.productSize?.size}"></span>
-                                </p>
-                            </td>
-                            <td th:text="${item.quantity}"></td>
-                            <td th:text="${item.product.price+'/-'}"></td>
+    <div th:each="order, iStat : ${orderDetails}" class="col-md-8 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <p th:if="${successRefund}" class="text-success" th:text="${successRefund}"></p>
+                <p th:if="${success}" class="text-success" th:text="${success}"></p>
 
 
-                        </tr>
-                        </tbody>
-                    </table>
-                    <p class="card-text"><strong>Address:</strong> <span th:text="${order.address.name}"></span></p>
+                <h5 class="card-title">Order #<span th:text="${order.id}"></span></h5>
 
-                    <p class="card-text"><strong>Phone No:</strong> <span th:text="${order.address.phoneNo}"></span></p>
-                    <p class="card-text"><strong>Order Date:</strong> <span th:text="${#temporals.format(order.localDateTime, 'yyyy-MM-dd')}"></span></p>
-                    <p class="card-text"><strong>Status:</strong> <span th:text="${order.orderStatus.status}"></span></p>
-                    <p class="card-text text-danger font-italic"><strong>Payment Method:</strong> <span th:text="${order.paymentMethod.name}"></span></p>
-                    <p class="card-text text-success"><strong>Total Amount:</strong> <span th:text="${order.amount+'/-'}"></span></p>
-                    <a th:if="${order.isNotCancelled()} and ${order.isNotReturned()} and ${order.isNotDelivered()}" th:href="@{/user/order/cancel/{id}(id=${order.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to cancel this order ?') )) return false">Cancel</a>
-                    <a th:if="${!order.isNotDelivered()}" th:href="@{/user/order/return/{id}(id=${order.id})}" class="btn btn-primary" th:onclick="if(!(confirm('Are you sure you want to return this order ?') )) return false">return?</a>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Image</th>
+                        <th>Variant</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${order.orderItems}">
+                        <td th:text="${item.product.name}"></td>
+                        <td>
+                            <img th:src="@{${'/productImages/' + item.product.imageName}}" alt="Product Image" width="100" height="100" src="">
+                        </td>
+                        <td>
+                            <p class="mb-3 text-uppercase small"
+                               th:if="${item.productVariants?.productColor?.color != null or item.productVariants?.productSize?.size != null}">
+                                variant: <span th:text="${item.productVariants?.productColor?.color} + ' , ' + ${item.productVariants?.productSize?.size}"></span>
+                            </p>
+                        </td>
+                        <td th:text="${item.quantity}"></td>
+                        <td th:text="${item.product.price + '/-'}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p class="card-text"><strong>Address:</strong> <span th:text="${order.address.name}"></span></p>
+                <p class="card-text"><strong>Phone No:</strong> <span th:text="${order.address.phoneNo}"></span></p>
+                <p class="card-text"><strong>Order Date:</strong> <span th:text="${#temporals.format(order.localDateTime, 'yyyy-MM-dd')}"></span></p>
+                <p class="card-text"><strong>Status:</strong> <span th:text="${order.orderStatus.status}"></span></p>
+                <p class="card-text text-danger font-italic"><strong>Payment Method:</strong> <span th:text="${order.paymentMethod.name}"></span></p>
+                <p class="card-text text-success"><strong>Total Amount:</strong> <span th:text="${order.amount + '/-'}"></span></p>
+                <a th:if="${order.isNotCancelled()} and ${order.isNotReturned()} and ${order.isNotDelivered()}"
+                   th:href="@{/user/order/cancel/{id}(id=${order.id})}" class="btn btn-danger"
+                   th:onclick="if (!(confirm('Are you sure you want to cancel this order ?'))) return false">Cancel</a>
+                <a th:if="${!order.isNotDelivered()}" th:href="@{/user/order/return/{id}(id=${order.id})}" class="btn btn-primary"
+                   th:onclick="if (!(confirm('Are you sure you want to return this order ?'))) return false">return?</a>
 
-                    <br><br>
+                <br><br>
+                <a th:href="@{/invoice/{id}(id=${order.id})}" class="btn btn-danger">Download Invoice</a>
+
+                <!-- Review Section - Display for delivered orders -->
+                <div th:if="${!order.isNotDelivered()}">
+                    <form th:action="@{/addRatingReview}" method="post">
+                        <h6 class="mb-3">Rate and Review Products</h6>
+                        <div th:each="item : ${order.orderItems}" class="mb-4">
+                            <div class="form-group">
+                                <label for="rating">Rating:</label>
+                                <select name="rating" id="rating" class="form-control">
+                                    <option value="1">1 (Poor)</option>
+                                    <option value="2">2 (Fair)</option>
+                                    <option value="3">3 (Good)</option>
+                                    <option value="4">4 (Very Good)</option>
+                                    <option value="5">5 (Excellent)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="review">Review:</label>
+                                <textarea name="review" id="review" class="form-control" rows="4"></textarea>
+                            </div>
+                            <input type="hidden" name="productId" th:value="${item.product.id}" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Rating & Review</button>
+                    </form>
                 </div>
             </div>
         </div>
-
     </div>
+
+    <!-- ... (remaining HTML code) ... -->
+
+</div>
 
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

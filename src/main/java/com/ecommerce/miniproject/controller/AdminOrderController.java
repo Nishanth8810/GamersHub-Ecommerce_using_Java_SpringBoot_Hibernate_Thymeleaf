@@ -1,6 +1,7 @@
 package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.entity.Orders;
+import com.ecommerce.miniproject.enums.UserManagementMessages;
 import com.ecommerce.miniproject.repository.OrderStatusRepository;
 import com.ecommerce.miniproject.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,11 +112,13 @@ public class AdminOrderController {
                 return "adminOrders";
             }
             catch (Exception e){
-                model.addAttribute("errorSearch","Id is not present");
+                model.addAttribute("errorSearch", UserManagementMessages.ERROR_SEARCH.getMessage());
                 model.addAttribute("userOrder", orderService.getAllOrders());
                 return "adminOrders";
 
             }
+            /////////DASHBOARD ORDERS////////
+
 
 
     }

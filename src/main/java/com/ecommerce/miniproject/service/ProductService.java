@@ -47,12 +47,16 @@ public class ProductService {
     }
 
 
-    public List<Product> searchProductsByKeyword(String keyword) {
+    public List<Product> searchProductsByKeyword(String keyword,int categoryId) {
 
-        return productRepository.findByNameContaining(keyword);
+        return productRepository.findByNameContainingAndCategoryId(keyword,categoryId);
     }
 
     public List<Product> findByName(String keyword) {
        return productRepository.findByNameContaining(keyword);
+    }
+
+    public List<Product> getProductsByPriceRange(Double minPrice, Double maxPrice) {
+      return   productRepository.findByPriceBetween(minPrice,maxPrice);
     }
 }

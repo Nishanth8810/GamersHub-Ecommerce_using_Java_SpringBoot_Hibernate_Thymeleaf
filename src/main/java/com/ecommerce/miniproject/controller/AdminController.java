@@ -3,9 +3,11 @@ package com.ecommerce.miniproject.controller;
 import com.ecommerce.miniproject.dto.CategoryDTO;
 import com.ecommerce.miniproject.dto.CouponDTO;
 import com.ecommerce.miniproject.entity.*;
+import com.ecommerce.miniproject.enums.CategoryManagementMessages;
+import com.ecommerce.miniproject.enums.CouponManagementMessages;
+import com.ecommerce.miniproject.enums.UserManagementMessages;
 import com.ecommerce.miniproject.repository.ProductColorRepository;
 import com.ecommerce.miniproject.repository.ProductSizeRepository;
-import com.ecommerce.miniproject.repository.ProductVariantsRepository;
 import com.ecommerce.miniproject.repository.RoleRepository;
 import com.ecommerce.miniproject.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class AdminController {
-    public static String uploadDir = System.getProperty("user.dir") +
-            "/src/main/resources/static/productImages";
     @Autowired
     CategoryService categoryService;
     @Autowired
@@ -40,11 +38,52 @@ public class AdminController {
 
     @Autowired
     ProductColorRepository productColorRepository;
+    @Autowired
+    OrderService orderService;
+    @Autowired
+    ChartService chartService;
 
 //////////////Admin Section/////////////////
 
     @GetMapping("/admin")
-    public String adminHome() {
+    public String adminHome(Model model) {
+
+
+        List<List<Object>> weekly = chartService.weeklyReport();
+        Collections.reverse(weekly.get(0));
+        Collections.reverse(weekly.get(1));
+        model.addAttribute("data", weekly.get(0));
+        model.addAttribute("labels", weekly.get(1));
+
+        List<List<Object>> monthly=chartService.monthlyReport();
+        Collections.reverse(monthly.get(0));
+        Collections.reverse(monthly.get(1));
+        model.addAttribute("monthlyData", monthly.get(0));
+        model.addAttribute("monthlyLabel", monthly.get(1));
+
+        List<List<Object>> yearly=chartService.yearlyReport();
+        Collections.reverse(yearly.get(0));
+        Collections.reverse(yearly.get(1));
+        model.addAttribute("yearlyData", yearly.get(0));
+        model.addAttribute("yearlyLabel", yearly.get(1));
+
+
+
+        HashMap<String,Integer> summary=orderService.todayOrderCount();
+        HashMap<String,Integer> weeklySummary=orderService.weeklyOrderCount();
+        HashMap<String,Integer> monthlySummary=orderService.monthlyOrderCount();
+        HashMap<String,Integer> yearlySummary=orderService.yearlyOrderCount();
+
+
+        model.addAttribute("orderCount",summary.get("orderCount"));
+        model.addAttribute("revenue",summary.get("revenue"));
+        model.addAttribute("weeklyOrderCount",weeklySummary.get("weeklyOrderCount"));
+        model.addAttribute("weeklyRevenue",weeklySummary.get("weeklyRevenue"));
+        model.addAttribute("monthlyOrderCount",monthlySummary.get("monthlyOrderCount"));
+        model.addAttribute("monthlyRevenue",monthlySummary.get("monthlyRevenue"));
+        model.addAttribute("yearlyOrderCount",yearlySummary.get("yearlyOrderCount"));
+        model.addAttribute("yearlyRevenue",yearlySummary.get("yearlyRevenue"));
+
         return "adminHome";
     }
 
@@ -67,7 +106,7 @@ public class AdminController {
 
         if (categoryService.getCategoryByName(categoryDTO.getName())) {
             model.addAttribute("categoryDTO", categoryDTO);
-            model.addAttribute("errorCategory", "Category with same name already exist");
+            model.addAttribute("errorCategory",CategoryManagementMessages.DUPLICATE_CATEGORY_NAME.getMessage());
             return "categoriesAdd";
         }
         Category category = new Category();
@@ -83,7 +122,7 @@ public class AdminController {
 
 
         if (categoryService.getProductByCategoryId(id)) {
-            model.addAttribute("productPresent", "Product is available in this Category , try deleting product first");
+            model.addAttribute("productPresent",CategoryManagementMessages.ERROR_DELETE.getMessage());
             model.addAttribute("categories", categoryService.getAllCategory());
             return "categories";
         }
@@ -157,7 +196,7 @@ public class AdminController {
             return "redirect:/admin/userManagement";
         }
        catch (Exception e){
-            redirectAttributes.addFlashAttribute("errorDelete","Cannot delete this user because this user is associated with some order,try to block user");
+            redirectAttributes.addFlashAttribute("errorDelete", UserManagementMessages.ERROR_DELETE.getMessage());
            return "redirect:/admin/userManagement";
        }
     }
@@ -221,13 +260,13 @@ public class AdminController {
 
 
         if (couponService.getCouponByName(couponDTO.getCouponCode())){
-            redirectAttributes.addFlashAttribute("errorCoupon","coupon with same name already exits");
+            redirectAttributes.addFlashAttribute("errorCoupon", CouponManagementMessages.ERROR_COUPON.getMessage());
             return "redirect:/admin/coupon/add";
 
         }
         LocalDate currentDate=LocalDate.now();
         if (currentDate.isAfter(couponDTO.getExpiryDate())){
-            redirectAttributes.addFlashAttribute("errorCoupon","Enter a valid date");
+            redirectAttributes.addFlashAttribute("errorCoupon",CouponManagementMessages.ERROR_DATE.getMessage());
             return "redirect:/admin/coupon/add";
 
         }
@@ -254,6 +293,7 @@ public class AdminController {
     @GetMapping("/admin/coupon/update/{id}")
     public String getUpdateCoupon(Model model, @PathVariable long id){
 
+
         Coupon coupon=couponService.getCouponById(id);
         CouponDTO couponDTO=new CouponDTO();
         couponDTO.setCouponCode(coupon.getCouponCode());
@@ -263,6 +303,17 @@ public class AdminController {
         couponDTO.setDiscountAmount(coupon.getDiscountAmount());
         model.addAttribute("couponDTO",couponDTO);
         return "couponUpdate";
+
+    }
+    @PostMapping("/admin/coupon/update")
+    public String couponUpdate(CouponDTO couponDTO){
+        Coupon coupon=couponService.getByCouponCode(couponDTO.getCouponCode());
+        coupon.setCouponCode(couponDTO.getCouponCode());
+        coupon.setDiscountAmount(couponDTO.getDiscountAmount());
+        coupon.setUsageLimit(couponDTO.getUsageLimit());
+        coupon.setExpiryDate(couponDTO.getExpiryDate());
+        couponService.saveCoupon(coupon);
+      return "redirect:/admin/coupon";
 
     }
 
@@ -275,19 +326,28 @@ public class AdminController {
         return "variants";
 
     }
+
+
     @GetMapping("/admin/variants/size/add")
     public String getVariantsSizeAdd(Model model){
         model.addAttribute("variantSize",new ProductSize());
         return "variantsSizeAdd";
     }
+
+
     @GetMapping("/admin/variants/color/add")
     public String getVariantsColorAdd(Model model){
         model.addAttribute("variantColor",new ProductColor());
         return "variantsColorAdd";
     }
-    @PostMapping("/admin/variants/size/add")
-    public String postVariantsSizeAdd(@ModelAttribute("variantSize")ProductSize productSize){
 
+
+    @PostMapping("/admin/variants/size/add")
+    public String postVariantsSizeAdd(@ModelAttribute("variantSize")ProductSize productSize,RedirectAttributes redirectAttributes){
+        if(productSizeRepository.existsById(productSize.getId())){
+            redirectAttributes.addFlashAttribute("alreadyPresent");
+            return "/admin/variants/size/add";
+        }
         productSizeRepository.save(productSize);
 
         return "redirect:/admin/variants";
@@ -295,34 +355,40 @@ public class AdminController {
 
 
     @PostMapping("/admin/variants/color/add")
-    public String postVariantsColorAdd(@ModelAttribute("variantColor")ProductColor productColor){
-
-        productColorRepository.save(productColor);
+    public String postVariantsColorAdd(@ModelAttribute("variantColor")ProductColor productColor,RedirectAttributes redirectAttributes){
+        if(productColorRepository.existsById(productColor.getId())){
+            redirectAttributes.addFlashAttribute("alreadyPresent");
+            return "redirect:/admin/variants/color/add";
+        }
+                productColorRepository.save(productColor);
 
         return "redirect:/admin/variants";
     }
+
+
     @GetMapping("/admin/variants/color/delete/{id}")
     public String deleteColorById(@PathVariable long id,RedirectAttributes redirectAttributes){
         try{
             productColorRepository.deleteById(id);
         }catch (Exception e){
-            redirectAttributes.addFlashAttribute("errorDelete",
-                    "This variant is associated with some product");
+            redirectAttributes.addFlashAttribute("errorDelete",CategoryManagementMessages.ERROR_VARIANT_DELETE.getMessage()
+                    );
         }
         return "redirect:/admin/variants";
     }
+
+
     @GetMapping("/admin/variants/size/delete/{id}")
     public String deleteSizeById(@PathVariable long id,RedirectAttributes redirectAttributes){
         try {
             productSizeRepository.deleteById(id);
         }catch (Exception e){
             redirectAttributes.addFlashAttribute("errorDelete",
-                    "This variant is associated with some product");
-
+                    CategoryManagementMessages.ERROR_VARIANT_DELETE.getMessage());
         }
-
         return "redirect:/admin/variants";
     }
+
 }
 
 
