@@ -3,17 +3,14 @@ package com.ecommerce.miniproject.service;
 import com.ecommerce.miniproject.entity.OrderItem;
 import com.ecommerce.miniproject.entity.Orders;
 import com.ecommerce.miniproject.entity.Report;
-import jakarta.persistence.criteria.Order;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -21,9 +18,9 @@ import java.util.*;
 @Service
 public class ReportService {
     @Autowired
-    private OrderService orderService;
+    OrderService orderService;
 
-    public byte[] exportPdfReport(String format) throws FileNotFoundException, JRException {
+    public byte[] exportPdfReport(String format) throws JRException {
 
         List<Orders> filteredUserOrders = orderService.getAllOrders();
 
@@ -65,8 +62,7 @@ public class ReportService {
 
         //Export to pdf
         if (format.equalsIgnoreCase("pdf")) {
-            byte[] pdfBytes = JasperExportManager.exportReportToPdf(jasperPrint);
-            return pdfBytes;
+            return JasperExportManager.exportReportToPdf(jasperPrint);
         }
 
         //Export to xls
