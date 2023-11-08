@@ -41,7 +41,7 @@ public class BannerController {
     public  String postAddBanner(@RequestParam("bannerImage")List<MultipartFile> fileList) throws IOException {
 
         if (fileList.isEmpty()){
-            return "redirect:/admin/banner/add";
+            return "redirect:/admin/banner";
         }
         for (MultipartFile file:fileList){
             BannerImage bannerImage=new BannerImage();
@@ -50,6 +50,12 @@ public class BannerController {
             Files.write(filename,file.getBytes());
             bannerImageRepository.save(bannerImage);
         }
+        return "redirect:/admin/banner";
+
+    }
+    @GetMapping("/admin/banner/delete/{id}")
+    public String deleteBanner(@PathVariable long id){
+        bannerImageRepository.deleteById(id);
         return "redirect:/admin/banner";
 
     }

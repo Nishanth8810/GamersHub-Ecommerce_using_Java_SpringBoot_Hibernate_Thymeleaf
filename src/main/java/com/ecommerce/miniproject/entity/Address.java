@@ -40,17 +40,13 @@ public class Address {
         return isDefault;
     }
     public String getFullAddress(){
-        return "Address{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", phoneNo=" + phoneNo +
-                ", pincode=" + pincode +
-                ", address='" + address + '\'' +
-                ", city='" + city + '\'' +
-                ", landmark='" + landmark + '\'' +
-                ", user=" + user +
-                ", orders=" + orders +
-                '}';
+        return
+                 id +
+                " " + name + '\'' +
+                " " + phoneNo +
+                " " + pincode +
+                " "+ address + '\'' ;
+
     }
 
 
