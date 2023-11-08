@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class UserOrderController {
@@ -34,6 +35,8 @@ public class UserOrderController {
     ProductService productService;
     @Autowired
     RatingRepository ratingRepository;
+    @Autowired
+    RatingService ratingService;
 
 
     @GetMapping("/user/order/cancel/{id}")
@@ -42,8 +45,15 @@ public class UserOrderController {
 
         Orders orders = orderService.getOrderById(id).orElseThrow();
         User user = orders.getUser();
+        List<OrderItem>orderItems=orders.getOrderItems();
+        for (OrderItem orderItem:orderItems){
+            Product product=orderItem.getProduct();
+            product.setQuantity(product.getQuantity()+orderItem.getQuantity());
+            productService.addProduct(product);
+        }
         boolean isWallet = orders.getPaymentMethod() == paymentMethodService.findById(3L).orElse(null) ||
-                (paymentMethodService.findById(2L).isPresent() && orders.getPaymentMethod() == paymentMethodService.findById(2L).get());
+                (paymentMethodService.findById(2L).isPresent() &&
+                        orders.getPaymentMethod() == paymentMethodService.findById(2L).get());
         if (isWallet) {
             Wallet wallet = walletService.getWalletOfUser(user.getId());
             double newBalance = orders.getAmount() + wallet.getBalance();
@@ -89,6 +99,11 @@ public class UserOrderController {
                              RedirectAttributes redirectAttributes) {
         Product product=productService.getProductById(productId).orElseThrow();
         User user=userService.getUserByEmail(principal.getName()).orElseThrow();
+        if (ratingService.isReviewExists(productId, user.getId())){
+         redirectAttributes.addFlashAttribute("errorReview",
+                 "You have already rated this product");
+            return "redirect:/user/orders";
+        }
         Rating rating=new Rating();
         rating.setRatingValue(id);
         rating.setUser(user);

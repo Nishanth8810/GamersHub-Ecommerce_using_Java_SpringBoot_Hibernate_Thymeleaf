@@ -167,6 +167,7 @@ public class OrderController {
         long orderId = orders.getId();
 
         Cart cart = cartService.findCartByUser(user).orElse(null);
+
         assert cart != null;
         List<CartItem> cartItemLists = cart.getCartItems();
         for (CartItem cartItem : cartItemLists) {

@@ -42,13 +42,17 @@
     <a th:href="@{/user/orders}"></a>
 
     <!-- ... (previous HTML code) ... -->
+    <p th:if="${successRefund}" class="text-success" th:text="${successRefund}"></p>
+    <p th:if="${success}" class="text-success" th:text="${success}"></p>
+    <p th:if="${errorReview}" class="text-danger" th:text="${errorReview}"></p>
 
     <div th:each="order, iStat : ${orderDetails}" class="col-md-8 mb-4">
         <div class="card">
-            <div class="card-body">
-                <p th:if="${successRefund}" class="text-success" th:text="${successRefund}"></p>
-                <p th:if="${success}" class="text-success" th:text="${success}"></p>
 
+
+
+
+            <div class="card-body">
 
                 <h5 class="card-title">Order #<span th:text="${order.id}"></span></h5>
 
