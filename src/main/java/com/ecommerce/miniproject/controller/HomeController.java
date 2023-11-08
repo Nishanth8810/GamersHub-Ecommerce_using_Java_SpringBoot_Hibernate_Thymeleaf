@@ -41,9 +41,7 @@ public class HomeController {
     @Autowired
     RatingRepository ratingRepository;
     @Autowired
-    private OrderRepository orderRepository;
-    @Autowired
-    private BannerImageRepository bannerImageRepository;
+    BannerImageRepository bannerImageRepository;
 
     @GetMapping({"/", "home", "index"})
     public String home(Model model) {
