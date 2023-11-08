@@ -10,7 +10,4 @@ public class ProductSizeService {
     @Autowired
     ProductSizeRepository productSizeRepository;
 
-    public ProductSize getSizeBySize(String size){
-        return productSizeRepository.findBySize(size);
-    }
 }

@@ -1,7 +1,6 @@
 package com.ecommerce.miniproject.service;
 
 import com.ecommerce.miniproject.entity.Category;
-import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.repository.CategoryRepository;
 import com.ecommerce.miniproject.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,19 +37,6 @@ public class CategoryService {
             return productRepository.existsByCategory_Id(id);
     }
 
-//    public boolean getCategoryByName(String name) {
-//        Optional<Category> optionalCategory = categoryRepository.getCategoryByname(name);
-//        if (optionalCategory.isPresent()) {
-//            Category category = optionalCategory.get();
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
-//    public boolean getCategoryByName(String name) {
-//        Optional<Category> optionalCategory = categoryRepository.existsByName(name);
-//        return optionalCategory.isPresent();
-//    }
     public boolean getCategoryByName(String name){
         return categoryRepository.existsByName(name);
     }

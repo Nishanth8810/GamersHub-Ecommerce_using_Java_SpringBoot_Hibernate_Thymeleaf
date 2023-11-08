@@ -51,7 +51,6 @@ public class ReportService {
         }
 
         //Load jrxml file and compile it
-//        File file= ResourceUtils.getFile("classpath:salesReport.jrxml");
         InputStream inputStream= getClass().getClassLoader().getResourceAsStream("salesreport.jrxml");
         JasperReport jasperReport = JasperCompileManager.compileReport(inputStream);
 

@@ -6,7 +6,6 @@ import com.ecommerce.miniproject.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -23,14 +22,7 @@ public class CartService {
     public void removeCartItemOfUser(long id) {
         cartRepository.deleteById(id);
     }
-//    public void clearCart(User user) {
-//        Cart cart = findCartByUser(user).orElse(new Cart());
-//        cart.setCartItems(new ArrayList<>());
-//        cartRepository.save(cart);
-//    }
-
     public void removeCartById(Long id) {
         cartRepository.deleteById(id);
-
     }
 }

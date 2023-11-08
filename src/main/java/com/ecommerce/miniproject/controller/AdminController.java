@@ -32,8 +32,6 @@ public class AdminController {
     CouponService couponService;
 
     @Autowired
-    ProductVariantsService productVariantsService;
-    @Autowired
     ProductSizeRepository productSizeRepository;
 
     @Autowired
@@ -47,7 +45,6 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String adminHome(Model model) {
-
 
         List<List<Object>> weekly = chartService.weeklyReport();
         Collections.reverse(weekly.get(0));
@@ -67,13 +64,10 @@ public class AdminController {
         model.addAttribute("yearlyData", yearly.get(0));
         model.addAttribute("yearlyLabel", yearly.get(1));
 
-
-
         HashMap<String,Integer> summary=orderService.todayOrderCount();
         HashMap<String,Integer> weeklySummary=orderService.weeklyOrderCount();
         HashMap<String,Integer> monthlySummary=orderService.monthlyOrderCount();
         HashMap<String,Integer> yearlySummary=orderService.yearlyOrderCount();
-
 
         model.addAttribute("orderCount",summary.get("orderCount"));
         model.addAttribute("revenue",summary.get("revenue"));
@@ -102,11 +96,13 @@ public class AdminController {
     }
 
     @PostMapping("/admin/categories/add")
-    public String postCatAdd(@ModelAttribute("categoryDTO") CategoryDTO categoryDTO, Model model) {
+    public String postCatAdd(@ModelAttribute("categoryDTO")
+                                 CategoryDTO categoryDTO, Model model) {
 
         if (categoryService.getCategoryByName(categoryDTO.getName())) {
             model.addAttribute("categoryDTO", categoryDTO);
-            model.addAttribute("errorCategory",CategoryManagementMessages.DUPLICATE_CATEGORY_NAME.getMessage());
+            model.addAttribute("errorCategory",
+                    CategoryManagementMessages.DUPLICATE_CATEGORY_NAME.getMessage());
             return "categoriesAdd";
         }
         Category category = new Category();

@@ -5,16 +5,10 @@ import com.ecommerce.miniproject.repository.OrderItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.PublicKey;
-import java.util.List;
-import java.util.Optional;
-
 @Service
 public class OrderItemService {
     @Autowired
     OrderItemRepository orderItemRepository;
-
-
     public void saveOrderItem(OrderItem orderItem) {
         orderItemRepository.save(orderItem);
     }

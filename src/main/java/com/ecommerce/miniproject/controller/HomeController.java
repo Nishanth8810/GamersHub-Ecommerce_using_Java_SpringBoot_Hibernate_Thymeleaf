@@ -22,10 +22,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 
@@ -58,8 +56,6 @@ public class HomeController {
 
     @GetMapping("/shop")
     public String shop(Model model, Principal principal) {
-//        System.out.println(orderRepository.findFirstByOrderByLocalDateTimeAsc().toString());
-
         if (principal == null) {
             model.addAttribute("categories", categoryService.getAllCategory());
             model.addAttribute("products", productService.getAllProduct());
@@ -69,19 +65,19 @@ public class HomeController {
         }
 
         Optional<Cart> cartOptional = cartService
-                .findCartByUser(userService.getUserByEmail(principal.getName()).get());
+                .findCartByUser(userService.getUserByEmail(principal.getName()).orElseThrow());
         if (cartOptional.isEmpty()) {
             Cart cart = new Cart();
-            cart.setUser(userService.getUserByEmail(principal.getName()).get());
+            cart.setUser(userService.getUserByEmail(principal.getName()).orElseThrow());
             cartService.save(cart);
         }
         model.addAttribute("cartCount",
-                cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get()
+                cartService.findCartByUser(userService.getUserByEmail(principal.getName()).orElseThrow()).orElseThrow()
                         .getCartItems().size());
 
 
         model.addAttribute("total", cartService.findCartByUser(userService.getUserByEmail
-                        (principal.getName()).get()).get().getCartItems()
+                        (principal.getName()).orElseThrow()).orElseThrow().getCartItems()
                 .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
                 .reduce(0.0, Double::sum));
 
@@ -104,7 +100,7 @@ public class HomeController {
 
         }
         model.addAttribute("total", cartService.findCartByUser
-                        (userService.getUserByEmail(principal.getName()).get()).get().getCartItems()
+                        (userService.getUserByEmail(principal.getName()).orElseThrow()).orElseThrow().getCartItems()
                 .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
                 .reduce(0.0, Double::sum));
 
@@ -122,18 +118,17 @@ public class HomeController {
         if (principal == null) {
 
             model.addAttribute("product", productService.getProductById(id).get());
-            return "viewProduct";
 
         } else {
 
             model.addAttribute("cartCount", cartService
                     .findCartByUser
-                            (userService.getUserByEmail(principal.getName()).get())
-                    .get().getCartItems().size());
+                            (userService.getUserByEmail(principal.getName()).orElseThrow())
+                    .orElseThrow().getCartItems().size());
 
             model.addAttribute("total",
                     cartService.findCartByUser(userService.getUserByEmail(principal.getName())
-                                    .get()).get().getCartItems()
+                                    .orElseThrow()).orElseThrow().getCartItems()
                             .stream()
                             .map(item -> item.getProduct()
                                     .getPrice() * item.getQuantity())
@@ -158,8 +153,8 @@ public class HomeController {
             model.addAttribute("product", productService.getProductById(id).orElseThrow());
             model.addAttribute("rating",formattedAverageRatingDouble);
             model.addAttribute("rateCount",ratingValues.size());
-            return "viewProduct";
         }
+        return "viewProduct";
     }
 
 
@@ -176,8 +171,8 @@ public class HomeController {
 
         model.addAttribute("cartCount",
                 cartService.findCartByUser
-                                (userService.getUserByEmail(principal.getName()).get())
-                        .get().getCartItems().size());
+                                (userService.getUserByEmail(principal.getName()).orElseThrow())
+                        .orElseThrow().getCartItems().size());
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("products", productList);
         model.addAttribute("totalPages", page.getTotalPages());
@@ -216,14 +211,15 @@ public class HomeController {
     }
 
     @GetMapping("/filterProducts")
-    public String filterProducts(@RequestParam("minPrice") Double minPrice, @RequestParam("maxPrice") Double maxPrice, Model model) {
+    public String filterProducts(@RequestParam("minPrice") Double minPrice,
+                                 @RequestParam("maxPrice") Double maxPrice,
+                                 Model model) {
 
         List<Product> filteredProducts = productService.getProductsByPriceRange(minPrice, maxPrice);
 
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
-
         model.addAttribute("products", filteredProducts);
 
         return "shop";

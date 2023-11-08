@@ -1,12 +1,9 @@
 package com.ecommerce.miniproject.dto;
 
-import com.ecommerce.miniproject.entity.Role;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-
-import java.util.List;
 @Data
 public class UserDTO {
 

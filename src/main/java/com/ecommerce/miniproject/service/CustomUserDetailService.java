@@ -17,14 +17,10 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findUserByEmail(email);
-
-
-
         user.orElseThrow(() -> new RuntimeException ("Email is invalid"));
         if (!user.get().isOtpActive()) {
             throw new UsernameNotFoundException("user not verified");
         }
-
         return user.map(CustomUserDetail::new).get();
     }
 }

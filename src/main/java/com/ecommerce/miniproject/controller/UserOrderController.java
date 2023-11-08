@@ -33,7 +33,7 @@ public class UserOrderController {
     @Autowired
     ProductService productService;
     @Autowired
-    private RatingRepository ratingRepository;
+    RatingRepository ratingRepository;
 
 
     @GetMapping("/user/order/cancel/{id}")
@@ -69,15 +69,15 @@ public class UserOrderController {
 
     @GetMapping("/user/order/viewOrder/{id}")
     public String getUserOrder(@PathVariable long id, Model model) {
-        Orders order = orderService.getOrderById(id).get();
+        Orders order = orderService.getOrderById(id).orElseThrow();
         model.addAttribute("orderList", order);
         return "userViewOrder";
     }
 
     @GetMapping("user/order/return/{id}")
     public String getReturnOrder(@PathVariable long id) {
-        Orders order = orderService.getOrderById(id).get();
-        order.setOrderStatus(orderStatusRepository.findById(7L).get());
+        Orders order = orderService.getOrderById(id).orElseThrow();
+        order.setOrderStatus(orderStatusRepository.findById(7L).orElseThrow());
         orderService.saveOrder(order);
         return "redirect:/user/orders";
     }

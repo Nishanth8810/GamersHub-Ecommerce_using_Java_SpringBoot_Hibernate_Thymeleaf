@@ -2,10 +2,12 @@ package com.ecommerce.miniproject.controller;
 
 import com.ecommerce.miniproject.entity.BannerImage;
 import com.ecommerce.miniproject.repository.BannerImageRepository;
-import jakarta.mail.Multipart;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -15,8 +17,6 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Controller
-//@RequestMapping("/banner")
-
 public class BannerController {
     public static String uploadDir = System.getProperty("user.dir") +
             "/src/main/resources/static/bannerImages";

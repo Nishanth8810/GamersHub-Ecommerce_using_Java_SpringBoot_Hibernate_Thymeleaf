@@ -13,8 +13,6 @@ import java.util.List;
 @Service
 public class ChartService {
     @Autowired
-    OrderService orderService;
-    @Autowired
     OrderRepository orderRepository;
 
 

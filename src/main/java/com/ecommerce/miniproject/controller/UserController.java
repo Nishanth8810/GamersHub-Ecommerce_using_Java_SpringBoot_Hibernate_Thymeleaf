@@ -39,11 +39,11 @@ public class UserController {
 
 
     @GetMapping("/user")
-    public String getUserDetail(Model model,Principal principal){
+    public String getUserDetail(Model model){
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
-        User user = userService.getUserByEmail(currentPrincipalName).get();
+        User user = userService.getUserByEmail(currentPrincipalName).orElseThrow();
         model.addAttribute(user);
         return "userProfile";
 
@@ -76,7 +76,7 @@ public class UserController {
                                     Model model,
                                     Principal principal){
         String loggedUser=principal.getName();
-        User user = userService.getUserByEmail(loggedUser).get();
+        User user = userService.getUserByEmail(loggedUser).orElseThrow();
         Address address = addressService.getAddressOfUser(id);
         AddressDTO addressDTO= new AddressDTO();
         addressDTO.setAddress(address.getAddress());
@@ -94,24 +94,17 @@ public class UserController {
 
 
     @GetMapping("user/address/default/{id}")
-    public String getDefaultAddress(@PathVariable int id, Principal principal, RedirectAttributes redirectAttributes){
+    public String getDefaultAddress(@PathVariable int id,
+                                    Principal principal,
+                                    RedirectAttributes redirectAttributes){
 
         User user= userService.getUserByEmail(principal.getName()).orElseThrow();
         Address address=addressService.getAddressById(id);
         addressService.setDefaultAddressForUser(user,address);
-
         redirectAttributes.addFlashAttribute("message1",UserManagementMessages.DEFAULT_ADDRESS.getMessage());
-
-
-
         return "redirect:/user/address";
 
     }
-
-
-
-
-
     @GetMapping("user/addressAdd")
     public String addAddress(Model model){
         model.addAttribute("addressDTO",new AddressDTO());
@@ -123,16 +116,12 @@ public class UserController {
         StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
         webDataBinder.registerCustomEditor(String.class,stringTrimmerEditor);
     }
-
     @PostMapping("user/addressAdd")
     public String postAddAddress(@Valid @ModelAttribute AddressDTO addressDTO,
                                  Principal principal, BindingResult bindingResult){
-
-
         if (bindingResult.hasErrors()){
             return "user/addressAdd";
         }
-
         String loggedUser=principal.getName();
         User user = userService.getUserByEmail(loggedUser).get();
         Address address = new Address();

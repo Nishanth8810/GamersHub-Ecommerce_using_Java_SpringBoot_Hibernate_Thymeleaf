@@ -51,15 +51,10 @@ public class OrderController {
     CouponService couponService;
     @Autowired
     WalletService walletService;
-
-
     Map<String, Boolean> userBooleanMap = new HashMap<>();
-
     Map<String, Double> userDoubleMap = new HashMap<>();
     @Autowired
-    private CartRepository cartRepository;
-    @Autowired
-    private ProductRepository productRepository;
+    ProductRepository productRepository;
     @Autowired
      CartItemRepository cartItemRepository;
 
@@ -67,7 +62,8 @@ public class OrderController {
     @GetMapping("/checkout")
     public String checkout(@ModelAttribute("appliedCoupon") String couponCode,
                            @ModelAttribute("totalDiscount") String totalDiscount,
-                           Model model, Principal principal) {
+                           Model model,
+                           Principal principal) {
 
         int number = Objects.requireNonNull(cartService.findCartByUser(userService.getUserByEmail
                 (principal.getName()).orElse(null)).orElse(null)).getCartItems().size();

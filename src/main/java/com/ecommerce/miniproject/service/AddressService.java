@@ -21,7 +21,7 @@ public class AddressService {
     }
 
     public List<Address> getAddressOfUser(String email){
-        User user = userRepository.findUserByEmail(email).get();
+        User user = userRepository.findUserByEmail(email).orElseThrow();
         return addressRepository.findByUser(user);
     }
 
@@ -30,12 +30,12 @@ public class AddressService {
     }
 
     public Address getAddressOfUser(int id) {
-      return addressRepository.findById(id).get();
+      return addressRepository.findById(id).orElseThrow();
 
     }
 
     public Address getAddressById(int id) {
-        return  addressRepository.findById(id).get();
+        return  addressRepository.findById(id).orElseThrow();
     }
 
 

@@ -1,9 +1,7 @@
 package com.ecommerce.miniproject.dto;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 @Data
 public class CouponDTO {

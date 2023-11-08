@@ -164,14 +164,16 @@ public class UserService {
     }
 
     public int verifyOtpForForgotPassword(String email, String otp) {
-        User user = userRepository.findUserByEmail(email).get();
+        User user = userRepository.findUserByEmail(email).orElseThrow();
 
         if (!user.getOtp().equals(otp)) {
             return 1;
-        } else if (Duration.between(user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() > 2 * 60) {
+        } else if (Duration.between(user.getOtpGeneratedTime(),
+                LocalDateTime.now()).getSeconds() > 2 * 60) {
             return 3;
         } else if (user.getOtp().equals(otp) && Duration.between
-                (user.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() < (2 * 60)) {
+                (user.getOtpGeneratedTime(),
+                        LocalDateTime.now()).getSeconds() < (2 * 60)) {
             return 2;
         }
         return 0;

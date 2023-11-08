@@ -46,12 +46,10 @@ public class LoginController {
             return "login";
         }
         return "redirect:/";
-
     }
 
     @GetMapping("register")
     public String getRegister(Model model) {
-
         model.addAttribute("user", new User());
         return "register";
     }
@@ -81,52 +79,41 @@ public class LoginController {
             model.addAttribute("errorRegister", "Email already exists");
             return "register";
         }
-
         userService.register(userDTO);
-
         model.addAttribute("email", userDTO.getEmail());
-
         return "otpVerification";
     }
 
 
     @PostMapping("/verifyAccount")
     public String postOtpVerification(@RequestParam("otp") String otp,
-                                      @RequestParam("email") String email, Model model) {
+                                      @RequestParam("email") String email,
+                                      Model model) {
 
         int verification = userService.verifyOtp(otp, email);
-
-
         if (verification == 1) {
             model.addAttribute("email", email);
             model.addAttribute("wrongOtp", UserManagementMessages.ERROR_OTP.getMessage());
             return "otpVerification";
-
         }
         if (verification == 2) {
             model.addAttribute("email", email);
             model.addAttribute("wrongOtp", UserManagementMessages.OTP_VERIFIED.getMessage());
             return "login";
-
         }
         if (verification == 3) {
             model.addAttribute("email", email);
             model.addAttribute("wrongOtp", UserManagementMessages.OTP_VERIFIED.getMessage());
             return "otpVerification";
-
         }
-
-
         return "login";
     }
 
     @PostMapping("/resendOTP")
-    public String postResendOTP(@ModelAttribute("email") String email, Model model) throws MessagingException {
-
-
+    public String postResendOTP(@ModelAttribute("email") String email,
+                                Model model) throws MessagingException {
         userService.regenerateOtp(email);
         model.addAttribute("email", email);
-
         return "otpVerification";
     }
 
@@ -141,9 +128,9 @@ public class LoginController {
     @PostMapping("/resetPassword")
     public String resetPassword(@RequestParam("email") String email, Model model) {
         User user = userService.getUserByEmail(email).orElseThrow();
-        List<Role>roles=new ArrayList<>();
-        roles.add(roleRepository.findById(3).get());
-        roles.add(roleRepository.findById(2).get());
+        List<Role> roles = new ArrayList<>();
+        roles.add(roleRepository.findById(3).orElseThrow());
+        roles.add(roleRepository.findById(2).orElseThrow());
         user.setRoles(roles);
         userService.saveUser(user);
         userService.sendOTP(email);
@@ -153,30 +140,24 @@ public class LoginController {
 
     @PostMapping("/forgotVerifyAccount")
     public String postOtpForgotVerification(@RequestParam("otp") String otp,
-                                            @RequestParam("email") String email, Model model) {
-
-        System.out.println(otp + " " + email);
+                                            @RequestParam("email") String email,
+                                            Model model) {
 
         int verification = userService.verifyOtpForForgotPassword(email, otp);
-
-
         if (verification == 1) {
             model.addAttribute("email", email);
             model.addAttribute("wrongOtp", UserManagementMessages.ERROR_OTP.getMessage());
             return "otpVerificationForgot";
-
         }
         if (verification == 2) {
             model.addAttribute("email", email);
             model.addAttribute("wrongOtp", UserManagementMessages.OTP_VERIFIED.getMessage());
             return "changePasswordForgot";
-
         }
         if (verification == 3) {
             model.addAttribute("email", email);
             model.addAttribute("wrongOtp", UserManagementMessages.OTP_TIMEOUT.getMessage());
             return "otpVerificationForgot";
-
         }
         return "login";
     }
@@ -184,7 +165,8 @@ public class LoginController {
 
     @PostMapping("/changePassword")
     public String getChangePassword(@RequestParam("newPass") String newPass,
-                                    @RequestParam("confirmPass") String confirmPass, Model model,
+                                    @RequestParam("confirmPass") String confirmPass,
+                                    Model model,
                                     @RequestParam("email") String email,
                                     RedirectAttributes redirectAttributes) {
 
@@ -194,10 +176,10 @@ public class LoginController {
         } else {
             user.setPassword(bCryptPasswordEncoder.encode(newPass));
             userService.saveUser(user);
-             redirectAttributes.addFlashAttribute("passSuccess", UserManagementMessages.PASSWORD_SUCCESS.getMessage());
+            redirectAttributes.addFlashAttribute("passSuccess", UserManagementMessages.PASSWORD_SUCCESS.getMessage());
             return "redirect:/login";
         }
-    return "changePasswordForgot";
+        return "changePasswordForgot";
     }
 }
 

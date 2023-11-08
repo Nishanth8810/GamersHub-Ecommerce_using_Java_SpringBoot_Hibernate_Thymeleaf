@@ -1,6 +1,5 @@
 package com.ecommerce.miniproject.dto;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data

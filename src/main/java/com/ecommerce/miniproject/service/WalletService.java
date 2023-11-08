@@ -13,7 +13,6 @@ public class WalletService {
     public void saveWallet(Wallet wallet){
         walletRepository.save(wallet);
     }
-
     public Wallet getWalletOfUser(int id) {
        return walletRepository.findWalletByUserId(id);
     }
