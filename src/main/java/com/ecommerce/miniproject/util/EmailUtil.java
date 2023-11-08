@@ -14,7 +14,7 @@ public class EmailUtil {
         this.javaMailSender = javaMailSender;
     }
     public void sendOtpEmail(String email, String otp) throws MessagingException {
-        SimpleMailMessage message =new SimpleMailMessage();
+        SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
         message.setSubject("Verify OTP");
         message.setText(email + "&otp=" + otp);

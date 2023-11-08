@@ -249,13 +249,13 @@
                 </textElement>
                 <text><![CDATA[Grand Total Amount:]]></text>
             </staticText>
-            <staticText>
-                <reportElement x="140" y="60" width="250" height="30" uuid="93a6bc4c-6004-4e34-9ca2-856d94a3beb8"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font size="14"/>
-                </textElement>
-                <text><![CDATA[Total Quantity of Products Sold:]]></text>
-            </staticText>
+<!--            <staticText>-->
+<!--                <reportElement x="140" y="60" width="250" height="30" uuid="93a6bc4c-6004-4e34-9ca2-856d94a3beb8"/>-->
+<!--                <textElement textAlignment="Center" verticalAlignment="Middle">-->
+<!--                    <font size="14"/>-->
+<!--                </textElement>-->
+<!--                <text><![CDATA[Total Quantity of Products Sold:]]></text>-->
+<!--            </staticText>-->
             <textField>
                 <reportElement x="310" y="20" width="180" height="30" uuid="41c24c97-9c0a-4be5-abf5-56c7fe88027f"/>
                 <textElement textAlignment="Left" verticalAlignment="Middle">
@@ -263,13 +263,13 @@
                 </textElement>
                 <textFieldExpression><![CDATA[$P{grandTotal}]]></textFieldExpression>
             </textField>
-            <textField>
-                <reportElement x="390" y="60" width="135" height="30" uuid="a2bc6583-cba8-4eb9-a226-0b564ef8c208"/>
-                <textElement textAlignment="Left" verticalAlignment="Middle">
-                    <font size="16"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$P{quantity}]]></textFieldExpression>
-            </textField>
+<!--            <textField>-->
+<!--                <reportElement x="390" y="60" width="135" height="30" uuid="a2bc6583-cba8-4eb9-a226-0b564ef8c208"/>-->
+<!--                <textElement textAlignment="Left" verticalAlignment="Middle">-->
+<!--                    <font size="16"/>-->
+<!--                </textElement>-->
+<!--                <textFieldExpression><![CDATA[$P{quantity}]]></textFieldExpression>-->
+<!--            </textField>-->
         </band>
     </summary>
 </jasperReport>

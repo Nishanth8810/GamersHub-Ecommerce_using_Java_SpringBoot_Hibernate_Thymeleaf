@@ -170,7 +170,7 @@ public class AdminController {
 
     @GetMapping("/admin/userManagement/disableUser/{id}")
     public String getBlockUser(@PathVariable int id) {
-        User user = userService.getUserById(id).get();
+        User user = userService.getUserById(id).orElseThrow();
         user.setActive(false);
         userService.saveUser(user);
         return "redirect:/admin/userManagement";
@@ -179,7 +179,7 @@ public class AdminController {
 
     @GetMapping("/admin/userManagement/enableUser/{id}")
     public String getActiveBUser(@PathVariable int id) {
-        User user = userService.getUserById(id).get();
+        User user = userService.getUserById(id).orElseThrow();
         user.setActive(true);
         userService.saveUser(user);
         return "redirect:/admin/userManagement";
@@ -211,9 +211,9 @@ public class AdminController {
 
     @GetMapping("/admin/userManagement/removeRole/{id}")
     public String getRemoveRoleBYId(@PathVariable int id) {
-        User user = userService.getUserById(id).get();
+        User user = userService.getUserById(id).orElseThrow();
         List<Role> roles = new ArrayList<>();
-        roles.add(roleRepository.findById(2).get());
+        roles.add(roleRepository.findById(2).orElseThrow());
         user.setRoles(roles);
         userService.saveUser(user);
         return "redirect:/admin/userManagement";
@@ -222,24 +222,16 @@ public class AdminController {
 
     @GetMapping("search/user")
     public String searchUser(@RequestParam("keyword")String keyword,Model model){
-
-
         List<User> userList = userService.findUserByKeyword(keyword);
-
         model.addAttribute("users", userList);
-
-
-
         return "userManagement";
     }
-
 
 ///////////////coupon management///////////////
 
 
     @GetMapping("/admin/coupon")
     public String getCoupon(Model model) {
-
         model.addAttribute("coupons", couponService.getAllCoupon());
         return "adminCoupon";
 
@@ -252,17 +244,20 @@ public class AdminController {
     }
 
     @PostMapping("/admin/coupon/add")
-    public String postCouponAdd(@ModelAttribute("couponDTO") CouponDTO couponDTO, RedirectAttributes redirectAttributes) {
+    public String postCouponAdd(@ModelAttribute("couponDTO") CouponDTO couponDTO,
+                                RedirectAttributes redirectAttributes) {
 
 
         if (couponService.getCouponByName(couponDTO.getCouponCode())){
-            redirectAttributes.addFlashAttribute("errorCoupon", CouponManagementMessages.ERROR_COUPON.getMessage());
+            redirectAttributes.addFlashAttribute("errorCoupon",
+                    CouponManagementMessages.ERROR_COUPON.getMessage());
             return "redirect:/admin/coupon/add";
 
         }
         LocalDate currentDate=LocalDate.now();
         if (currentDate.isAfter(couponDTO.getExpiryDate())){
-            redirectAttributes.addFlashAttribute("errorCoupon",CouponManagementMessages.ERROR_DATE.getMessage());
+            redirectAttributes.addFlashAttribute("errorCoupon",
+                    CouponManagementMessages.ERROR_DATE.getMessage());
             return "redirect:/admin/coupon/add";
 
         }
@@ -339,36 +334,39 @@ public class AdminController {
 
 
     @PostMapping("/admin/variants/size/add")
-    public String postVariantsSizeAdd(@ModelAttribute("variantSize")ProductSize productSize,RedirectAttributes redirectAttributes){
+    public String postVariantsSizeAdd(@ModelAttribute("variantSize")
+                                          ProductSize productSize,
+                                      RedirectAttributes redirectAttributes){
         if(productSizeRepository.existsById(productSize.getId())){
             redirectAttributes.addFlashAttribute("alreadyPresent");
             return "/admin/variants/size/add";
         }
         productSizeRepository.save(productSize);
-
         return "redirect:/admin/variants";
     }
 
 
     @PostMapping("/admin/variants/color/add")
-    public String postVariantsColorAdd(@ModelAttribute("variantColor")ProductColor productColor,RedirectAttributes redirectAttributes){
+    public String postVariantsColorAdd(@ModelAttribute("variantColor")ProductColor productColor,
+                                       RedirectAttributes redirectAttributes){
         if(productColorRepository.existsById(productColor.getId())){
             redirectAttributes.addFlashAttribute("alreadyPresent");
             return "redirect:/admin/variants/color/add";
         }
-                productColorRepository.save(productColor);
+        productColorRepository.save(productColor);
 
         return "redirect:/admin/variants";
     }
 
 
     @GetMapping("/admin/variants/color/delete/{id}")
-    public String deleteColorById(@PathVariable long id,RedirectAttributes redirectAttributes){
+    public String deleteColorById(@PathVariable long id,
+                                  RedirectAttributes redirectAttributes){
         try{
             productColorRepository.deleteById(id);
         }catch (Exception e){
-            redirectAttributes.addFlashAttribute("errorDelete",CategoryManagementMessages.ERROR_VARIANT_DELETE.getMessage()
-                    );
+            redirectAttributes.addFlashAttribute("errorDelete",
+                    CategoryManagementMessages.ERROR_VARIANT_DELETE.getMessage());
         }
         return "redirect:/admin/variants";
     }

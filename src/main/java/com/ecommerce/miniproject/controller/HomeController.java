@@ -6,7 +6,6 @@ import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.entity.Rating;
 import com.ecommerce.miniproject.enums.ProductManagementMessages;
 import com.ecommerce.miniproject.repository.BannerImageRepository;
-import com.ecommerce.miniproject.repository.OrderRepository;
 import com.ecommerce.miniproject.repository.RatingRepository;
 import com.ecommerce.miniproject.service.CartService;
 import com.ecommerce.miniproject.service.CategoryService;
@@ -32,10 +31,8 @@ public class HomeController {
     CategoryService categoryService;
     @Autowired
     ProductService productService;
-
     @Autowired
     UserService userService;
-
     @Autowired
     CartService cartService;
     @Autowired
@@ -51,7 +48,6 @@ public class HomeController {
         return "index";
 
     }
-
     @GetMapping("/shop")
     public String shop(Model model, Principal principal) {
         if (principal == null) {
@@ -85,7 +81,6 @@ public class HomeController {
         model.addAttribute("minPrice", 0);
         model.addAttribute("maxPrice", 0);
         return findPaginated(1, model, principal);
-//        return "shop";
     }
 
     @GetMapping("/shop/category/{id}")
@@ -114,11 +109,8 @@ public class HomeController {
     public String viewProduct(@PathVariable int id, Model model, Principal principal) {
 
         if (principal == null) {
-
-            model.addAttribute("product", productService.getProductById(id).get());
-
+            model.addAttribute("product", productService.getProductById(id).orElseThrow());
         } else {
-
             model.addAttribute("cartCount", cartService
                     .findCartByUser
                             (userService.getUserByEmail(principal.getName()).orElseThrow())
@@ -176,8 +168,8 @@ public class HomeController {
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("currentPage", pageNo);
-        return "shop";
 
+        return "shop";
     }
 
 
