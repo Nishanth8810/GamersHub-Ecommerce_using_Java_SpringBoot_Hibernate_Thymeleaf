@@ -165,8 +165,38 @@
                     <!--                    <p th:text="${rating.review}"></p>-->
 
                 </div>
+                <div class="reviews-container mt-3">
+                    <button class="btn btn-warning" type="button" data-toggle="collapse" href="#reviewsCollapse" aria-expanded="false">
+                        Show Reviews
+                    </button>
+                    <div class="collapse" id="reviewsCollapse">
+                        <div th:if="${reviews != null && reviews.size() > 0}">
+                            <div th:each="review : ${reviews}" class="review card mb-3">
+                                <div class="card-header">
+                                    <h6 class="mb-0">
+                                        <span class="reviewer-name" th:text="${review.user.firstName}"></span>
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                    <span class="review-rating">
+                        <span th:each="i : ${#numbers.sequence(1, 5)}">
+                            <i class="fa fa-star" th:classappend="${i <= review.ratingValue} ? 'text-warning' : 'text-secondary'"></i>
+                        </span>
+                    </span>
+                                    <p class="card-text review-text" th:text="${review.review}"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </form>
         </div>
+
+
+
+
         <h4 th:if="${alreadyPresent}" class="text-warning" th:text="${alreadyPresent}"></h4>
         <div id="addToCartSuccessMessage" class="alert alert-success mt-3" style="display: none;">
             Product added to cart!

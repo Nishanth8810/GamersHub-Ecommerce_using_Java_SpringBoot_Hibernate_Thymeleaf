@@ -56,7 +56,12 @@ public class ReportService {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("grandTotal", Math.round(filteredUserOrders.stream().map(Orders::getAmount).reduce(0, Integer::sum)*100.0)/100.0);
-//        parameters.put("quantity", filteredUserOrders.stream().map(Orders).reduce(0, Integer::sum));
+        int totalQuantity = filteredUserOrders.stream()
+                .flatMap(order -> order.getOrderItems().stream()) // Flatten the list of order items
+                .mapToInt(OrderItem::getQuantity)  // Extract the quantity from each order item
+                .sum();
+        parameters.put("quantity", totalQuantity);
+// Sum all the quantities
         parameters.put("totalOrders", filteredUserOrders.size());
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 

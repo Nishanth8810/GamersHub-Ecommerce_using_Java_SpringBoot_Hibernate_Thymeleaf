@@ -143,6 +143,7 @@ public class HomeController {
             model.addAttribute("product", productService.getProductById(id).orElseThrow());
             model.addAttribute("rating",formattedAverageRatingDouble);
             model.addAttribute("rateCount",ratingValues.size());
+            model.addAttribute("reviews",ratingList);
         }
         return "viewProduct";
     }

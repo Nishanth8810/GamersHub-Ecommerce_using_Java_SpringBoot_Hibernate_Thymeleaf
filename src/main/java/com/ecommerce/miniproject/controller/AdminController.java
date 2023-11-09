@@ -42,7 +42,6 @@ public class AdminController {
     ChartService chartService;
 
 //////////////Admin Section/////////////////
-
     @GetMapping("/admin")
     public String adminHome(Model model) {
 
@@ -61,6 +60,10 @@ public class AdminController {
         List<List<Object>> yearly=chartService.yearlyReport();
         Collections.reverse(yearly.get(0));
         Collections.reverse(yearly.get(1));
+        Collections.reverse(yearly.get(2));
+        System.out.println(yearly.get(2));
+        model.addAttribute("revenue",yearly.get(2));
+        model.addAttribute("labelsRevenue",yearly.get(0));
         model.addAttribute("yearlyData", yearly.get(0));
         model.addAttribute("yearlyLabel", yearly.get(1));
 

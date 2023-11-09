@@ -25,6 +25,7 @@ public class AdminSalesController {
     ReportService reportService;
 
     public AdminSalesController(OrderRepository orderRepository) {
+
     }
     @GetMapping("/admin/salesReport")
     public String salesReport(Model model){
