@@ -24,9 +24,6 @@ public class AdminSalesController {
     @Autowired
     ReportService reportService;
 
-    public AdminSalesController(OrderRepository orderRepository) {
-
-    }
     @GetMapping("/admin/salesReport")
     public String salesReport(Model model){
         model.addAttribute("userOrder",orderService.getAllOrders());
