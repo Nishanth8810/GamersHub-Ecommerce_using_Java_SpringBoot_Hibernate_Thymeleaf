@@ -73,7 +73,7 @@ public class WalletController {
         }
     }
     @GetMapping("/walletOrderSuccessful")
-    public String walletSuccessTransaction(RedirectAttributes redirectAttributes, HttpSession httpSession){
+    public String walletSuccessTransaction(HttpSession httpSession){
         double total = Double.parseDouble(httpSession.getAttribute("amount").toString());
         User user=userService.getUserByEmail(getCurrentUsername()).orElseThrow();
         Wallet wallet=walletService.getWalletOfUser(user.getId());

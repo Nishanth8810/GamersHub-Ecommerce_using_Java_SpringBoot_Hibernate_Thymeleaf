@@ -68,7 +68,7 @@ public class CartController {
             if (!selectedColor.isEmpty()){
                 ProductVariants productVariants=productVariantsService.getVariantById(Integer.parseInt(selectedColor));
                 CartItem cartItem = new CartItem();
-                cartItem.setProduct(productService.getProductById(productId).get());
+                cartItem.setProduct(productService.getProductById(productId).orElseThrow());
                 cartItem.setProductVariants(productVariants);
                 cartItem.setCart(cart);
                 cartItem.setQuantity(1);
@@ -137,17 +137,18 @@ public class CartController {
 
         model.addAttribute("cartCount", cartService.findCartByUser
                 (userService.getUserByEmail(principal.getName())
-                        .get()).get().getCartItems().size());
+                        .orElseThrow()).orElseThrow().getCartItems().size());
 
         model.addAttribute("total", cartService.findCartByUser
-                        (userService.getUserByEmail(principal.getName()).get())
-                .get().getCartItems()
+                        (userService.getUserByEmail(principal.getName()).orElseThrow())
+                        .orElseThrow().getCartItems()
                 .stream()
                 .map(item -> item.getProduct().getPrice() * item.getQuantity())
                 .reduce(0.0, Double::sum));
 
         model.addAttribute("cart", cartService.findCartByUser
-                (userService.getUserByEmail(principal.getName()).get()).get().getCartItems());
+                (userService.getUserByEmail(principal.getName()).orElseThrow())
+                .orElseThrow().getCartItems());
         return "cart";
     }
 

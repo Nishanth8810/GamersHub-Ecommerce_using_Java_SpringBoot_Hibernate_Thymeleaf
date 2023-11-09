@@ -1,12 +1,10 @@
 package com.ecommerce.miniproject.controller;
+
 import com.ecommerce.miniproject.dto.ProductDTO;
 import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.enums.ProductManagementMessages;
-import com.ecommerce.miniproject.repository.ProductRepository;
 import com.ecommerce.miniproject.service.ProductService;
-import jakarta.persistence.Access;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

@@ -79,21 +79,23 @@
 }
 
 </style>
-<nav class="navbar navbar-expand-lg navbar-light bg-light" >
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
-            <img th:src="@{/images/logo.png}"  src="../static/images/logo.png" width="auto" height="40" class="d-inline-block align-top" alt=""/>
+            <img th:src="@{/images/logo.png}" src="../static/images/logo.png" width="auto" height="40"
+                 class="d-inline-block align-top" alt=""/>
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto"></ul>
             <ul class="navbar-nav">
-<!--                <li class="nav-item active">-->
-<!--                    <a class="nav-link" th:href="@{/admin}" href="#">admin-home</a>-->
-<!--                </li>-->
+                <!--                <li class="nav-item active">-->
+                <!--                    <a class="nav-link" th:href="@{/admin}" href="#">admin-home</a>-->
+                <!--                </li>-->
                 <li class="nav-item active">
                     <a class="nav-link" th:href="@{/}" href="#">Shop</a>
                 </li>
@@ -106,32 +108,43 @@
         </div>
     </div>
 </nav>
-<div class="jumbotron text-center ">
+<div class="jumbotron text-center">
     <h1 class="display-5">Admin dashboard</h1>
     <h1 class="display-4">Welcome back, <span th:text="${#authentication.principal.firstName}"></span></h1>
-    <p>Easily manage your data from this admin </p>
+    <p>Easily manage your data from this admin</p>
 </div>
-<div style="width: 100%; margin-left:6rem; margin-top:0; display:inline">
-    <button class="btn-primary"  onclick="weeklyChart()">Weekly Chart</button>
-    <button class="btn-primary" onclick="monthlyChart()">Monthly Chart</button>
-    <button class="btn-primary" onclick="yearlyChart()">Yearly Chart</button>
-<!--    <canvas id="myChart"></canvas>-->
-    <canvas id="myCharts" style="width:50%;max-width:500px;max-height:400px"></canvas>
-    <canvas id="myChartPie" style="width:50%;max-width:500px;height:300px;"></canvas>
 
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <button class="btn btn-primary" onclick="weeklyChart()">Weekly Chart</button>
+            <button class="btn btn-primary" onclick="monthlyChart()">Monthly Chart</button>
+            <button class="btn btn-primary" onclick="yearlyChart()">Yearly Chart</button>
+            <div class="row">
+                <div class="col">
+                    <canvas id="myCharts" style="max-width: 500px; height: 400px"></canvas>
+                </div>
+                <div class="col">
+                    <canvas id="myLineChart" style="max-width:500px; height:400px"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<!--<canvas id="myChartPie" style="width:50%;max-width:500px"></canvas>-->
+
+
+
 
 
 <!--<canvas id="myCharts" style="width:50%;max-width:500px"></canvas>-->
 
 
-<div  class="container-fluid">
+<div class="container-fluid">
     <div class="row">
         <div class="col-sm-3">
             <div class="card" style="background-color:MediumSeaGreen;">
                 <div class="card-body">
-                    <h4  class="card-title">TODAY</h4>
+                    <h4 class="card-title">TODAY</h4>
                     <h5 class="card-text">ORDER COUNT:<span th:text="${orderCount}"></span></h5>
                     <p class="card-text">REVENUE:<span th:text="${revenue}"></span></p>
                 </div>
@@ -140,7 +153,7 @@
         <div class="col-sm-3">
             <div class="card" style="background-color:MediumSeaGreen;">
                 <div class="card-body">
-                    <h4  class="card-title">THIS WEEK</h4>
+                    <h4 class="card-title">THIS WEEK</h4>
                     <p class="card-text">ORDER COUNT:<span th:text="${weeklyOrderCount}"></span></p>
                     <p class="card-text">REVENUE:<span th:text="${weeklyRevenue}"></span></p>
                 </div>
@@ -149,7 +162,7 @@
         <div class="col-sm-3">
             <div class="card" style="background-color:MediumSeaGreen;">
                 <div class="card-body">
-                    <h4  class="card-title">THIS MONTH</h4>
+                    <h4 class="card-title">THIS MONTH</h4>
                     <p class="card-text">ORDER COUNT:<span th:text="${monthlyOrderCount}"></span></p>
                     <p class="card-text">REVENUE:<span th:text="${monthlyRevenue}"></span></p>
                 </div>
@@ -158,7 +171,7 @@
         <div class="col-sm-3">
             <div class="card" style="background-color:MediumSeaGreen;">
                 <div class="card-body">
-                    <h4  class="card-title">THIS YEAR</h4>
+                    <h4 class="card-title">THIS YEAR</h4>
                     <p class="card-text">ORDER COUNT:<span th:text="${yearlyOrderCount}"></span></p>
                     <p class="card-text">REVENUE:<span th:text="${yearlyRevenue}"></span></p>
                 </div>
@@ -167,7 +180,7 @@
         <div class="col-sm-3">
             <div class="card" style="background-color:white;">
                 <div class="card-body">
-                    <h4  class="card-title">Categories</h4>
+                    <h4 class="card-title">Categories</h4>
                     <p class="card-text">Manage the categories section here.</p>
                     <a href="#" th:href="@{/admin/categories}" class="card-link btn btn-primary">Manage</a>
                 </div>
@@ -280,6 +293,37 @@
         }
     });
 
+    const xValuesLine =[[(${revenue})]];
+    var yValuesLine = [[(${labelsRevenue})]];
+    console.log('xValuesLine',xValuesLine);
+    console.log('yValuesLine',yValuesLine);
+
+    var lineData = {
+    labels: xValuesLine,
+    datasets: [{
+        label: 'line chart data',
+        borderColor: "blue",
+        data: yValuesLine
+    }]
+};
+
+var lineOptions = {
+    legend: { display: false },
+    title: {
+        display: true,
+        text: "Line Chart"
+    }
+};
+
+// Create the line chart with sample data
+var lineChart = new Chart("myLineChart", {
+    type: "line",
+    data: lineData,
+    options: lineOptions
+});
+
+
+
     // Function to update chart data
     function weeklyChart() {
         // Generate new data values (you can fetch these from your server or other source)
@@ -306,7 +350,7 @@
         myChart.data.datasets[0].label = 'monthly orders';
 
 
-        // Redraw the chart
+
         myChart.update();
     }
       function yearlyChart() {
@@ -324,37 +368,17 @@
         myChart.update();
     }
 
-<!--var xValues = ["Italy", "France", "Spain", "USA", "Argentina"];-->
-<!--var yValues = [55, 49, 44, 24, 15];-->
-<!--var barColors = [-->
-<!--  "#b91d47",-->
-<!--  "#00aba9",-->
-<!--  "#2b5797",-->
-<!--  "#e8c3b9",-->
-<!--  "#1e7145"-->
-<!--];-->
-
-<!--new Chart("myChartPie", {-->
-<!--  type: "pie",-->
-<!--  data: {-->
-<!--    labels: xValues,-->
-<!--    datasets: [{-->
-<!--      backgroundColor: barColors,-->
-<!--      data: yValues-->
-<!--    }]-->
-<!--  },-->
-<!--  options: {-->
-<!--    title: {-->
-<!--      display: true,-->
-<!--      text: "World Wide Wine Production 2018"-->
-<!--    }-->
-<!--  }-->
-<!--});-->
 </script>
 
 
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
 </body>
 </html>

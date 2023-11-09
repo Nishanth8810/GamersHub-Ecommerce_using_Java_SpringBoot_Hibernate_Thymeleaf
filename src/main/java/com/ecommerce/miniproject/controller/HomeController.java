@@ -6,7 +6,6 @@ import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.entity.Rating;
 import com.ecommerce.miniproject.enums.ProductManagementMessages;
 import com.ecommerce.miniproject.repository.BannerImageRepository;
-import com.ecommerce.miniproject.repository.OrderRepository;
 import com.ecommerce.miniproject.repository.RatingRepository;
 import com.ecommerce.miniproject.service.CartService;
 import com.ecommerce.miniproject.service.CategoryService;
@@ -22,10 +21,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 
@@ -34,18 +31,14 @@ public class HomeController {
     CategoryService categoryService;
     @Autowired
     ProductService productService;
-
     @Autowired
     UserService userService;
-
     @Autowired
     CartService cartService;
     @Autowired
     RatingRepository ratingRepository;
     @Autowired
-    private OrderRepository orderRepository;
-    @Autowired
-    private BannerImageRepository bannerImageRepository;
+    BannerImageRepository bannerImageRepository;
 
     @GetMapping({"/", "home", "index"})
     public String home(Model model) {
@@ -55,11 +48,8 @@ public class HomeController {
         return "index";
 
     }
-
     @GetMapping("/shop")
     public String shop(Model model, Principal principal) {
-//        System.out.println(orderRepository.findFirstByOrderByLocalDateTimeAsc().toString());
-
         if (principal == null) {
             model.addAttribute("categories", categoryService.getAllCategory());
             model.addAttribute("products", productService.getAllProduct());
@@ -69,19 +59,19 @@ public class HomeController {
         }
 
         Optional<Cart> cartOptional = cartService
-                .findCartByUser(userService.getUserByEmail(principal.getName()).get());
+                .findCartByUser(userService.getUserByEmail(principal.getName()).orElseThrow());
         if (cartOptional.isEmpty()) {
             Cart cart = new Cart();
-            cart.setUser(userService.getUserByEmail(principal.getName()).get());
+            cart.setUser(userService.getUserByEmail(principal.getName()).orElseThrow());
             cartService.save(cart);
         }
         model.addAttribute("cartCount",
-                cartService.findCartByUser(userService.getUserByEmail(principal.getName()).get()).get()
+                cartService.findCartByUser(userService.getUserByEmail(principal.getName()).orElseThrow()).orElseThrow()
                         .getCartItems().size());
 
 
         model.addAttribute("total", cartService.findCartByUser(userService.getUserByEmail
-                        (principal.getName()).get()).get().getCartItems()
+                        (principal.getName()).orElseThrow()).orElseThrow().getCartItems()
                 .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
                 .reduce(0.0, Double::sum));
 
@@ -91,7 +81,6 @@ public class HomeController {
         model.addAttribute("minPrice", 0);
         model.addAttribute("maxPrice", 0);
         return findPaginated(1, model, principal);
-//        return "shop";
     }
 
     @GetMapping("/shop/category/{id}")
@@ -104,7 +93,7 @@ public class HomeController {
 
         }
         model.addAttribute("total", cartService.findCartByUser
-                        (userService.getUserByEmail(principal.getName()).get()).get().getCartItems()
+                        (userService.getUserByEmail(principal.getName()).orElseThrow()).orElseThrow().getCartItems()
                 .stream().map(item -> item.getProduct().getPrice() * item.getQuantity())
                 .reduce(0.0, Double::sum));
 
@@ -120,20 +109,16 @@ public class HomeController {
     public String viewProduct(@PathVariable int id, Model model, Principal principal) {
 
         if (principal == null) {
-
-            model.addAttribute("product", productService.getProductById(id).get());
-            return "viewProduct";
-
+            model.addAttribute("product", productService.getProductById(id).orElseThrow());
         } else {
-
             model.addAttribute("cartCount", cartService
                     .findCartByUser
-                            (userService.getUserByEmail(principal.getName()).get())
-                    .get().getCartItems().size());
+                            (userService.getUserByEmail(principal.getName()).orElseThrow())
+                    .orElseThrow().getCartItems().size());
 
             model.addAttribute("total",
                     cartService.findCartByUser(userService.getUserByEmail(principal.getName())
-                                    .get()).get().getCartItems()
+                                    .orElseThrow()).orElseThrow().getCartItems()
                             .stream()
                             .map(item -> item.getProduct()
                                     .getPrice() * item.getQuantity())
@@ -158,8 +143,9 @@ public class HomeController {
             model.addAttribute("product", productService.getProductById(id).orElseThrow());
             model.addAttribute("rating",formattedAverageRatingDouble);
             model.addAttribute("rateCount",ratingValues.size());
-            return "viewProduct";
+            model.addAttribute("reviews",ratingList);
         }
+        return "viewProduct";
     }
 
 
@@ -176,15 +162,15 @@ public class HomeController {
 
         model.addAttribute("cartCount",
                 cartService.findCartByUser
-                                (userService.getUserByEmail(principal.getName()).get())
-                        .get().getCartItems().size());
+                                (userService.getUserByEmail(principal.getName()).orElseThrow())
+                        .orElseThrow().getCartItems().size());
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("products", productList);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
         model.addAttribute("currentPage", pageNo);
-        return "shop";
 
+        return "shop";
     }
 
 
@@ -216,14 +202,15 @@ public class HomeController {
     }
 
     @GetMapping("/filterProducts")
-    public String filterProducts(@RequestParam("minPrice") Double minPrice, @RequestParam("maxPrice") Double maxPrice, Model model) {
+    public String filterProducts(@RequestParam("minPrice") Double minPrice,
+                                 @RequestParam("maxPrice") Double maxPrice,
+                                 Model model) {
 
         List<Product> filteredProducts = productService.getProductsByPriceRange(minPrice, maxPrice);
 
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
-
         model.addAttribute("products", filteredProducts);
 
         return "shop";

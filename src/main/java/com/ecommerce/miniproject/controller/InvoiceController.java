@@ -43,16 +43,13 @@ public class InvoiceController {
         parameters.put("total", order.getAmount());
 
         List<OrderItem> orderItemList = order.getOrderItems();
-
             for (OrderItem orderItem : orderItemList) {
             InvoiceDataset invoiceDataset = new InvoiceDataset();
             invoiceDataset.setProductName(orderItem.getProduct().getName());
             invoiceDataset.setQuantity(orderItem.getQuantity());
             invoiceDataset.setUnitPrice(orderItem.getProduct().getPrice());
             invoiceDataset.setStotal(orderItem.getSubtotal());
-
             invoiceDatasetList.add(invoiceDataset);
-
         }
 
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(invoiceDatasetList);

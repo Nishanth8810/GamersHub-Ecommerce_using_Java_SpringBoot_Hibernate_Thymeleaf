@@ -13,8 +13,6 @@ import java.util.List;
 @Service
 public class ChartService {
     @Autowired
-    OrderService orderService;
-    @Autowired
     OrderRepository orderRepository;
 
 
@@ -87,7 +85,11 @@ public class ChartService {
             lastDayOfYear=lastDayOfYear.minusYears(1);
         }
 
-        return List.of(xAxis, yAxis);
+        return List.of(xAxis, yAxis,yAxis2);
     }
+
+
+
+
 
 }

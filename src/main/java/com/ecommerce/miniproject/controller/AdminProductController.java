@@ -263,7 +263,7 @@ public class AdminProductController {
     private void updateProductDetails(Product product, ProductDTO productDTO) {
         product.setName(productDTO.getName());
         product.setQuantity(productDTO.getQuantity());
-        product.setCategory(categoryService.getCategoryById(productDTO.getCategoryId()).get());
+        product.setCategory(categoryService.getCategoryById(productDTO.getCategoryId()).orElseThrow());
         product.setPrice(productDTO.getPrice());
         product.setWeight(productDTO.getWeight());
         product.setDescription(productDTO.getDescription());

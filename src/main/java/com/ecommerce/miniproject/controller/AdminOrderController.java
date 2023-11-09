@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AdminOrderController {
 
 
-
     @Autowired
     OrderService orderService;
 
@@ -103,24 +102,18 @@ public class AdminOrderController {
 
 
     @GetMapping("/search/order")
-    public String getOrderById(@RequestParam("keyword")int id,Model model){
+    public String getOrderById(@RequestParam("keyword") int id, Model model) {
 
 
-            try {
-                Orders orders=orderService.getOrderById(id).get();
-                model.addAttribute("userOrder", orders);
-                return "adminOrders";
-            }
-            catch (Exception e){
-                model.addAttribute("errorSearch", UserManagementMessages.ERROR_SEARCH.getMessage());
-                model.addAttribute("userOrder", orderService.getAllOrders());
-                return "adminOrders";
+        try {
+            Orders orders = orderService.getOrderById(id).get();
+            model.addAttribute("userOrder", orders);
+            return "adminOrders";
+        } catch (Exception e) {
+            model.addAttribute("errorSearch", UserManagementMessages.ERROR_SEARCH.getMessage());
+            model.addAttribute("userOrder", orderService.getAllOrders());
+            return "adminOrders";
 
-            }
-            /////////DASHBOARD ORDERS////////
-
-
-
+        }
     }
-
 }

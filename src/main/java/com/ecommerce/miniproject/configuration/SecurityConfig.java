@@ -1,15 +1,12 @@
 package com.ecommerce.miniproject.configuration;
 
 import com.ecommerce.miniproject.service.CustomUserDetailService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -19,9 +16,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(configurer ->
                         configurer
-                                .requestMatchers("/", "shop/**","register/**","/resources/**","otpScreen/**","verifyAccount/**",
+                                .requestMatchers("/", "shop/**","register/**","/resources/**","otpScreen/**", "verifyAccount/**",
                                         "/static/**","/images/**","/productImages/**","/css/**","/js/**","/index/**","/resendOTP/**", "/error",
-                                        "/error/**", "/resources/templates/rr.html","/changePasswordForgot/**","/forgotVerifyAccount/**","/changePassword/**","/forgotPassword","/bannerImages/**","/error-404/**", "/resetPassword","/invalid-url/**","/razorOrder/**","/page/**").permitAll()
+                                        "/error/**", "/resources/templates/error.html","/changePasswordForgot/**","/forgotVerifyAccount/**",
+                                        "/changePassword/**","/forgotPassword","/bannerImages/**","/error-404/**",
+                                        "/resetPassword","/invalid-url/**","/razorOrder/**","/page/**").permitAll()
                                 .requestMatchers("/admin/**","/admin/userManagement/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )

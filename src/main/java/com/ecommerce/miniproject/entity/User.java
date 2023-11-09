@@ -4,7 +4,6 @@ package com.ecommerce.miniproject.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -94,12 +93,6 @@ public class User {
         }
         return false;
     }
-//    public String getPassword(User user){
-//        this.password=user.getPassword();
-//        return password;
-//    }
-//
-
 
     public void setId(Integer id) {
         this.id = id;
@@ -130,9 +123,6 @@ public class User {
     }
 
 
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
-    }
 }
 
 
