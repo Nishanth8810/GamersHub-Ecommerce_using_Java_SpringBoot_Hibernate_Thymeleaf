@@ -87,12 +87,6 @@ public class AdminProductController {
         }
     }
 
-
-
-
-
-
-
     @PostMapping("/admin/products/add")
     public String productAddPost(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
                                  BindingResult bindingResult,
@@ -257,8 +251,6 @@ public class AdminProductController {
         }
 
     }
-
-
 
     private void updateProductDetails(Product product, ProductDTO productDTO) {
         product.setName(productDTO.getName());

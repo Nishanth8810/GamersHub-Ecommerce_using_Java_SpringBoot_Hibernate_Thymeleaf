@@ -50,6 +50,7 @@ public class LoginController {
 
     @GetMapping("register")
     public String getRegister(Model model) {
+        userService.deleteAllNonVerifiedUser();
         model.addAttribute("user", new User());
         return "register";
     }
@@ -68,6 +69,11 @@ public class LoginController {
     @PostMapping("/register")
     public String postRegister(@Valid @ModelAttribute("user") UserDTO userDTO,
                                BindingResult bindingResult, Model model) {
+
+
+
+
+
 
         if (bindingResult.hasErrors()) {
             return "register";
