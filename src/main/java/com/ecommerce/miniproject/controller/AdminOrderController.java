@@ -103,10 +103,8 @@ public class AdminOrderController {
 
     @GetMapping("/search/order")
     public String getOrderById(@RequestParam("keyword") int id, Model model) {
-
-
         try {
-            Orders orders = orderService.getOrderById(id).get();
+            Orders orders = orderService.getOrderById(id).orElseThrow();
             model.addAttribute("userOrder", orders);
             return "adminOrders";
         } catch (Exception e) {

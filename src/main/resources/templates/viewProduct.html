@@ -25,6 +25,14 @@
         background-color: #FF5733; /* Change this color to your desired color */
         /* You can adjust the color and other styles as needed */
     }
+     /* Add this style block in your HTML file or in your CSS file */
+    .zoom-effect {
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .zoom-effect:hover {
+      transform: scale(1.2); /* You can adjust the scale value as needed */
+    }
 </style>
 
 
@@ -214,7 +222,23 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/igorlino/elevatezoom-plus/1.1.6/src/jquery.ez-plus.js"></script>
+
 <script>
+    $(document).ready(function() {
+        $("#zoom_01").ezPlus();
+
+        $(".thumbnail-image").on("click", function() {
+            var newImageSrc = $(this).attr("src");
+            var zoomImageSrc = $(this).data("zoom-image");
+            var zoomImageId = $(this).data("zoom-id");
+
+            $("#" + zoomImageId).attr("src", newImageSrc);
+            $("#" + zoomImageId).data("zoom-image", zoomImageSrc).elevateZoom();
+        });
+    });
+</script>
     document.addEventListener("DOMContentLoaded", function () {
         const addToCartButton = document.getElementById("addToCartButton");
         const successMessage = document.getElementById("addToCartSuccessMessage");

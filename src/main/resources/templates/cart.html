@@ -39,9 +39,7 @@
                 <li class="nav-item">
                     <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/cart}" href="#"><i class="fas fa-shopping-cart"></i> Cart</a>
-                </li>
+
                 <li class="nav-item">
                     <span class="nav-link"><i class="fas fa-shopping-cart"></i> <span th:text="${cartCount}">0</span></span>
                 </li>

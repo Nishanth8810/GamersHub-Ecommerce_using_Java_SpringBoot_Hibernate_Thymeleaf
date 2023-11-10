@@ -57,6 +57,14 @@
     .fas.fa-search {
         margin-right: 8px;
     }
+    /* Add this style block in your HTML file or in your CSS file */
+    .zoom-effect {
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .zoom-effect:hover {
+      transform: scale(1.2); /* You can adjust the scale value as needed */
+    }
 </style>
 
 
@@ -177,8 +185,12 @@
                 <!-- Loop through your products and create product cards -->
                 <div class="col-md-4" th:each="product : ${products}">
                     <div class="card" style="margin-top: 20px">
-                        <img class="card-img-top" height="150px" width="150px"
-                             th:src="@{${'/productImages/' + product.imageName}}" th:alt="${product.name}" alt="" src="">
+                        <div class="zoom-effect">
+                            <a th:href="@{/shop/viewProduct/{id}(id=${product.id})}">
+                                <img class="card-img-top" height="150px" width="150px"
+                                     th:src="@{${'/productImages/' + product.imageName}}" th:alt="${product.name}" alt="" src="">
+                            </a>
+                        </div>
                         <div class="card-body">
                             <h5 class="card-title" th:text="${product.name}"></h5>
                             <h4>₹ <span th:text="${product.price}"></span></h4>
