@@ -49,55 +49,64 @@
     <!-- header section strats -->
     <header class="header_section">
         <div class="container-fluid">
-            <nav class="navbar navbar-expand-lg custom_nav-container ">
-                <a class="navbar-brand" >
-            <span>
-              GamersHub
-            </span>
+            <nav class="navbar navbar-expand-lg custom_nav-container">
+                <!-- Your brand -->
+                <a class="navbar-brand">
+                    <span>GamersHub</span>
                 </a>
 
+                <!-- Toggler button for small screens -->
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class=""> </span>
+                    <span class=""></span>
                 </button>
 
+                <!-- Navigation links -->
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav  ">
+<!--                    <ul class="navbar-nav navbar-expand-lg custom_nav-container justify-content-end">-->
+
+                    <ul class="navbar-nav mr-3"> <!-- ml-auto pushes the items to the right -->
+                        <!-- Admin Panel link for authenticated users with the role 'ROLE_ADMIN' -->
                         <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-                            <a class="nav-link" th:href="@{/admin}">Admin Panel <span class="sr-only">(current)</span></a>
-
+                            <a class="nav-link" th:href="@{/admin}">Admin Panel</a>
                         </li>
 
-                        <li class="nav-item active">
-                            <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+                        <!-- Home link -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Home</a>
                         </li>
+
+                        <!-- Products link -->
                         <li class="nav-item">
                             <a class="nav-link ml-1" th:href="@{/shop}">Products</a>
                         </li>
+
+                        <!-- Cart link for authenticated users -->
                         <li class="nav-item">
                             <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/cart}">Cart</a>
                         </li>
+
+                        <!-- User link for authenticated users -->
                         <li sec:authorize="isAuthenticated()" class="nav-item">
-                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user}" href="#" ><span th:text="${#authentication.principal.firstName}"></span></a>
+                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user}" href="#">
+                                <span th:text="${#authentication.principal.firstName}"></span>
+                            </a>
                         </li>
-                        <li class="nav-item active">
-                            <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/login}" href="#">login</a>
+
+                        <!-- Login link for anonymous users -->
+                        <li class="nav-item">
+                            <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/login}" href="#">Login</a>
                         </li>
-                        <li class="nav-item active">
-                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}" href="#">logout</a>
+
+                        <!-- Logout link for authenticated users -->
+                        <li class="nav-item">
+                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}" href="#">Logout</a>
                         </li>
                     </ul>
-<!--                    <div class="user_optio_box">-->
-<!--                        <a href="">-->
-<!--                            <i class="fa fa-user" aria-hidden="true"></i>-->
-<!--                        </a>-->
-<!--                        <a href="">-->
-<!--                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>-->
-<!--                        </a>-->
-<!--                    </div>-->
                 </div>
             </nav>
         </div>
     </header>
+
     <!-- end header section -->
     <!-- slider section -->
     <div class="container">
@@ -440,8 +449,9 @@
 </script>
 <!-- End Google Map -->
 
+    </div>
 
-    
+</div>
 </body>
 
 </html>

@@ -40,13 +40,10 @@ public class OrderController {
     CartService cartService;
     @Autowired
     UserService userService;
-
     @Autowired
     PaymentMethodRepository paymentMethodRepository;
-
     @Autowired
     OrderStatusRepository orderStatusRepository;
-
     @Autowired
     CouponService couponService;
     @Autowired
