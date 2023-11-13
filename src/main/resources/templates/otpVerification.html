@@ -4,12 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="/images/fevicon/istockphoto-1475398455-612x612.png" type="image/png">
+
     <title>OTP Verification</title>
 
     <!-- Include Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 </head>
 <body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light" >
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img th:src="@{/images/logo.png}" src="../static/images/logo.png" width="auto" height="38" class="d-inline-block align-top" alt=""/>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto"></ul>
+            <ul class="navbar-nav">
+
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/login}" href="#">back to login</a>
+                </li>
+
+            </ul>
+
+        </div>
+    </div>
+</nav>
+
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -36,9 +62,9 @@
                     <input type="hidden"  name="email" th:value="${param.email}" required>
 
 
-                    <button type="submit" class="btn btn-secondary">Resend OTP</button>
+                    <button type="submit"  id="resendButton" class="btn btn-secondary"  >Resend OTP</button>
 
-
+                    <div id="countdown" class="text-center text-primary"></div>
 
                 </div>
             </form>
@@ -46,28 +72,50 @@
     </div>
 </div>
 <script>
-    // Function to simulate OTP verification
-    function simulateOTPVerification() {
-        return Math.random() < 0.5; // Simulating successful verification half the time
-    }
+    document.addEventListener("DOMContentLoaded", function () {
+        var seconds = 60; // 1 minute
+        var isButtonDisabled = false;
 
-    // Function to redirect to the login page
-    function redirectToLogin() {
-        window.location.href = '/login'; // Replace '/login' with the actual URL of your login page
-    }
-
-    // Simulate OTP verification when the "Verify OTP" button is clicked
-    document.getElementById("verifyBtn").addEventListener("click", function() {
-        var otpVerified = simulateOTPVerification();
-
-        if (otpVerified) {
-            // Call the redirection function if OTP is verified
-            alert("OTP is verified. You will be redirected to the login page after 5 seconds.");
-            setTimeout(redirectToLogin, 5000); // 5000 milliseconds (5 seconds)
-        } else {
-            alert("OTP verification failed. Please try again.");
+        function updateCountdown() {
+            document.getElementById('countdown').innerText = 'OTP Valid only for ' + seconds + ' seconds';
         }
+
+        function showResendButton() {
+            document.getElementById('resendForm').style.display = 'block';
+        }
+
+        function disableResendButton() {
+            document.getElementById('resendButton').disabled = true;
+            isButtonDisabled = true;
+        }
+
+        function enableResendButton() {
+            document.getElementById('resendButton').disabled = false;
+            isButtonDisabled = false;
+        }
+
+        updateCountdown();
+
+        var countdownInterval = setInterval(function () {
+            seconds--;
+            updateCountdown();
+
+            if (seconds <= 0) {
+                clearInterval(countdownInterval);
+                if (isButtonDisabled) {
+                    enableResendButton();
+                    showResendButton();
+                }
+            }
+        }, 1000); // Update every second
+
+        document.getElementById('resendButton').addEventListener('click', function () {
+            disableResendButton();
+            // Add logic to resend OTP here
+            setTimeout(function () {
+                enableResendButton();
+            }, 60000); // Enable button after 1 minute
+        });
     });
-</script>
-</body>
+</script></body>
 </html>

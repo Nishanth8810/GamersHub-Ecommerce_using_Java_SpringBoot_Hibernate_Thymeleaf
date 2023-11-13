@@ -49,12 +49,13 @@ public class HomeController {
 
     }
     @GetMapping("/shop")
-    public String shop(Model model, Principal principal) {
+    public String shop(Model model, Principal principal,HttpSession httpSession) {
         if (principal == null) {
             model.addAttribute("categories", categoryService.getAllCategory());
             model.addAttribute("products", productService.getAllProduct());
             model.addAttribute("minPrice", 0);
             model.addAttribute("maxPrice", 0);
+            httpSession.setAttribute("categoryId",null);
             return "shop";
         }
 
@@ -80,11 +81,13 @@ public class HomeController {
         model.addAttribute("products", productService.getAllProduct());
         model.addAttribute("minPrice", 0);
         model.addAttribute("maxPrice", 0);
+        httpSession.setAttribute("categoryId",null);
         return findPaginated(1, model, principal);
     }
 
     @GetMapping("/shop/category/{id}")
-    public String shopByCategory(@PathVariable int id, Model model, Principal principal, HttpSession httpSession) {
+    public String shopByCategory(@PathVariable int id, Model model, Principal principal,
+                                 HttpSession httpSession) {
 
         if (principal == null) {
             model.addAttribute("categories", categoryService.getAllCategory());

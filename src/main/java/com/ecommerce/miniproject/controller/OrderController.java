@@ -54,7 +54,7 @@ public class OrderController {
     @Autowired
     ProductRepository productRepository;
     @Autowired
-     CartItemRepository cartItemRepository;
+    CartItemRepository cartItemRepository;
     Map<String, Boolean> userBooleanMap = new HashMap<>();
     Map<String, Double> userDoubleMap = new HashMap<>();
 
@@ -88,11 +88,9 @@ public class OrderController {
 
         String loggedUser = principal.getName();
         List<Address> addressList = addressService.getAddressOfUser(loggedUser);
-        if (addressList.isEmpty()){
-            System.out.println(addressList);
-            model.addAttribute("addressList",null);
-        }
-        else {
+        if (addressList.isEmpty()) {
+            model.addAttribute("addressList", null);
+        } else {
             model.addAttribute("addressList", addressList);
 
         }
@@ -100,9 +98,10 @@ public class OrderController {
 
         return "checkout";
     }
+
     @PostMapping("/checkout/addressAdd")
     public String postCheckout(@Valid @ModelAttribute AddressDTO addressDTO,
-                               BindingResult bindingResult, Model model,Principal principal) {
+                               BindingResult bindingResult, Model model, Principal principal) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentPrincipalName = authentication.getName();
@@ -119,11 +118,10 @@ public class OrderController {
             model.addAttribute("walletAmount", wallet.getBalance());
 
             List<Address> addressList = addressService.getAddressOfUser(user.getEmail());
-            if (addressList.isEmpty()){
+            if (addressList.isEmpty()) {
                 System.out.println(addressList);
-                model.addAttribute("addressList",null);
-            }
-            else {
+                model.addAttribute("addressList", null);
+            } else {
                 model.addAttribute("addressList", addressList);
 
             }
@@ -155,16 +153,16 @@ public class OrderController {
                                HttpServletRequest servletRequest,
                                RedirectAttributes redirectAttributes, Model model
     ) {
-        User user=userService.getUserByEmail(principal.getName()).orElseThrow();
+        User user = userService.getUserByEmail(principal.getName()).orElseThrow();
         Cart cart = cartService.findCartByUser(user).orElse(null);
         assert cart != null;
         List<CartItem> cartItemLists = cart.getCartItems();
         for (CartItem cartItem : cartItemLists) {
             Product product = cartItem.getProduct();
-          if ( product.getQuantity()<cartItem.getQuantity()){
-              redirectAttributes.addFlashAttribute("stockError","No stock available");
-              return "redirect:/checkout";
-          }
+            if (product.getQuantity() < cartItem.getQuantity()) {
+                redirectAttributes.addFlashAttribute("stockError", "No stock available");
+                return "redirect:/checkout";
+            }
         }
 
         double total;
@@ -231,7 +229,7 @@ public class OrderController {
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
             Product product = cartItem.getProduct();
-            int qu=product.getQuantity()-cartItem.getQuantity();
+            int qu = product.getQuantity() - cartItem.getQuantity();
             product.setQuantity(qu);
             productRepository.save(product);
             orderItem.setOrders(orders);
@@ -367,7 +365,7 @@ public class OrderController {
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
             Product product = cartItem.getProduct();
-            int qu=product.getQuantity()-cartItem.getQuantity();
+            int qu = product.getQuantity() - cartItem.getQuantity();
             product.setQuantity(qu);
             productRepository.save(product);
             orderItem.setProductVariants(cartItem.getProductVariants());
@@ -404,7 +402,7 @@ public class OrderController {
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
             Product product = cartItem.getProduct();
-            int qu=product.getQuantity()-cartItem.getQuantity();
+            int qu = product.getQuantity() - cartItem.getQuantity();
             product.setQuantity(qu);
             productRepository.save(product);
             orderItem.setQuantity(cartItem.getQuantity());
@@ -412,7 +410,7 @@ public class OrderController {
             orderItem.setOrders(orders);
             orderItemService.saveOrderItem(orderItem);
         }
-       cartItemRepository.deleteAll(cartItemLists);
+        cartItemRepository.deleteAll(cartItemLists);
         redirectAttributes.addFlashAttribute("orderId", orderId);
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
         return "redirect:/orderSuccess";
