@@ -6,9 +6,9 @@ import lombok.Getter;
 public enum CartManagementMessages {
    ERROR_VARIANT("This combination of variant is not available"),
     ALREADY_PRESENT("item is already in your cart :)"),
+    NO_STOCK("No stock available"),
     ADDED_CART("Added to cart");
     private final String message;
-
     CartManagementMessages(String message) {
         this.message = message;
     }

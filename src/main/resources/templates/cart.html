@@ -80,11 +80,14 @@
                                     <div>
                                         <div class="d-flex justify-content-between">
                                             <div>
+                                                <p class="text-danger" th:if="${errorCart}" th:text="${errorCart}"></p>
                                                 <h5 th:text="${item.product.name}">Blue denim shirt</h5>
                                                 <p class="mb-3 text-uppercase small">Weight: <span th:text="${item.product.weight}"></span> grams</p>
                                                 <a  type="button" class="btn btn-sm btn-primary" th:href="@{/cart/decreaseQuantity/{id}(id=${item.id})}">-</a>
                                                 <a type="button" class="btn btn-sm btn-primary" th:href="@{/cart/increaseQuantity/{id}(id=${item.id})}" >+</a>
                                                 <p class="mb-3 text-uppercase small">Quantity: <span th:text="${item.quantity}"></span></p>
+                                                <p class="mb-3 text-uppercase big">Stock Available <span th:text="${item.product.quantity}"></span></p>
+
                                                 <p class="mb-3 text-uppercase small" th:if="${item.productVariants?.productColor?.color != null or item.productVariants?.productSize?.size != null}">
                                                     variant: <span th:text="${item.productVariants?.productColor?.color} + ' , ' + ${item.productVariants?.productSize?.size}"></span>
                                                 </p>
@@ -97,7 +100,7 @@
                                                         class="fas fa-trash-alt mr-1" ></i> Remove item </a>
 
                                             </div>
-                                            <p class="mb-0"><span><strong>₹<span th:text="${item.product.price}"></span></strong></span></p>
+                                            <p class="mb-0"><span><strong>₹<span th:text="${item.product.price}"></span>x<span th:text="${item.quantity}"></span><span th:text="${cartItemTotl}"></span></strong></span></p>
                                         </div>
                                     </div>
                                 </div>

@@ -116,6 +116,7 @@ public class CartController {
                 (userService.getUserByEmail(principal.getName())
                         .orElseThrow()).orElseThrow().getCartItems().size());
 
+
         model.addAttribute("total", cartService.findCartByUser
                         (userService.getUserByEmail(principal.getName()).orElseThrow())
                         .orElseThrow().getCartItems()
@@ -130,10 +131,15 @@ public class CartController {
     }
 
     @GetMapping("/cart/increaseQuantity/{id}")
-    public String getIncreaseQuantity(@PathVariable long id) {
+    public String getIncreaseQuantity(@PathVariable long id,RedirectAttributes redirectAttributes) {
         CartItem cartItem = cartItemRepository.findById(id).orElse(null);
 
         assert cartItem != null;
+        if (cartItem.getQuantity()>=cartItem.getProduct().getQuantity()){
+            redirectAttributes.addFlashAttribute("errorCart",CartManagementMessages.NO_STOCK.getMessage());
+
+            return "redirect:/cart";
+        }
         cartItem.setQuantity(cartItem.getQuantity() + 1);
         cartItemRepository.save(cartItem);
 
