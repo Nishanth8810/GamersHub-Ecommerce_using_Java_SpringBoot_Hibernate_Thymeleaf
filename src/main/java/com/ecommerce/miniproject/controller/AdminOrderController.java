@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collections;
+import java.util.List;
+
 @Controller
 public class AdminOrderController {
 
@@ -24,8 +27,9 @@ public class AdminOrderController {
 
     @GetMapping("/admin/orders")
     public String getAdminOrders(Model model) {
-
-        model.addAttribute("userOrder", orderService.getAllOrders());
+       List< Orders> ordersList=orderService.getAllOrders();
+        Collections.reverse(ordersList);
+        model.addAttribute("userOrder", ordersList);
         return "adminOrders";
     }
 
@@ -38,7 +42,7 @@ public class AdminOrderController {
 
         Orders orders = orderService.getOrderById(id).get();
 
-        orders.setOrderStatus(orderStatusRepository.findById(5L).get());
+        orders.setOrderStatus(orderStatusRepository.findById(5L).orElseThrow());
 
         orderService.saveOrder(orders);
 
@@ -78,8 +82,8 @@ public class AdminOrderController {
     @GetMapping("/admin/order/delivered/{id}")
     public String getDeliveredOrder(@PathVariable long id) {
 
-        Orders orders = orderService.getOrderById(id).get();
-        orders.setOrderStatus(orderStatusRepository.findById(4L).get());
+        Orders orders = orderService.getOrderById(id).orElseThrow();
+        orders.setOrderStatus(orderStatusRepository.findById(4L).orElseThrow());
         orderService.saveOrder(orders);
         return "redirect:/admin/orders";
     }
@@ -87,15 +91,15 @@ public class AdminOrderController {
     @GetMapping("/admin/order/confirmed/{id}")
     public String getConfirmedOrder(@PathVariable long id) {
 
-        Orders orders = orderService.getOrderById(id).get();
-        orders.setOrderStatus(orderStatusRepository.findById(1L).get());
+        Orders orders = orderService.getOrderById(id).orElseThrow();
+        orders.setOrderStatus(orderStatusRepository.findById(1L).orElseThrow());
         orderService.saveOrder(orders);
         return "redirect:/admin/orders";
     }
 
     @GetMapping("/admin/order/viewOrderDetails/{id}")
     public String getViewOrderDetails(Model model, @PathVariable long id) {
-        Orders orders = orderService.getOrderById(id).get();
+        Orders orders = orderService.getOrderById(id).orElseThrow();
         model.addAttribute("orderList", orders);
         return "adminViewOrder";
     }

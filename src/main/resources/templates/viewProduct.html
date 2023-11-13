@@ -196,7 +196,7 @@
                     <!--                    <p th:text="${rating.review}"></p>-->
 
                 </div>
-                <div class="reviews-container mt-3">
+                <div th:if="${rating!=null}" class="reviews-container mt-3">
                     <button class="btn btn-warning" type="button" data-toggle="collapse" href="#reviewsCollapse" aria-expanded="false">
                         Show Reviews
                     </button>
