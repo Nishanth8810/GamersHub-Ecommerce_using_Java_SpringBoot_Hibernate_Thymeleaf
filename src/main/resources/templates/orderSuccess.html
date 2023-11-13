@@ -3,6 +3,8 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/fevicon/istockphoto-1475398455-612x612.png" type="image/png">
+
     <title>Order Placed</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
@@ -82,7 +84,34 @@
             <li><strong>Total Amount:</strong> <span th:text="${total}"></span> </li>
         </ul>
     </div>
+    <div id="countdown" class="text-center text-primary"></div>
+
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var seconds = 7;
+
+        function updateCountdown() {
+            document.getElementById('countdown').innerText = 'Redirecting to home page in ' + seconds + ' seconds';
+        }
+
+        function redirect() {
+            window.location.href = "/";
+        }
+
+        updateCountdown();
+
+        var countdownInterval = setInterval(function () {
+            seconds--;
+            updateCountdown();
+
+            if (seconds <= 0) {
+                clearInterval(countdownInterval);
+                redirect();
+            }
+        }, 1000); // Update every second
+    });
+</script>
 
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

@@ -178,4 +178,8 @@ public class UserService {
         }
         return 0;
     }
+
+    public void deleteAllNonVerifiedUser() {
+        userRepository.deleteNonVerifiedUsers();
+    }
 }

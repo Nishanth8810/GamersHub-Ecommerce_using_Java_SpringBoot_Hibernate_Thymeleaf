@@ -3,6 +3,8 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/images/fevicon/istockphoto-1475398455-612x612.png" type="image/png">
+
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -98,9 +100,6 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/cart}" href="#"><i class="fas fa-shopping-cart"></i> Cart</a>
                 </li>
-                <li class="nav-item">
-                    <span class="nav-link"><i class="fas fa-shopping-cart"></i> <span th:text="${cartCount}">0</span></span>
-                </li>
             </ul>
         </div>
     </div>
@@ -123,6 +122,8 @@
                         <input type="hidden" id="appliedCoupon" name="appliedCoupon" th:value="${appliedCoupon}" required>
                         <p th:if="${walletError}" class="text-danger" th:text="${walletError}"></p>
                         <p th:if="${stockError}" class="text-danger" th:text="${stockError}"></p>
+                        <p th:if="${addressError}" class="text-danger" th:text="${addressError}"></p>
+
 
                         <h5 class="mb-2">Billing details</h5>
                         <!--<input type="hidden" name="id" th:value="${address.id}" />-->
@@ -158,11 +159,12 @@
                     </select>
 
                         <br><br>
-
-
+                        <p th:if="${addressList==null}" class="text-danger">Please add address to place order</p>
+                        <div th:if="${addressList!=null}">
                         <button type="submit" class="btn btn-primary btn-block waves-effect waves-light">Place
                             order
                         </button>
+                        </div>
 
                     </form>
                 </div>
@@ -182,7 +184,7 @@
 
 
                             <div class="form-group">
-                                <form th:action="@{/checkout}" th:object="${addressDTO}" method="post">
+                                <form th:action="@{/checkout/addressAdd}" th:object="${addressDTO}" method="post">
 
                                     <input type="hidden" name="id" th:field="*{id}">
                                     <!-- Grid row -->

@@ -49,12 +49,13 @@ public class HomeController {
 
     }
     @GetMapping("/shop")
-    public String shop(Model model, Principal principal) {
+    public String shop(Model model, Principal principal,HttpSession httpSession) {
         if (principal == null) {
             model.addAttribute("categories", categoryService.getAllCategory());
             model.addAttribute("products", productService.getAllProduct());
             model.addAttribute("minPrice", 0);
             model.addAttribute("maxPrice", 0);
+            httpSession.setAttribute("categoryId",null);
             return "shop";
         }
 
@@ -80,11 +81,13 @@ public class HomeController {
         model.addAttribute("products", productService.getAllProduct());
         model.addAttribute("minPrice", 0);
         model.addAttribute("maxPrice", 0);
+        httpSession.setAttribute("categoryId",null);
         return findPaginated(1, model, principal);
     }
 
     @GetMapping("/shop/category/{id}")
-    public String shopByCategory(@PathVariable int id, Model model, Principal principal, HttpSession httpSession) {
+    public String shopByCategory(@PathVariable int id, Model model, Principal principal,
+                                 HttpSession httpSession) {
 
         if (principal == null) {
             model.addAttribute("categories", categoryService.getAllCategory());
@@ -107,9 +110,28 @@ public class HomeController {
 
     @GetMapping("/shop/viewProduct/{id}")
     public String viewProduct(@PathVariable int id, Model model, Principal principal) {
+        List<Rating> ratingList = ratingRepository.findByProductId(id);
 
         if (principal == null) {
+
+            if (ratingList.isEmpty()) {
+                model.addAttribute("product", productService.getProductById(id).orElseThrow());
+                model.addAttribute("rating", null);
+                return "viewProduct";
+            }
+            List<Integer> ratingValues = ratingList.stream()
+                    .map(Rating::getRatingValue)
+                    .toList();
+            double averageRating = ratingValues.stream()
+                    .mapToDouble(Integer::doubleValue)
+                    .average()
+                    .orElse(0.0);
+            String formattedAverageRating = String.format("%.2f", averageRating);
+            double formattedAverageRatingDouble = Double.parseDouble(formattedAverageRating);
             model.addAttribute("product", productService.getProductById(id).orElseThrow());
+            model.addAttribute("rating",formattedAverageRatingDouble);
+            model.addAttribute("rateCount",ratingValues.size());
+            model.addAttribute("reviews",ratingList);
         } else {
             model.addAttribute("cartCount", cartService
                     .findCartByUser
@@ -124,7 +146,7 @@ public class HomeController {
                                     .getPrice() * item.getQuantity())
                             .reduce(0.0, Double::sum));
 
-            List<Rating> ratingList = ratingRepository.findByProductId(id);
+
             if (ratingList.isEmpty()) {
                 model.addAttribute("product", productService.getProductById(id).orElseThrow());
                 model.addAttribute("rating", null);

@@ -11,8 +11,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,23 +43,20 @@ public class OrderController {
     CartService cartService;
     @Autowired
     UserService userService;
-
     @Autowired
     PaymentMethodRepository paymentMethodRepository;
-
     @Autowired
     OrderStatusRepository orderStatusRepository;
-
     @Autowired
     CouponService couponService;
     @Autowired
     WalletService walletService;
-    Map<String, Boolean> userBooleanMap = new HashMap<>();
-    Map<String, Double> userDoubleMap = new HashMap<>();
     @Autowired
     ProductRepository productRepository;
     @Autowired
-     CartItemRepository cartItemRepository;
+    CartItemRepository cartItemRepository;
+    Map<String, Boolean> userBooleanMap = new HashMap<>();
+    Map<String, Double> userDoubleMap = new HashMap<>();
 
 
     @GetMapping("/checkout")
@@ -79,6 +79,7 @@ public class OrderController {
         } else {
             model.addAttribute("total", Double.valueOf(totalDiscount));
         }
+
         User user = userService.getUserByEmail(principal.getName()).orElseThrow();
         Wallet wallet = walletService.getWalletOfUser(user.getId());
         model.addAttribute("addressDTO", new AddressDTO());
@@ -87,9 +88,61 @@ public class OrderController {
 
         String loggedUser = principal.getName();
         List<Address> addressList = addressService.getAddressOfUser(loggedUser);
-        model.addAttribute("addressList", addressList);
+        if (addressList.isEmpty()) {
+            model.addAttribute("addressList", null);
+        } else {
+            model.addAttribute("addressList", addressList);
+
+        }
+
 
         return "checkout";
+    }
+
+    @PostMapping("/checkout/addressAdd")
+    public String postCheckout(@Valid @ModelAttribute AddressDTO addressDTO,
+                               BindingResult bindingResult, Model model, Principal principal) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        User user = userService.getUserByEmail(currentPrincipalName).orElse(null);
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("total", Objects.requireNonNull(cartService.findCartByUser
+                            (userService.getUserByEmail(principal.getName())
+                                    .orElse(null)).orElse(null)).getCartItems()
+                    .stream()
+                    .map(item -> item.getProduct().getPrice() * item.getQuantity()).reduce(0.0, Double::sum));
+            assert user != null;
+            Wallet wallet = walletService.getWalletOfUser(user.getId());
+            model.addAttribute("walletAmount", wallet.getBalance());
+
+            List<Address> addressList = addressService.getAddressOfUser(user.getEmail());
+            if (addressList.isEmpty()) {
+                System.out.println(addressList);
+                model.addAttribute("addressList", null);
+            } else {
+                model.addAttribute("addressList", addressList);
+
+            }
+
+
+            model.addAttribute("addressError", OrderManagementMessages.ADDRESS_ERROR.getMessage());
+            return "checkout";
+        }
+
+        Address address = new Address();
+        address.setId(addressDTO.getId());
+        address.setName(addressDTO.getName());
+        address.setCity(addressDTO.getCity());
+        address.setPhoneNo(addressDTO.getPhoneNo());
+        address.setLandmark(addressDTO.getLandmark());
+        address.setUser(user);
+        address.setPincode(addressDTO.getPincode());
+        address.setAddress(addressDTO.getAddress());
+        addressService.addAddress(address);
+
+        return "redirect:/checkout";
     }
 
     @PostMapping("/checkout/confirmOrder")
@@ -100,23 +153,24 @@ public class OrderController {
                                HttpServletRequest servletRequest,
                                RedirectAttributes redirectAttributes, Model model
     ) {
-        User user=userService.getUserByEmail(principal.getName()).orElseThrow();
+        User user = userService.getUserByEmail(principal.getName()).orElseThrow();
         Cart cart = cartService.findCartByUser(user).orElse(null);
         assert cart != null;
         List<CartItem> cartItemLists = cart.getCartItems();
         for (CartItem cartItem : cartItemLists) {
             Product product = cartItem.getProduct();
-          if ( product.getQuantity()<cartItem.getQuantity()){
-              redirectAttributes.addFlashAttribute("stockError","No stock available");
-              return "redirect:/checkout";
-          }
+            if (product.getQuantity() < cartItem.getQuantity()) {
+                redirectAttributes.addFlashAttribute("stockError", "No stock available");
+                return "redirect:/checkout";
+            }
         }
 
-
         double total;
-        if (userBooleanMap.get(Objects.requireNonNull(userService.getUserByEmail(principal.getName())
-                        .orElse(null))
+
+        if (userBooleanMap.get((Objects.requireNonNull(userService.getUserByEmail(principal.getName())
+                .orElse(null)))
                 .getEmail())) {
+
             total = userDoubleMap.get(Objects.requireNonNull(userService.getUserByEmail(principal.getName())
                     .orElse(null)).getEmail());
         } else {
@@ -175,7 +229,7 @@ public class OrderController {
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
             Product product = cartItem.getProduct();
-            int qu=product.getQuantity()-cartItem.getQuantity();
+            int qu = product.getQuantity() - cartItem.getQuantity();
             product.setQuantity(qu);
             productRepository.save(product);
             orderItem.setOrders(orders);
@@ -200,7 +254,6 @@ public class OrderController {
 
     @GetMapping("/orderSuccess")
     public String getOrderSuccess(Model model, @ModelAttribute("orderId") long orderId) {
-
         Orders orders = orderService.getOrderById(orderId).orElse(null);
         assert orders != null;
         model.addAttribute("orderItem", orders.getOrderItems());
@@ -312,7 +365,7 @@ public class OrderController {
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
             Product product = cartItem.getProduct();
-            int qu=product.getQuantity()-cartItem.getQuantity();
+            int qu = product.getQuantity() - cartItem.getQuantity();
             product.setQuantity(qu);
             productRepository.save(product);
             orderItem.setProductVariants(cartItem.getProductVariants());
@@ -349,7 +402,7 @@ public class OrderController {
             orderItem.setProduct(cartItem.getProduct());
             orderItem.setQuantity(cartItem.getQuantity());
             Product product = cartItem.getProduct();
-            int qu=product.getQuantity()-cartItem.getQuantity();
+            int qu = product.getQuantity() - cartItem.getQuantity();
             product.setQuantity(qu);
             productRepository.save(product);
             orderItem.setQuantity(cartItem.getQuantity());
@@ -357,7 +410,7 @@ public class OrderController {
             orderItem.setOrders(orders);
             orderItemService.saveOrderItem(orderItem);
         }
-       cartItemRepository.deleteAll(cartItemLists);
+        cartItemRepository.deleteAll(cartItemLists);
         redirectAttributes.addFlashAttribute("orderId", orderId);
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
         return "redirect:/orderSuccess";

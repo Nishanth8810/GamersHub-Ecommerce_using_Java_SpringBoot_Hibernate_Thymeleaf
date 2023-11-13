@@ -3,9 +3,7 @@ package com.ecommerce.miniproject.controller;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.enums.OrderManagementMessages;
 import com.ecommerce.miniproject.enums.UserManagementMessages;
-import com.ecommerce.miniproject.repository.OrderStatusRepository;
-import com.ecommerce.miniproject.repository.PaymentMethodRepository;
-import com.ecommerce.miniproject.repository.RatingRepository;
+import com.ecommerce.miniproject.repository.*;
 import com.ecommerce.miniproject.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -37,6 +36,10 @@ public class UserOrderController {
     RatingRepository ratingRepository;
     @Autowired
     RatingService ratingService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
 
     @GetMapping("/user/order/cancel/{id}")
@@ -73,7 +76,10 @@ public class UserOrderController {
     public String getOrders(Model model, Principal principal) {
         String loggedUser = principal.getName();
         User user = userService.getUserByEmail(loggedUser).orElseThrow();
-        model.addAttribute("orderDetails", user.getOrders());
+        Collections.reverse(user.getOrders());
+        List<Orders>ordersList=orderRepository.findByUserId(user.getId());
+        Collections.reverse(ordersList);
+        model.addAttribute("orderDetails", ordersList);
         return "userOrders";
     }
 

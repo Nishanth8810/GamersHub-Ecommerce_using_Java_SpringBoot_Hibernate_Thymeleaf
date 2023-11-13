@@ -11,7 +11,7 @@ public class AddressDTO {
     private int id;
     @Size(min = 1,message = "Name is required")
     private String name;
-    @Min(message = "Phone must be a 10 digit number",value = 10)
+    @Min(message = "Enter 10 digit number",value = 10)
     private long phoneNo;
 
     @Min(message = "Pincode is required",value = 6)

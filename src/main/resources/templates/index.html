@@ -12,6 +12,8 @@
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     <meta name="author" content="" />
+    <link rel="icon" href="/images/fevicon/istockphoto-1475398455-612x612.png" type="image/png">
+
 
     <title>GamersHub</title>
 
@@ -34,60 +36,79 @@
 </head>
 
 <body>
+<style>
+    /* Add this style block in your HTML file or in your CSS file */
+    .zoom-effect {
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .zoom-effect:hover {
+      transform: scale(1.2); /* You can adjust the scale value as needed */
+    }
+</style>
 
 <div class="hero_area">
     <!-- header section strats -->
     <header class="header_section">
         <div class="container-fluid">
-            <nav class="navbar navbar-expand-lg custom_nav-container ">
-                <a class="navbar-brand" href="index.html">
-            <span>
-              GamersHub
-            </span>
+            <nav class="navbar navbar-expand-lg custom_nav-container">
+                <!-- Your brand -->
+                <a class="navbar-brand">
+                    <span>GamersHub</span>
                 </a>
 
+                <!-- Toggler button for small screens -->
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class=""> </span>
+                    <span class=""></span>
                 </button>
 
+                <!-- Navigation links -->
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav  ">
+<!--                    <ul class="navbar-nav navbar-expand-lg custom_nav-container justify-content-end">-->
+
+                    <ul class="navbar-nav mr-3"> <!-- ml-auto pushes the items to the right -->
+                        <!-- Admin Panel link for authenticated users with the role 'ROLE_ADMIN' -->
                         <li class="nav-item" th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
-                            <a class="nav-link" th:href="@{/admin}">Admin Panel <span class="sr-only">(current)</span></a>
-
+                            <a class="nav-link" th:href="@{/admin}">Admin Panel</a>
                         </li>
 
-                        <li class="nav-item active">
-                            <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
-                        </li>
+                        <!-- Home link -->
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link" href="index.html">Home</a>-->
+<!--                        </li>-->
+
+                        <!-- Products link -->
                         <li class="nav-item">
                             <a class="nav-link ml-1" th:href="@{/shop}">Products</a>
                         </li>
+
+                        <!-- Cart link for authenticated users -->
                         <li class="nav-item">
                             <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/cart}">Cart</a>
                         </li>
+
+                        <!-- User link for authenticated users -->
                         <li sec:authorize="isAuthenticated()" class="nav-item">
-                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user}" href="#" ><span th:text="${#authentication.principal.firstName}"></span></a>
+                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/user}" href="#">
+                                <span th:text="${#authentication.principal.firstName}"></span>
+                            </a>
                         </li>
-                        <li class="nav-item active">
-                            <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/login}" href="#">login</a>
+
+                        <!-- Login link for anonymous users -->
+                        <li class="nav-item">
+                            <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/login}" href="#">Login</a>
                         </li>
-                        <li class="nav-item active">
-                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}" href="#">logout</a>
+
+                        <!-- Logout link for authenticated users -->
+                        <li class="nav-item">
+                            <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/logout}" href="#">Logout</a>
                         </li>
                     </ul>
-<!--                    <div class="user_optio_box">-->
-<!--                        <a href="">-->
-<!--                            <i class="fa fa-user" aria-hidden="true"></i>-->
-<!--                        </a>-->
-<!--                        <a href="">-->
-<!--                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>-->
-<!--                        </a>-->
-<!--                    </div>-->
                 </div>
             </nav>
         </div>
     </header>
+
     <!-- end header section -->
     <!-- slider section -->
     <div class="container">
@@ -95,37 +116,19 @@
             <div id="customCarousel1" class="carousel slide" data-ride="carousel">
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img th:src="'/bannerImages/' + ${bannerImage.get(0).name}"  alt="Mother Boards Image" src="">
+                        <img  height="600px" width="1300px" th:src="'/bannerImages/' + ${bannerImage.get(0).name}"  alt="Mother Boards Image" src="">
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-7">
-                                    <div class="detail-box">
-                                        <h1>New Arrivals</h1>
-                                        <p>Discover our latest products.</p>
-                                        <div class="btn-box">
-                                            <a href="#" class="btn btn-primary">Contact Us</a>
-                                            <a href="#" class="btn btn-secondary">About Us</a>
-                                        </div>
-                                    </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <div th:each="banner,i :${bannerImage}" th:if="${i.index!=0}" class="carousel-item">
-                        <img th:src="'/bannerImages/' + ${banner.name}"  alt="Mother Boards Image" src="">
+                        <img height="600px" width="1300px"th:src="'/bannerImages/' + ${banner.name}"  alt="Mother Boards Image" src="">
                         <div class="container">
                             <div class="row">
-                                <div class="col-md-7">
-                                    <div class="detail-box">
-                                        <h1>Mother Boards</h1>
-                                        <p>ASUS Pro Workstation motherboards are designed for professionals in AI training, deep learning, animation, or 3D rendering.</p>
-                                        <div class="btn-box">
-                                            <a href="#" class="btn btn-primary">Contact Us</a>
-                                            <a href="#" class="btn btn-secondary">About Us</a>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -222,9 +225,13 @@
     <div class="row">
         <!-- Loop through your products and create product cards -->
         <div class="col-md-3" th:each="product : ${products}">
-            <div class="card" style="margin-top: 20px">
-                <img class="card-img-top" height="150px" width="150px"
-                     th:src="@{${'/productImages/' + product.imageName}}" th:alt="${product.name}" alt="" src="">
+            <div class="card " style="margin-top: 20px">
+                <div class="zoom-effect">
+                <a th:href="@{/shop/viewProduct/{id}(id=${product.id})}">
+                    <img class="card-img-top" height="150px" width="150px"
+                         th:src="@{${'/productImages/' + product.imageName}}" th:alt="${product.name}" alt="" src="">
+                </a>
+                </div>
                 <div class="card-body">
                     <h5 class="card-title" th:text="${product.name}"></h5>
                     <h4>₹ <span th:text="${product.price}"></span></h4>
@@ -236,39 +243,6 @@
         </div>
     </div>
  </div>
-
-<!--<div th:if="${totalPages > 1}">-->
-<!--    <div class="row col-sm-10">-->
-<!--        <div class="col-sm-2">-->
-<!--            Total Rows:[[${totalItems}]]-->
-
-<!--        </div>-->
-<!--        <div class="col-sm-1">-->
-<!--            <span th:each="i : ${#numbers.sequence(1, totalPages)}">-->
-<!--    <a th:if="${currentPage != i}" th:href="@{'/page/' + ${i}}">[[${i}]]</a>-->
-<!--    <span th:unless="${currentPage != i}">[[${i}]]</span>  &nbsp; &nbsp;-->
-<!--            </span>-->
-<!--        </div>-->
-
-
-<!--    </div>-->
-<!--</div>-->
-
-<!--        <div class="col-sm-1">-->
-<!--            <a th:if="${currentPage < totalPages}" th:href="@{'/page' + (${currentPage+1})}">Next</a>-->
-<!--            <span th:unless="${currentPage < totalPages}">Next-->
-
-<!--            </span>-->
-
-
-
-
-
-
-
-
-
-
 
 <!-- end product section -->
 
@@ -296,7 +270,7 @@
                     <p>
                         Gaming Stations: Some gaming stores provide gaming stations where customers can try out games before purchasing them.
                     </p>
-                    <a href="">
+                    <a>
                         Read More
                     </a>
                 </div>
@@ -312,50 +286,6 @@
 
 
 <!-- end product section -->
-
-<!-- contact section -->
-<section class="contact_section layout_padding">
-    <div class="container">
-        <div class="heading_container">
-            <h2>
-                Contact Us
-            </h2>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form_container">
-                    <form action="">
-                        <div>
-                            <input type="text" placeholder="Your Name" />
-                        </div>
-                        <div>
-                            <input type="text" placeholder="Phone Number" />
-                        </div>
-                        <div>
-                            <input type="email" placeholder="Email" />
-                        </div>
-                        <div>
-                            <input type="text" class="message-box" placeholder="Message" />
-                        </div>
-                        <div class="btn_box">
-                            <button>
-                                SEND
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col-md-6 ">
-                <div class="map_container">
-                    <div class="map">
-                        <div id="googleMap"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<!-- end contact section -->
 
 <!-- info section -->
 <section class="info_section layout_padding2">
@@ -467,7 +397,7 @@
                     <h5>
                         Newsletter
                     </h5>
-                    <form action="">
+                    <form >
                         <input type="email" placeholder="Enter your email">
                         <button>
                             Subscribe
@@ -491,7 +421,6 @@
             </div>
         </div>
     </div>
-
 </section>
 
 
@@ -522,8 +451,9 @@
 </script>
 <!-- End Google Map -->
 
+    </div>
 
-    
+</div>
 </body>
 
 </html>

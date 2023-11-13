@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
+    <link rel="icon" href="/images/fevicon/istockphoto-1475398455-612x612.png" type="image/png">
+
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
@@ -14,17 +16,43 @@
 </head>
 <body>
 <style>
-    /* Add this CSS to change the color of the data slide next icon */
-    .carousel-control-next-icon {
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16"><path d="M5.854 8.354a.5.5 0 0 1 0 .708l4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708 0l-4 4z"/></svg>');
-        background-color: #FF5733; /* Change this color to your desired color */
-        /* You can adjust the color and other styles as needed */
+<!--    /* Add this CSS to change the color of the data slide next icon */-->
+<!--    .carousel-control-next-icon {-->
+<!--        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16"><path d="M5.854 8.354a.5.5 0 0 1 0 .708l4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708 0l-4 4z"/></svg>');-->
+<!--        background-color: #FF5733; /* Change this color to your desired color */-->
+<!--        /* You can adjust the color and other styles as needed */-->
 
-         .carousel-control-prev-icon {
-        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16"><path d="M5.854 8.354a.5.5 0 0 1 0 .708l4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708 0l-4 4z"/></svg>');
-        background-color: #FF5733; /* Change this color to your desired color */
-        /* You can adjust the color and other styles as needed */
-    }
+<!--         .carousel-control-prev-icon {-->
+<!--        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16"><path d="M5.854 8.354a.5.5 0 0 1 0 .708l4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 0 1 .708 0l-4 4z"/></svg>');-->
+<!--        background-color: #FF5733; /* Change this color to your desired color */-->
+<!--        /* You can adjust the color and other styles as needed */-->
+<!--    }-->
+   /* Customize the color of the carousel control buttons */
+.carousel-control-prev,
+.carousel-control-next {
+    color: #ff0000; /* Change to the desired color */
+}
+
+/* Customize the background color of the carousel control buttons (optional) */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #00ff00; /* Change to the desired background color */
+    border: 1px solid #00ff00; /* Change to match the background color */
+}
+
+/* Customize the color of the carousel control buttons on hover (optional) */
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    color: #0000ff; /* Change to the desired color on hover */
+}
+
+/* Customize the background color of the carousel control buttons on hover (optional) */
+.carousel-control-prev:hover .carousel-control-prev-icon,
+.carousel-control-next:hover .carousel-control-next-icon {
+    background-color: #ffff00; /* Change to the desired background color on hover */
+    border: 1px solid #ffff00; /* Change to match the background color on hover */
+}
+
 </style>
 
 
@@ -117,7 +145,7 @@
             <p th:text="${product.description}"></p>
 
 
-            <div class="col-sm-6" th:if="${product.productVariants}">
+            <div class="col-sm-6" th:if="${product.productVariants} and ${product.quantity !=0}">
                 <h6>Select Variant:</h6>
                 <div class="row">
                     <div class="col-md-6">
@@ -154,10 +182,13 @@
                 </div>
 <!--                <button type="submit" class="btn btn-primary">Add to cart</button>-->
                 <div th:if="${product.quantity == 0}">
-                    <p>Out of Stock</p>
+                    <h4 class="text-danger">Out of Stock</h4>
+                </div>
+                <div th:if="${product.quantity != 0}">
+                    <p >Stock Available:<span th:text="${product.quantity}"></span></p>
                 </div>
                 <h5>Rating:</h5>
-                <div th:if="${rating==null}">No reviews yet!</div>
+                <h6 class="text-danger" th:if="${rating==null}">No reviews yet!</h6>
                 <div th:if="${rating!=null}" class="rating">
                     <span class="fa fa-star" th:each="i : ${#numbers.sequence(1,rating)}"></span>
                     <span class="fa fa-star-o" th:each="i : ${#numbers.sequence(rating + 1, 5)}"></span><span th:text="${rating}"></span><span th:if="${rateCount != null}" th:text="'(' + ${rateCount} + ')'"></span>
@@ -165,7 +196,7 @@
                     <!--                    <p th:text="${rating.review}"></p>-->
 
                 </div>
-                <div class="reviews-container mt-3">
+                <div th:if="${rating!=null}" class="reviews-container mt-3">
                     <button class="btn btn-warning" type="button" data-toggle="collapse" href="#reviewsCollapse" aria-expanded="false">
                         Show Reviews
                     </button>
@@ -214,29 +245,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const addToCartButton = document.getElementById("addToCartButton");
-        const successMessage = document.getElementById("addToCartSuccessMessage");
-
-        addToCartButton.addEventListener("click", function () {
-            // Hide the "Add to Cart" button
-            addToCartButton.style.display = "none";
-
-            // Display the success message with animation
-            successMessage.style.display = "block";
-            successMessage.classList.add("animate__animated", "animate__fadeInUp");
-
-            // Automatically hide the message after a few seconds (adjust the delay as needed)
-            setTimeout(function () {
-                successMessage.style.display = "none";
-                // Show the "Add to Cart" button again
-                addToCartButton.style.display = "block";
-            }, 9000); // Adjust the delay (in milliseconds) as needed
-        });
-    });
-
-</script>
 
 </body>
 </html>

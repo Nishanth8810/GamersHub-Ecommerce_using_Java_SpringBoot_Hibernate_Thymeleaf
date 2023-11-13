@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
+    <link rel="icon" href="/images/fevicon/istockphoto-1475398455-612x612.png" type="image/png">
+
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
@@ -57,6 +59,14 @@
     .fas.fa-search {
         margin-right: 8px;
     }
+    /* Add this style block in your HTML file or in your CSS file */
+    .zoom-effect {
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .zoom-effect:hover {
+      transform: scale(1.2); /* You can adjust the scale value as needed */
+    }
 </style>
 
 
@@ -111,7 +121,8 @@
 <div class="container mt-3">
     <form class="form-inline" th:action="@{/search/product}" method="get" >
         <div  class="input-group" >
-            <input type="text" class="form-control" name="keyword"  th:value="${keyword}" placeholder="Search Product" aria-label="Search" aria-describedby="search-button">
+            <input type="text" class="form-control" name="keyword"  th:value="${keyword}"
+                   placeholder="Search Product" aria-label="Search" aria-describedby="search-button">
             <div class="input-group-append">
                 <button  class="btn btn-primary" type="submit" id="search-button">
                     <i class="fas fa-search"></i>
@@ -177,8 +188,12 @@
                 <!-- Loop through your products and create product cards -->
                 <div class="col-md-4" th:each="product : ${products}">
                     <div class="card" style="margin-top: 20px">
-                        <img class="card-img-top" height="150px" width="150px"
-                             th:src="@{${'/productImages/' + product.imageName}}" th:alt="${product.name}" alt="" src="">
+                        <div class="zoom-effect">
+                            <a th:href="@{/shop/viewProduct/{id}(id=${product.id})}">
+                                <img class="card-img-top" height="150px" width="150px"
+                                     th:src="@{${'/productImages/' + product.imageName}}" th:alt="${product.name}" alt="" src="">
+                            </a>
+                        </div>
                         <div class="card-body">
                             <h5 class="card-title" th:text="${product.name}"></h5>
                             <h4>₹ <span th:text="${product.price}"></span></h4>

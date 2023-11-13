@@ -61,7 +61,7 @@ public class AdminController {
         Collections.reverse(yearly.get(0));
         Collections.reverse(yearly.get(1));
         Collections.reverse(yearly.get(2));
-        System.out.println(yearly.get(2));
+//        System.out.println(yearly.get(2));
         model.addAttribute("revenue",yearly.get(2));
         model.addAttribute("labelsRevenue",yearly.get(0));
         model.addAttribute("yearlyData", yearly.get(0));
