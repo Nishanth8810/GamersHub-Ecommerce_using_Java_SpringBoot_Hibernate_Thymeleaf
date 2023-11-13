@@ -146,7 +146,7 @@
 							<artifactId>spring-boot-configuration-processor</artifactId>
 						</exclude>
 					</excludes>
-					<finalName>gamershubv1</finalName>
+					<finalName>gamershubv2</finalName>
 				</configuration>
 			</plugin>
 		</plugins>

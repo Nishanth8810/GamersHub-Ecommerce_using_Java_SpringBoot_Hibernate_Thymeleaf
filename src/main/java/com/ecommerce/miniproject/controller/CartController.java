@@ -2,6 +2,7 @@ package com.ecommerce.miniproject.controller;
 import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.enums.CartManagementMessages;
+import com.ecommerce.miniproject.enums.OrderManagementMessages;
 import com.ecommerce.miniproject.repository.CartItemRepository;
 import com.ecommerce.miniproject.service.*;
 import jakarta.validation.Valid;
@@ -87,31 +88,7 @@ public class CartController {
     }
 
 ////adding address in checkout///////////
-    @PostMapping("/checkout")
-    public String postCheckout(@Valid @ModelAttribute AddressDTO addressDTO,
-                               BindingResult bindingResult) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentPrincipalName = authentication.getName();
-        User user = userService.getUserByEmail(currentPrincipalName).orElse(null);
-
-        if (bindingResult.hasErrors()) {
-            return "checkout";
-        }
-
-        Address address = new Address();
-        address.setId(addressDTO.getId());
-        address.setName(addressDTO.getName());
-        address.setCity(addressDTO.getCity());
-        address.setPhoneNo(addressDTO.getPhoneNo());
-        address.setLandmark(addressDTO.getLandmark());
-        address.setUser(user);
-        address.setPincode(addressDTO.getPincode());
-        address.setAddress(addressDTO.getAddress());
-        addressService.addAddress(address);
-
-        return "redirect:/checkout";
-    }
 
     @GetMapping("/cart/removeItem/{id}")
     public String removeCart(@PathVariable long id) {
