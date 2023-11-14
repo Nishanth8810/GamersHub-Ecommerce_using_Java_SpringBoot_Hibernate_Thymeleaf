@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -24,11 +25,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.chrono.ChronoLocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Controller
 public class OrderController {
@@ -57,6 +57,11 @@ public class OrderController {
     CartItemRepository cartItemRepository;
     Map<String, Boolean> userBooleanMap = new HashMap<>();
     Map<String, Double> userDoubleMap = new HashMap<>();
+
+
+
+
+
 
 
     @GetMapping("/checkout")
@@ -215,7 +220,9 @@ public class OrderController {
         orders.setUser(user);
         orders.setPaymentMethod(paymentMethodRepository.findById(3L).orElse(null));
         orders.setOrderStatus(orderStatusRepository.findById(1L).orElse(null));
-        orders.setLocalDateTime(LocalDateTime.now());
+        ZonedDateTime zonedDateTime=istTime();
+
+        orders.setLocalDateTime(zonedDateTime.toLocalDateTime());
         orders.setAmount((int) total);
         orderService.saveOrder(orders);
         long orderId = orders.getId();
@@ -387,11 +394,13 @@ public class OrderController {
         orders.setUser(user);
         orders.setPaymentMethod(paymentMethodRepository.findById(1L).orElse(null));
         orders.setOrderStatus(orderStatusRepository.findById(1L).orElse(null));
-        orders.setLocalDateTime(LocalDateTime.now());
+
+        ZonedDateTime zonedDateTime=istTime();
+
+        orders.setLocalDateTime(zonedDateTime.toLocalDateTime());
         orders.setAmount((int) total);
         orderService.saveOrder(orders);
         long orderId = orders.getId();
-
         Cart cart = cartService.findCartByUser(user).orElse(null);
         assert cart != null;
         List<CartItem> cartItemLists = cart.getCartItems();
@@ -414,6 +423,11 @@ public class OrderController {
         redirectAttributes.addFlashAttribute("orderId", orderId);
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
         return "redirect:/orderSuccess";
+    }
+
+    public ZonedDateTime istTime() {
+        LocalDateTime localDateTime=LocalDateTime.now();
+     return localDateTime.atZone(ZoneId.of("Asia/Kolkata"));
     }
 
 

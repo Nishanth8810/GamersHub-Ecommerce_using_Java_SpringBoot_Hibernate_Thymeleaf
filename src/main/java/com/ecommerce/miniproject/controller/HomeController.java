@@ -21,8 +21,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.TimeZone;
 
 @Controller
 
@@ -45,6 +49,7 @@ public class HomeController {
 
         model.addAttribute("products", productService.getAllProduct());
         model.addAttribute("bannerImage",bannerImageRepository.findAll());
+
         return "index";
 
     }
