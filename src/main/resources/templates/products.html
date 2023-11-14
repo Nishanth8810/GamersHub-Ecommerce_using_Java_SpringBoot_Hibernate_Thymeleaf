@@ -107,7 +107,7 @@
             <th scope="row" th:text="${iStat.index + 1}">1</th>
             <td th:text="${product.name}">Larry</td>
             <td th:text="${product.category.name}">Larry</td>
-            <td><img src="" height="100px" width="100px"  th:src="@{${'/productImages/' + product.imageName}}" alt=""></td>
+            <td><img src="" height="100px" width="100px"  th:src="@{${product.imageName}}" alt=""></td>
 
             <td><a href="" th:href="@{/admin/product/delete/{id}(id=${product.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to delete this product ?') )) return false">Delete</a></td>
             <td><a href="" th:href="@{/admin/product/update/{id}(id=${product.id})}" class="btn btn-warning">Update</a></td>

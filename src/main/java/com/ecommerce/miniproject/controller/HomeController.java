@@ -1,5 +1,6 @@
 package com.ecommerce.miniproject.controller;
 
+import com.ecommerce.miniproject.aws.StorageService;
 import com.ecommerce.miniproject.entity.Cart;
 import com.ecommerce.miniproject.entity.Category;
 import com.ecommerce.miniproject.entity.Product;
@@ -44,12 +45,15 @@ public class HomeController {
     @Autowired
     BannerImageRepository bannerImageRepository;
 
+    @Autowired
+    StorageService storageService;
+
     @GetMapping({"/", "home", "index"})
     public String home(Model model) {
 
         model.addAttribute("products", productService.getAllProduct());
         model.addAttribute("bannerImage",bannerImageRepository.findAll());
-
+        model.addAttribute("urlList",storageService.getUrlList(productService.getAllProduct()));
         return "index";
 
     }
@@ -60,6 +64,8 @@ public class HomeController {
             model.addAttribute("products", productService.getAllProduct());
             model.addAttribute("minPrice", 0);
             model.addAttribute("maxPrice", 0);
+            model.addAttribute("urlList",storageService.getUrlList(productService.getAllProduct()));
+
             httpSession.setAttribute("categoryId",null);
             return "shop";
         }
@@ -122,6 +128,8 @@ public class HomeController {
             if (ratingList.isEmpty()) {
                 model.addAttribute("product", productService.getProductById(id).orElseThrow());
                 model.addAttribute("rating", null);
+                model.addAttribute("urlList",storageService.getUrlListForSingleProduct(productService.getProductById(id).orElseThrow()));
+
                 return "viewProduct";
             }
             List<Integer> ratingValues = ratingList.stream()
@@ -137,6 +145,7 @@ public class HomeController {
             model.addAttribute("rating",formattedAverageRatingDouble);
             model.addAttribute("rateCount",ratingValues.size());
             model.addAttribute("reviews",ratingList);
+            model.addAttribute("urlList",storageService.getUrlListForSingleProduct(productService.getProductById(id).orElseThrow()));
         } else {
             model.addAttribute("cartCount", cartService
                     .findCartByUser

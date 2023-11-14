@@ -1,0 +1,13 @@
+cloud:
+  aws:
+    credentials:
+      access-key: AKIA455RWMWGMNSTXE6B
+      secret-key: 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
+    region:
+      static: ap-south-1
+    stack:
+      auto: false
+
+application:
+  bucket:
+    name: imagebucketgamershub

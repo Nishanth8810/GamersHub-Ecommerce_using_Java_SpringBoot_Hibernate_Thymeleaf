@@ -1,5 +1,6 @@
 package com.ecommerce.miniproject.controller;
 
+import com.ecommerce.miniproject.aws.StorageService;
 import com.ecommerce.miniproject.dto.ProductDTO;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.enums.ProductManagementMessages;
@@ -27,8 +28,7 @@ import java.util.UUID;
 @Controller
 public class AdminProductController {
 
-    public static String uploadDir = System.getProperty("user.dir") +
-            "/src/main/resources/static/productImages";
+
     @Autowired
     CategoryService categoryService;
     @Autowired
@@ -47,6 +47,10 @@ public class AdminProductController {
 
     @Autowired
     ProductVariantsService productVariantsService;
+
+
+    @Autowired
+    StorageService storageService;
 
 
     @GetMapping("/admin/products")
@@ -135,7 +139,9 @@ public class AdminProductController {
         product.setPrice(productDTO.getPrice());
         product.setWeight(productDTO.getWeight());
         product.setDescription(productDTO.getDescription());
-        product.setImageName(fileList.get(0).getOriginalFilename());
+        String imageUUIDs = storageService.uploadFile(fileList.get(0));
+        product.setImageName(imageUUIDs);
+//        product.setImageName(fileList.get(0).getOriginalFilename());
         productService.addProduct(product);
 
         List<ProductVariants> productVariantsList = new ArrayList<>();
@@ -157,17 +163,13 @@ public class AdminProductController {
         }
         product.setProductVariants(productVariantsList);
 
-        for (MultipartFile file : fileList) {
-            String imageUUID = file.getOriginalFilename();
-            Path fileNameAndPath = Paths.get(uploadDir, imageUUID);
-            Files.write(fileNameAndPath, file.getBytes());
-        }
         List<ProductImage> productImageList = new ArrayList<>();
 
         for (int i = 1; i < fileList.size(); i++) {
+            String imageUUID = storageService.uploadFile(fileList.get(i));
             ProductImage productImage = new ProductImage();
             productImage.setProduct(product);
-            productImage.setImageName(fileList.get(i).getOriginalFilename());
+            productImage.setImageName(imageUUID);
             productImageRepository.save(productImage);
             productImageList.add(productImage);
         }
@@ -196,6 +198,7 @@ public class AdminProductController {
         productDTO.setPrice(product.getPrice());
         productDTO.setWeight(product.getWeight());
         productDTO.setDescription(product.getDescription());
+
         productDTO.setImageName(product.getImageName());
         model.addAttribute("sizes", productSizeRepository.findAll());
         model.addAttribute("colors", productColorRepository.findAll());
@@ -259,6 +262,7 @@ public class AdminProductController {
         product.setPrice(productDTO.getPrice());
         product.setWeight(productDTO.getWeight());
         product.setDescription(productDTO.getDescription());
+
         product.setImageName(productDTO.getImageName());
     }
 
@@ -267,6 +271,10 @@ public class AdminProductController {
             throws IOException {
 
         productImageService.removeImageById(product.getId());
+        String imageUUIDs = storageService.uploadFile(fileList.get(0));
+        product.setImageName(imageUUIDs);
+
+
         product.setImageName(fileList.get(0).getOriginalFilename());
         List<ProductImage> productImageList = new ArrayList<>();
 //        int maxImages = 10;
@@ -274,10 +282,7 @@ public class AdminProductController {
         for (int i = 1;  i < fileList.size(); i++) {
             MultipartFile file = fileList.get(i);
             if (!file.isEmpty()) {
-                String imageUUID = UUID.randomUUID() + "_" + file.getOriginalFilename();
-                Path fileNameAndPath = Paths.get(uploadDir, imageUUID);
-                Files.write(fileNameAndPath, file.getBytes());
-
+                String imageUUID = storageService.uploadFile(fileList.get(i));
                 ProductImage productImage = new ProductImage();
                 productImage.setProduct(product);
                 productImage.setImageName(imageUUID);

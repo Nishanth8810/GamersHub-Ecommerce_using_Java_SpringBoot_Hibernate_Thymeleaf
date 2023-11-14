@@ -186,12 +186,12 @@
 
 
                 <!-- Loop through your products and create product cards -->
-                <div class="col-md-4" th:each="product : ${products}">
+                <div class="col-md-4" th:each="product,i : ${products}">
                     <div class="card" style="margin-top: 20px">
                         <div class="zoom-effect">
                             <a th:href="@{/shop/viewProduct/{id}(id=${product.id})}">
                                 <img class="card-img-top" height="150px" width="150px"
-                                     th:src="@{${'/productImages/' + product.imageName}}" th:alt="${product.name}" alt="" src="">
+                                     th:src="@{${urlList.get(i.index)}}" th:alt="${product.name}" alt="" src="">
                             </a>
                         </div>
                         <div class="card-body">

@@ -111,11 +111,11 @@
                 <div class="carousel-inner">
                     <div class="carousel-item active">
                         <img class="mt-5" height="300px" width="300px" src=""
-                             th:src="@{${'/productImages/' + product.imageName}}"
+                             th:src="@{${urlList.get(0)}}"
                              alt=""></div>
-                    <div class="carousel-item" th:each="image : ${product.productImages}">
+                    <div class="carousel-item" th:each="image,i : ${product.productImages}">
                         <img class="mt-5" height="300px" width="300px" src=""
-                             th:src="@{${'/productImages/' + image.imageName}}"
+                             th:src="@{${urlList.get(i.index+1)}}"
                              alt=""></div>
                     <!-- Add more carousel items as needed -->
                 </div>
