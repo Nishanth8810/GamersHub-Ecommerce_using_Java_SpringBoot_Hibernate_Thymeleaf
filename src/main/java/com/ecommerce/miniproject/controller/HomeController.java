@@ -215,6 +215,10 @@ public class HomeController {
 
         return "shop";
     }
+//    @GetMapping("/images/logo.png")
+//    public String getPage(){
+//        return "redirect:/";
+//    }
 
 
     @GetMapping("/search/product")

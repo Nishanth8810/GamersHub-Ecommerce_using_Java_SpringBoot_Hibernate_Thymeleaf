@@ -57,12 +57,6 @@ public class OrderController {
     Map<String, Boolean> userBooleanMap = new HashMap<>();
     Map<String, Double> userDoubleMap = new HashMap<>();
 
-
-
-
-
-
-
     @GetMapping("/checkout")
     public String checkout(@ModelAttribute("appliedCoupon") String couponCode,
                            @ModelAttribute("totalDiscount") String totalDiscount,
@@ -251,6 +245,7 @@ public class OrderController {
         double newBalance = wallet.getBalance() - total;
         wallet.setBalance(newBalance);
         walletService.saveWallet(wallet);
+        cartItemRepository.deleteAll(cartItemLists);
 
         redirectAttributes.addFlashAttribute("orderId", orderId);
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));

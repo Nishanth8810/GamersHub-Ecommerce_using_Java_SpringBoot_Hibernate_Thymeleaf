@@ -43,7 +43,7 @@ public class AdminOrderController {
     @GetMapping("/admin/order/cancel/{id}")
     public String getCancelOrder(@PathVariable long id) {
 
-        Orders orders = orderService.getOrderById(id).get();
+        Orders orders = orderService.getOrderById(id).orElseThrow();
 
         orders.setOrderStatus(orderStatusRepository.findById(5L).orElseThrow());
 
@@ -56,9 +56,9 @@ public class AdminOrderController {
     @GetMapping("/admin/order/shipped/{id}")
     public String getShippedOrder(@PathVariable long id) {
 
-        Orders orders = orderService.getOrderById(id).get();
+        Orders orders = orderService.getOrderById(id).orElseThrow();
 
-        orders.setOrderStatus(orderStatusRepository.findById(2L).get());
+        orders.setOrderStatus(orderStatusRepository.findById(2L).orElseThrow());
 
         orderService.saveOrder(orders);
         return "redirect:/admin/orders";
@@ -67,8 +67,8 @@ public class AdminOrderController {
     @GetMapping("/admin/order/pending/{id}")
     public String getPendingOrder(@PathVariable long id) {
 
-        Orders orders = orderService.getOrderById(id).get();
-        orders.setOrderStatus(orderStatusRepository.findById(6L).get());
+        Orders orders = orderService.getOrderById(id).orElseThrow();
+        orders.setOrderStatus(orderStatusRepository.findById(6L).orElseThrow());
         orderService.saveOrder(orders);
         return "redirect:/admin/orders";
     }
@@ -76,8 +76,8 @@ public class AdminOrderController {
     @GetMapping("/admin/order/transit/{id}")
     public String getTransitOrder(@PathVariable long id) {
 
-        Orders orders = orderService.getOrderById(id).get();
-        orders.setOrderStatus(orderStatusRepository.findById(3L).get());
+        Orders orders = orderService.getOrderById(id).orElseThrow();
+        orders.setOrderStatus(orderStatusRepository.findById(3L).orElseThrow());
         orderService.saveOrder(orders);
         return "redirect:/admin/orders";
     }
@@ -104,7 +104,6 @@ public class AdminOrderController {
     public String getViewOrderDetails(Model model, @PathVariable long id) {
         Orders orders = orderService.getOrderById(id).orElseThrow();
         model.addAttribute("urlList", storageService.getUrlListForSingleOrder(orders));
-
         model.addAttribute("orderList", orders);
         return "adminViewOrder";
     }
