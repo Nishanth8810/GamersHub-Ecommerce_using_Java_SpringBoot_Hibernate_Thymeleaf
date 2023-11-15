@@ -55,6 +55,8 @@ public class AdminProductController {
 
     @GetMapping("/admin/products")
     public String getProduct(Model model) {
+        List<Product> products = productService.getAllProduct();
+        model.addAttribute("urlList", storageService.getUrlList(products));
         model.addAttribute("products", productService.getAllProduct());
         return "products";
     }
@@ -204,6 +206,8 @@ public class AdminProductController {
 
         List<Product> productList = productService.findByName(keyword);
         model.addAttribute("products", productList);
+        model.addAttribute("urlList", storageService.getUrlList(productList));
+
         return "products";
     }
 
@@ -230,8 +234,6 @@ public class AdminProductController {
 
         try {
             Product product = productService.getProductById(productDTO.getId()).orElseThrow();
-            System.out.println(productDTO.getImageName());
-
             updateProductDetails(product, productDTO);
             saveProductImages(product, fileList);
             productService.addProduct(product);

@@ -144,7 +144,7 @@
                 <div class="form-group">
                     <div id="imagePreviews" style="margin-top: 20px;">
                         <!-- Loop through the image filenames and create image tags -->
-                        <th:block th:each="imageName : ${productDTO.imageName}">
+                        <th:block th:each="imageName,i: ${productDTO.imageName}">
                             <img th:src="'/productImages/' + ${imageName}" height="100px" width="100px" alt="Image Preview" />
                         </th:block>
                     </div>

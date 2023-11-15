@@ -57,7 +57,15 @@ public class StorageService {
         }
         return urlList;
     }
-
+    public List<String> getUrlOrderList(List<Orders> orderList) {
+        List<String> urlList = new ArrayList<>();
+        for (Orders order : orderList) {
+            for (OrderItem orderItem : order.getOrderItems()) {
+                urlList.add(generateS3ObjectUrl(orderItem.getProduct().getImageName()));
+            }
+        }
+        return urlList;
+    }
     public List<String> getUrlListForSingleProduct(Product product) {
         List<String> urlList = new ArrayList<>();
         urlList.add(generateS3ObjectUrl(product.getImageName()));
@@ -91,4 +99,9 @@ public class StorageService {
         return urlList;
 
     }
+
+
+
+
+
 }

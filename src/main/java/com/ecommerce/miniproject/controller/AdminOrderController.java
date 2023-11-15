@@ -1,5 +1,6 @@
 package com.ecommerce.miniproject.controller;
 
+import com.ecommerce.miniproject.aws.StorageService;
 import com.ecommerce.miniproject.entity.Orders;
 import com.ecommerce.miniproject.enums.UserManagementMessages;
 import com.ecommerce.miniproject.repository.OrderStatusRepository;
@@ -23,6 +24,8 @@ public class AdminOrderController {
 
     @Autowired
     OrderStatusRepository orderStatusRepository;
+    @Autowired
+    StorageService storageService;
 
 
     @GetMapping("/admin/orders")
@@ -100,6 +103,8 @@ public class AdminOrderController {
     @GetMapping("/admin/order/viewOrderDetails/{id}")
     public String getViewOrderDetails(Model model, @PathVariable long id) {
         Orders orders = orderService.getOrderById(id).orElseThrow();
+        model.addAttribute("urlList", storageService.getUrlListForSingleOrder(orders));
+
         model.addAttribute("orderList", orders);
         return "adminViewOrder";
     }

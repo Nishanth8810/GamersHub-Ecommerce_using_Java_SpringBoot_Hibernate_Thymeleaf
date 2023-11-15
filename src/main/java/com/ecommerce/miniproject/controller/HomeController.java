@@ -53,7 +53,7 @@ public class HomeController {
 
         model.addAttribute("products", productService.getAllProduct());
         model.addAttribute("bannerImage",bannerImageRepository.findAll());
-        model.addAttribute("urlList",storageService.getUrlList(productService.getAllProduct()));
+        model.addAttribute("urlList1",storageService.getUrlList(productService.getAllProduct()));
         model.addAttribute("urlList",storageService.getUrlListBanner(bannerImageRepository.findAll()));
         return "index";
 
@@ -93,6 +93,8 @@ public class HomeController {
         model.addAttribute("products", productService.getAllProduct());
         model.addAttribute("minPrice", 0);
         model.addAttribute("maxPrice", 0);
+        model.addAttribute("urlList",storageService.getUrlList(productService.getAllProduct()));
+
         httpSession.setAttribute("categoryId",null);
         return findPaginated(1, model, principal);
     }
@@ -103,6 +105,7 @@ public class HomeController {
 
         if (principal == null) {
             model.addAttribute("categories", categoryService.getAllCategory());
+            model.addAttribute("urlList",storageService.getUrlList(productService.getAllProduct()));
             model.addAttribute("products", productService.getAllProductsByCategory_id(id));
             return "shop";
 
@@ -113,7 +116,7 @@ public class HomeController {
                 .reduce(0.0, Double::sum));
 
         httpSession.setAttribute("categoryId", id);
-
+        model.addAttribute("urlList",storageService.getUrlList(productService.getAllProduct()));
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("products", productService.getAllProductsByCategory_id(id));
 
@@ -130,7 +133,6 @@ public class HomeController {
                 model.addAttribute("product", productService.getProductById(id).orElseThrow());
                 model.addAttribute("rating", null);
                 model.addAttribute("urlList",storageService.getUrlListForSingleProduct(productService.getProductById(id).orElseThrow()));
-
                 return "viewProduct";
             }
             List<Integer> ratingValues = ratingList.stream()
@@ -163,6 +165,7 @@ public class HomeController {
 
 
             if (ratingList.isEmpty()) {
+                model.addAttribute("urlList",storageService.getUrlListForSingleProduct(productService.getProductById(id).orElseThrow()));
                 model.addAttribute("product", productService.getProductById(id).orElseThrow());
                 model.addAttribute("rating", null);
                 return "viewProduct";
@@ -181,6 +184,8 @@ public class HomeController {
             model.addAttribute("rating",formattedAverageRatingDouble);
             model.addAttribute("rateCount",ratingValues.size());
             model.addAttribute("reviews",ratingList);
+            model.addAttribute("urlList",storageService.getUrlListForSingleProduct(productService.getProductById(id).orElseThrow()));
+
         }
         return "viewProduct";
     }
@@ -205,6 +210,7 @@ public class HomeController {
         model.addAttribute("products", productList);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("urlList",storageService.getUrlList(productList));
         model.addAttribute("currentPage", pageNo);
 
         return "shop";
@@ -233,6 +239,8 @@ public class HomeController {
         }
         model.addAttribute("products", productList);
         model.addAttribute("categories", categoriesList);
+        model.addAttribute("urlList",storageService.getUrlList(productList));
+
         model.addAttribute("keyword", keyword);
 
         return "shop";
@@ -244,7 +252,7 @@ public class HomeController {
                                  Model model) {
 
         List<Product> filteredProducts = productService.getProductsByPriceRange(minPrice, maxPrice);
-
+        model.addAttribute("urlList",storageService.getUrlList(filteredProducts));
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
