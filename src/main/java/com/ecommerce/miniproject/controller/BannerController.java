@@ -1,5 +1,6 @@
 package com.ecommerce.miniproject.controller;
 
+import com.ecommerce.miniproject.aws.StorageService;
 import com.ecommerce.miniproject.entity.BannerImage;
 import com.ecommerce.miniproject.repository.BannerImageRepository;
 import com.ecommerce.miniproject.service.BannerService;
@@ -21,15 +22,15 @@ import java.util.List;
 
 @Controller
 public class BannerController {
-    public static String uploadDir = System.getProperty("user.dir") +
-            "/src/main/resources/static/bannerImages";
-
     @Autowired
     BannerService bannerService;
+    @Autowired
+    StorageService storageService;
 
     @GetMapping("/admin/banner")
     public String getAllBanner(Model model){
         model.addAttribute("banners",bannerService.findAllBanners());
+        model.addAttribute("urlList",storageService.getUrlListBanner(bannerService.findAllBanners()));
         return "banners";
 
     }
@@ -46,9 +47,8 @@ public class BannerController {
         }
         for (MultipartFile file:fileList){
             BannerImage bannerImage=new BannerImage();
-            bannerImage.setName(file.getOriginalFilename());
-            Path filename= Paths.get(uploadDir, file.getOriginalFilename());
-            Files.write(filename,file.getBytes());
+            String imageUUID = storageService.uploadFile(fileList.get(0));
+                bannerImage.setName(imageUUID);
             bannerService.saveBanner(bannerImage);
         }
         return "redirect:/admin/banner";

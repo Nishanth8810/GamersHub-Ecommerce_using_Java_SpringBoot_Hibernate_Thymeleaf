@@ -1,4 +1,5 @@
 package com.ecommerce.miniproject.controller;
+import com.ecommerce.miniproject.aws.StorageService;
 import com.ecommerce.miniproject.dto.AddressDTO;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.enums.CartManagementMessages;
@@ -43,6 +44,9 @@ public class CartController {
     @Autowired
     ProductVariantsService productVariantsService;
 
+    @Autowired
+    StorageService storageService;
+
     @PostMapping("/addToCart")
     public String addToCart(@RequestParam("selectedVariantSize") String selectedSize,
                             @RequestParam("selectedVariantColor") String selectedColor,
@@ -58,10 +62,10 @@ public class CartController {
 
         User user = userService.getUserByEmail(principal.getName()).orElseThrow();
         Cart cart = cartService.findCartByUser(user).orElseThrow();
-        Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart
+        List<CartItem> cartItemList= cartItemRepository.findCartItemByProductAndCart
                 (productService.getProductById(productId).orElseThrow(), cart);
 
-        if (cartItemOptional.isPresent()) {
+        if (!cartItemList.isEmpty()) {
             redirectAttributes.addFlashAttribute("alreadyPresent",
                     CartManagementMessages.ALREADY_PRESENT.getMessage());
 
@@ -127,6 +131,16 @@ public class CartController {
         model.addAttribute("cart", cartService.findCartByUser
                 (userService.getUserByEmail(principal.getName()).orElseThrow())
                 .orElseThrow().getCartItems());
+            User user=userService.getUserByEmail(principal.getName()).orElseThrow();
+
+        Cart userCartEntity = cartService.findCartByUser(user).orElseThrow();
+        List<CartItem> cartItemList = userCartEntity.getCartItems();
+
+        model.addAttribute("cart", cartItemList);
+
+        model.addAttribute("urlList", storageService.getUrlListForSingleCart(userCartEntity));
+
+
         return "cart";
     }
 

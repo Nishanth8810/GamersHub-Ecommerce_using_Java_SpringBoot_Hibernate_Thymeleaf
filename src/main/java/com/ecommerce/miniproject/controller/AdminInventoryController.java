@@ -1,5 +1,6 @@
 package com.ecommerce.miniproject.controller;
 
+import com.ecommerce.miniproject.aws.StorageService;
 import com.ecommerce.miniproject.dto.ProductDTO;
 import com.ecommerce.miniproject.entity.Product;
 import com.ecommerce.miniproject.enums.ProductManagementMessages;
@@ -10,16 +11,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/admin")
 
 public class AdminInventoryController {
     @Autowired
     ProductService productService;
+    @Autowired
+    StorageService storageService;
 
     @GetMapping("/inventory")
     public String showInventory(Model model){
+        List<Product> products = productService.getAllProduct();
         model.addAttribute("products",productService.getAllProduct());
+        model.addAttribute("urlList", storageService.getUrlList(products));
         return "adminInventory";
     }
     @GetMapping("/inventory/update/{id}")

@@ -1,5 +1,6 @@
 package com.ecommerce.miniproject.controller;
 
+import com.ecommerce.miniproject.aws.StorageService;
 import com.ecommerce.miniproject.entity.*;
 import com.ecommerce.miniproject.enums.OrderManagementMessages;
 import com.ecommerce.miniproject.enums.UserManagementMessages;
@@ -38,6 +39,9 @@ public class UserOrderController {
     RatingService ratingService;
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    StorageService storageService;
     @Autowired
     private OrderRepository orderRepository;
 
@@ -79,16 +83,11 @@ public class UserOrderController {
         Collections.reverse(user.getOrders());
         List<Orders>ordersList=orderRepository.findByUserId(user.getId());
         Collections.reverse(ordersList);
+        model.addAttribute("urlList", storageService.getUrlOrderList(ordersList));
         model.addAttribute("orderDetails", ordersList);
         return "userOrders";
     }
 
-    @GetMapping("/user/order/viewOrder/{id}")
-    public String getUserOrder(@PathVariable long id, Model model) {
-        Orders order = orderService.getOrderById(id).orElseThrow();
-        model.addAttribute("orderList", order);
-        return "userViewOrder";
-    }
 
     @GetMapping("user/order/return/{id}")
     public String getReturnOrder(@PathVariable long id) {

@@ -8,13 +8,14 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <!-- Add your custom CSS links here if needed -->
     <link rel="icon" href="/images/fevicon/istockphoto-1475398455-612x612.png" type="image/png">
+    <title>GamersHub</title>
 
 </head>
 <body>
 <!-- Add a header or navigation bar using Bootstrap -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="/">
             <img th:src="@{/images/logo.png}" src="../static/images/logo.png" width="auto" height="38" class="d-inline-block align-top" alt=""/>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,13 +54,13 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="item : ${order.orderItems}">
+            <tr th:each="item,i : ${order.orderItems}">
                 <td th:text="${item.product.name}"></td>
 <!--                <td th:text="${item.product.name}"></td>-->
                 <!-- Display the product image using the imageUrl property -->
 <!--                <td th:text="${item.product.imageName}"></td>-->
                 <td>
-                    <img  th:src="@{${'/productImages/' + item.product.imageName}}"  alt="Product Image" width="100" height="100" src="">
+                    <img   th:src="${urlList.get(i.index)}"   alt="Product Image" width="100" height="100" src="">
                 </td>
                 <td th:text="${item.quantity}"></td>
                 <td th:text="${item.product.price + '/-'}"></td>

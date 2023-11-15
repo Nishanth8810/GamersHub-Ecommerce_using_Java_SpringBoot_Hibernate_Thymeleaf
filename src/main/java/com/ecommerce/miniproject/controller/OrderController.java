@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -57,12 +56,6 @@ public class OrderController {
     CartItemRepository cartItemRepository;
     Map<String, Boolean> userBooleanMap = new HashMap<>();
     Map<String, Double> userDoubleMap = new HashMap<>();
-
-
-
-
-
-
 
     @GetMapping("/checkout")
     public String checkout(@ModelAttribute("appliedCoupon") String couponCode,
@@ -252,6 +245,7 @@ public class OrderController {
         double newBalance = wallet.getBalance() - total;
         wallet.setBalance(newBalance);
         walletService.saveWallet(wallet);
+        cartItemRepository.deleteAll(cartItemLists);
 
         redirectAttributes.addFlashAttribute("orderId", orderId);
         redirectAttributes.addFlashAttribute("selectedAddress", addressService.getAddressById(id));
