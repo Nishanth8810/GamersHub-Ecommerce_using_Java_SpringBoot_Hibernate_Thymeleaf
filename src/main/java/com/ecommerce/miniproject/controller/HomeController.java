@@ -105,7 +105,7 @@ public class HomeController {
 
         if (principal == null) {
             model.addAttribute("categories", categoryService.getAllCategory());
-            model.addAttribute("urlList",storageService.getUrlList(productService.getAllProduct()));
+            model.addAttribute("urlList",storageService.getUrlList(productService.getAllProductsByCategory_id(id)));
             model.addAttribute("products", productService.getAllProductsByCategory_id(id));
             return "shop";
 
@@ -116,7 +116,7 @@ public class HomeController {
                 .reduce(0.0, Double::sum));
 
         httpSession.setAttribute("categoryId", id);
-        model.addAttribute("urlList",storageService.getUrlList(productService.getAllProduct()));
+        model.addAttribute("urlList",storageService.getUrlList(productService.getAllProductsByCategory_id(id)));
         model.addAttribute("categories", categoryService.getAllCategory());
         model.addAttribute("products", productService.getAllProductsByCategory_id(id));
 

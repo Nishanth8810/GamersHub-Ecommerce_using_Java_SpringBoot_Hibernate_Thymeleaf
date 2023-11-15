@@ -76,11 +76,7 @@
         <!-- Add order review details here -->
         <ul>
             <li ><strong>Order Number:</strong><span th:text="${orderId}"></span> </li>
-<!--            <li><strong>Shipping Address:</strong> <span th:text="${address}"></span> </li>-->
             <li><strong>Items Ordered:</strong> <span th:each="oi:${orderItem}" th:text="${oi.product.name}"></span> </li>
-<!--            <li ><strong>Quantity:</strong><span th:text="${orderItem.quantity}"></span> </li>-->
-
-
             <li><strong>Total Amount:</strong> <span th:text="${total}"></span> </li>
         </ul>
     </div>

@@ -88,13 +88,6 @@ public class UserOrderController {
         return "userOrders";
     }
 
-    @GetMapping("/user/order/viewOrder/{id}")
-    public String getUserOrder(@PathVariable long id, Model model) {
-        Orders order = orderService.getOrderById(id).orElseThrow();
-        model.addAttribute("urlList", storageService.getUrlListForSingleOrder(order));
-        model.addAttribute("orderList", order);
-        return "userViewOrder";
-    }
 
     @GetMapping("user/order/return/{id}")
     public String getReturnOrder(@PathVariable long id) {

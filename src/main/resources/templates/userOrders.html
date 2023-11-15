@@ -100,7 +100,8 @@
                 <br><br>
                 <a th:href="@{/invoice/{id}(id=${order.id})}" class="btn btn-danger">Download Invoice</a>
 
-                <!-- Review Section - Display for delivered orders -->
+                <!-- Review Section isReviewExists- Display for delivered orders -->
+
                 <div th:if="${!order.isNotDelivered()}">
                     <form th:action="@{/addRatingReview}" method="post">
                         <h6 class="mb-3">Rate and Review Products</h6>

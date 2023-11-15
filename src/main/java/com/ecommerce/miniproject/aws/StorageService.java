@@ -57,6 +57,14 @@ public class StorageService {
         }
         return urlList;
     }
+//    public List<String> getUrlListOrder(List<Orders> ordersList) {
+//        List<String> urlList = new ArrayList<>();
+//        for (Orders orders : ordersList) {
+//            String url = generateS3ObjectUrl(orders.getOrderItems());
+//            urlList.add(url);
+//        }
+//        return urlList;
+//    }
     public List<String> getUrlOrderList(List<Orders> orderList) {
         List<String> urlList = new ArrayList<>();
         for (Orders order : orderList) {
