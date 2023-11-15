@@ -54,6 +54,7 @@ public class HomeController {
         model.addAttribute("products", productService.getAllProduct());
         model.addAttribute("bannerImage",bannerImageRepository.findAll());
         model.addAttribute("urlList",storageService.getUrlList(productService.getAllProduct()));
+        model.addAttribute("urlList",storageService.getUrlListBanner(bannerImageRepository.findAll()));
         return "index";
 
     }

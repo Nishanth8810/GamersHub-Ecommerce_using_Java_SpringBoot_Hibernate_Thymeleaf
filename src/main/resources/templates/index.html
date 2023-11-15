@@ -113,10 +113,10 @@
     <!-- slider section -->
     <div class="container">
         <section class="slider_section">
-            <div id="customCarousel1" class="carousel slide" data-ride="carousel">
+            <div id="customCarousel1" class="carousel slide" data-ride="carousel-item active">
                 <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <img  height="600px" width="1300px" th:src="'/bannerImages/' + ${bannerImage.get(0).name}"  alt="Mother Boards Image" src="">
+                    <div th:each="banner,i :${bannerImage}"  class="carousel-item active">
+                        <img  height="600px" width="1300px" th:src="@{${urlList.get(i.index)}}" alt="Mother Boards Image" src="">
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-7">
@@ -125,8 +125,8 @@
                             </div>
                         </div>
                     </div>
-                    <div th:each="banner,i :${bannerImage}" th:if="${i.index!=0}" class="carousel-item">
-                        <img height="600px" width="1300px"th:src="'/bannerImages/' + ${banner.name}"  alt="Mother Boards Image" src="">
+                    <div th:each="banner,i :${bannerImage}" class="carousel-item">
+                        <img height="600px" width="1300px" th:src="@{${urlList.get(i.index)}}"  alt="Mother Boards Image" src="">
                         <div class="container">
                             <div class="row">
                             </div>

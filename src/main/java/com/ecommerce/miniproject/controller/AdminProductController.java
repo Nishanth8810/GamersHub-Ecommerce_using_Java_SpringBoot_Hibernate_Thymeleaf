@@ -97,10 +97,10 @@ public class AdminProductController {
                                  Model model,
                                  @RequestParam("productImage") List<MultipartFile> fileList,
                                  @RequestParam(name = "productColor", required = false)
-                                     List<String> productColors
-                                ,@RequestParam(name = "productSize" ,
-                                  required=false)List<String> productSizes)
-                                      throws IOException {
+                                 List<String> productColors
+            , @RequestParam(name = "productSize",
+            required = false) List<String> productSizes)
+            throws IOException {
 
 
         if (bindingResult.hasErrors()) {
@@ -155,8 +155,7 @@ public class AdminProductController {
                 productVariants.setProduct(product);
                 productVariantsList.add(productVariants);
             }
-        }
-        else {
+        } else {
             ProductVariants productVariants = new ProductVariants();
             productVariants.setProduct(product);
             productVariantsList.add(productVariants);
@@ -177,14 +176,6 @@ public class AdminProductController {
         productService.addProduct(product);
         return "redirect:/admin/products";
     }
-
-
-
-
-
-
-
-
 
 
     @GetMapping("/admin/product/update/{id}")
@@ -231,15 +222,15 @@ public class AdminProductController {
             model.addAttribute("categories", categoryService.getAllCategory());
             return "productUpdate";
         }
-     if (fileList.isEmpty()){
-         model.addAttribute("errorProduct", ProductManagementMessages.PRODUCT_IMAGE_ERROR.getMessage());
-         model.addAttribute("categories", categoryService.getAllCategory());
-         return "productUpdate";
-     }
+        if (fileList.isEmpty()) {
+            model.addAttribute("errorProduct", ProductManagementMessages.PRODUCT_IMAGE_ERROR.getMessage());
+            model.addAttribute("categories", categoryService.getAllCategory());
+            return "productUpdate";
+        }
 
         try {
             Product product = productService.getProductById(productDTO.getId()).orElseThrow();
-            System.out.println( productDTO.getImageName());
+            System.out.println(productDTO.getImageName());
 
             updateProductDetails(product, productDTO);
             saveProductImages(product, fileList);
@@ -279,7 +270,7 @@ public class AdminProductController {
         List<ProductImage> productImageList = new ArrayList<>();
 //        int maxImages = 10;
 
-        for (int i = 1;  i < fileList.size(); i++) {
+        for (int i = 1; i < fileList.size(); i++) {
             MultipartFile file = fileList.get(i);
             if (!file.isEmpty()) {
                 String imageUUID = storageService.uploadFile(fileList.get(i));

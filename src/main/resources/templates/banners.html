@@ -94,7 +94,7 @@
 
         <tr th:each="banner, iStat : ${banners}">
             <th scope="row" th:text="${iStat.index + 1}">1</th>
-            <td><img src="" height="100px" width="100px"  th:src="@{${'/bannerImages/' + banner.name}}" alt=""></td>
+            <td><img src="" height="100px" width="100px"  th:src="@{${urlList.get(iStat.index)}}" alt=""></td>
 
             <td><a href="" th:href="@{/admin/banner/delete/{id}(id=${banner.id})}" class="btn btn-danger" th:onclick="if(!(confirm('Are you sure you want to delete this banner ?') )) return false">Delete</a></td>
 

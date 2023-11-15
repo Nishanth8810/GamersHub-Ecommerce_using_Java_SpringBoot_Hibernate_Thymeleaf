@@ -82,6 +82,13 @@ public class StorageService {
         }
         return urlList;
     }
+    public List<String> getUrlListBanner(List<BannerImage> bannerImages) {
+        List<String> urlList = new ArrayList<>();
+        for (BannerImage bannerImage : bannerImages) {
+            String url = generateS3ObjectUrl(bannerImage.getName());
+            urlList.add(url);
+        }
+        return urlList;
 
-
+    }
 }
