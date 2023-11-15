@@ -22,9 +22,6 @@ import java.util.List;
 
 @Controller
 public class BannerController {
-    public static String uploadDir = System.getProperty("user.dir") +
-            "/src/main/resources/static/bannerImages";
-
     @Autowired
     BannerService bannerService;
     @Autowired

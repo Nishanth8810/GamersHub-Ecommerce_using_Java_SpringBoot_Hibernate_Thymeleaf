@@ -115,8 +115,8 @@
         <section class="slider_section">
             <div id="customCarousel1" class="carousel slide" data-ride="carousel-item active">
                 <div class="carousel-inner">
-                    <div th:each="banner,i :${bannerImage}"  class="carousel-item active">
-                        <img  height="600px" width="1300px" th:src="@{${urlList.get(i.index)}}" alt="Mother Boards Image" src="">
+                    <div class="carousel-item active">
+                        <img  height="600px" width="1300px"   th:src="@{${urlList.get(0)}}" alt="Mother Boards Image" src="">
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-7">
@@ -126,19 +126,51 @@
                         </div>
                     </div>
                     <div th:each="banner,i :${bannerImage}" class="carousel-item">
-                        <img height="600px" width="1300px" th:src="@{${urlList.get(i.index)}}"  alt="Mother Boards Image" src="">
+                        <img height="600px" width="1300px"  th:src="@{${urlList.get(i.index)}}" alt="Mother Boards Image" src="">
                         <div class="container">
                             <div class="row">
                             </div>
                         </div>
                     </div>
+<!--                   <div th:each="banner,i :${bannerImage}" class="carousel-item">-->
+<!--                        <img height="600px" width="1300px"  th:src="@{${urlList1.get(2)}}" alt="Mother Boards Image" src="">-->
+<!--                        <div class="container">-->
+<!--                            <div class="row">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div th:each="banner,i :${bannerImage}" class="carousel-item">-->
+<!--                        <img height="600px" width="1300px"  th:src="@{${urlList1.get(i.index)}}" alt="Mother Boards Image" src="">-->
+<!--                        <div class="container">-->
+<!--                            <div class="row">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div th:each="banner,i :${bannerImage}" class="carousel-item">-->
+<!--                        <img height="600px" width="1300px"  th:src="@{${urlList1.get(i.index)}}" alt="Mother Boards Image" src="">-->
+<!--                        <div class="container">-->
+<!--                            <div class="row">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div th:each="banner,i :${bannerImage}" class="carousel-item">-->
+<!--                        <img height="600px" width="1300px"  th:src="@{${urlList1.get(i.index)}}" alt="Mother Boards Image" src="">-->
+<!--                        <div class="container">-->
+<!--                            <div class="row">-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
 
-                    <!-- Add more carousel items with images and content here -->
+                    <!-- Add more carousel items with images an d content here -->
 
                 </div>
                 <ol class="carousel-indicators">
                     <li data-target="#customCarousel1" data-slide-to="0" class="active"></li>
                     <li data-target="#customCarousel1" data-slide-to="1"></li>
+                    <li data-target="#customCarousel1" data-slide-to="2"></li>
+                    <li data-target="#customCarousel1" data-slide-to="3"></li>
+                    <li data-target="#customCarousel1" data-slide-to="4"></li>
+
                     <!-- Add indicators for additional carousel items -->
 
                 </ol>
